@@ -14,19 +14,17 @@
 # and limitations under the License.
 #
 #
-# Phantom App imports
+import json
 import os
 import time
 
 import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-
-# Usage of the consts file is recommended
 import requests
-import json
 from bs4 import BeautifulSoup
 from django.http import HttpResponse
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
+
 from ciscowebex_consts import *
 
 
@@ -453,12 +451,14 @@ s
         #
         # If the corresponding state file doesn't have the correct owner, owner group or permissions,
         # the newly generated token is not being saved to state file and automatic workflow for the token has been stopped.
-        # So we have to check that token from response and token which is saved to state file after successful generation of the new token are the same or not.
+        # So we have to check that token from response and token which is saved to state file
+        # after successful generation of the new token are the same or not.
 
         if self._access_token != self._state.get(WEBEX_STR_TOKEN, {}).get(WEBEX_STR_ACCESS_TOKEN):
             message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and ownership for the corresponding state file (refer to the readme file for more information)."
+            message += "user should have the correct access rights and ownership for the corresponding state file \
+                (refer to the readme file for more information)."
             return action_result.set_status(phantom.APP_ERROR, message)
 
         return phantom.APP_SUCCESS
@@ -804,9 +804,10 @@ s
 
 if __name__ == '__main__':
 
-    import sys
-    import pudb
     import argparse
+    import sys
+
+    import pudb
 
     pudb.set_trace()
 
