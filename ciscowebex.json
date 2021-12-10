@@ -18,6 +18,7 @@
     "app_wizard_version": "1.0.0",
     "rest_handler": "ciscowebex_connector._handle_rest_request",
     "python_version": "3",
+    "fips_compliant":true,
     "latest_tested_versions": [
         "Cisco webex api v1 tested on 30 Aug, 2021"
     ],
