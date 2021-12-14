@@ -10,15 +10,15 @@
     "product_version_regex": ".*",
     "publisher": "Splunk Community",
     "license": "Copyright (c) 2021 Splunk Inc.",
-    "app_version": "1.0.2",
-    "utctime_updated": "2021-11-10T03:53:13.000000Z",
+    "app_version": "1.0.3",
+    "utctime_updated": "2021-12-14T17:52:52.000000Z",
     "package_name": "phantom_ciscowebex",
     "main_module": "ciscowebex_connector.py",
     "min_phantom_version": "4.9.39220",
     "app_wizard_version": "1.0.0",
     "rest_handler": "ciscowebex_connector._handle_rest_request",
     "python_version": "3",
-    "fips_compliant":true,
+    "fips_compliant": true,
     "latest_tested_versions": [
         "Cisco webex api v1 tested on 30 Aug, 2021"
     ],
