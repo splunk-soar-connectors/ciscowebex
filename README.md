@@ -1,3 +1,15 @@
+[comment]: # "Auto-generated SOAR connector documentation"
+# Cisco Webex
+
+Publisher: Splunk Community  
+Connector Version: 1\.0\.3  
+Product Vendor: Cisco  
+Product Name: Cisco Webex  
+Product Version Supported (regex): "\.\*"  
+Minimum Product Version: 4\.9\.39220  
+
+This app integrates with Cisco Webex to implement investigative and genric actions
+
 [comment]: # " File: readme.md"
 [comment]: # "     Copyright (c) 2021 Splunk Inc."
 [comment]: # "     Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)"
@@ -139,3 +151,124 @@ Please check the permissions for the state file as mentioned below.
 
 -   Webex(service) TCP(transport protocol)
 -   Webex(service) UDP(transport protocol)
+
+
+### Configuration Variables
+The below configuration variables are required for this Connector to operate.  These variables are specified when configuring a Cisco Webex asset in SOAR.
+
+VARIABLE | REQUIRED | TYPE | DESCRIPTION
+-------- | -------- | ---- | -----------
+**authorization\_key** |  optional  | password | Personal Access Token
+**client\_id** |  optional  | string | Client ID
+**client\_secret** |  optional  | password | Client Secret
+
+### Supported Actions  
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
+[list rooms](#action-list-rooms) - List webex rooms  
+[get user](#action-get-user) - Get user ID from e\-mail address  
+[send message](#action-send-message) - Send message to user or room  
+
+## action: 'test connectivity'
+Validate the asset configuration for connectivity using supplied configuration
+
+Type: **test**  
+Read only: **True**
+
+#### Action Parameters
+No parameters are required for this action
+
+#### Action Output
+No Output  
+
+## action: 'list rooms'
+List webex rooms
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+No parameters are required for this action
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.data\.\*\.created | string | 
+action\_result\.data\.\*\.creatorId | string |  `creater id` 
+action\_result\.data\.\*\.id | string |  `webex room id` 
+action\_result\.data\.\*\.isLocked | boolean | 
+action\_result\.data\.\*\.lastActivity | string | 
+action\_result\.data\.\*\.ownerId | string | 
+action\_result\.data\.\*\.title | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.summary\.total\_rooms | numeric | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'get user'
+Get user ID from e\-mail address
+
+Type: **investigate**  
+Read only: **True**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**email\_address** |  required  | User webex e\-mail address | string |  `email` 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.email\_address | string |  `email` 
+action\_result\.data\.\*\.created | string | 
+action\_result\.data\.\*\.displayName | string | 
+action\_result\.data\.\*\.firstName | string | 
+action\_result\.data\.\*\.id | string |  `webex user id` 
+action\_result\.data\.\*\.lastModified | string | 
+action\_result\.data\.\*\.lastName | string | 
+action\_result\.data\.\*\.created | string | 
+action\_result\.data\.\*\.emails | string |  `email` 
+action\_result\.data\.\*\.lastActivity | string | 
+action\_result\.data\.\*\.nickName | string | 
+action\_result\.data\.\*\.orgId | string | 
+action\_result\.data\.\*\.status | string | 
+action\_result\.data\.\*\.type | string | 
+action\_result\.summary\.found\_user | boolean | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric |   
+
+## action: 'send message'
+Send message to user or room
+
+Type: **generic**  
+Read only: **False**
+
+#### Action Parameters
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**endpoint\_id** |  required  | User or Room ID | string |  `webex user id`  `webex room id` 
+**destination\_type** |  required  | Destination Type | string | 
+**message** |  required  | Message | string | 
+
+#### Action Output
+DATA PATH | TYPE | CONTAINS
+--------- | ---- | --------
+action\_result\.status | string | 
+action\_result\.parameter\.destination\_type | string | 
+action\_result\.parameter\.endpoint\_id | string |  `webex user id`  `webex room id` 
+action\_result\.parameter\.message | string | 
+action\_result\.data\.\*\.created | string | 
+action\_result\.data\.\*\.id | string | 
+action\_result\.data\.\*\.personEmail | string |  `email` 
+action\_result\.data\.\*\.personId | string | 
+action\_result\.data\.\*\.roomId | string | 
+action\_result\.data\.\*\.roomType | string | 
+action\_result\.data\.\*\.text | string | 
+action\_result\.data\.\*\.toPersonId | string | 
+action\_result\.summary\.message | string | 
+action\_result\.message | string | 
+summary\.total\_objects | numeric | 
+summary\.total\_objects\_successful | numeric | 
