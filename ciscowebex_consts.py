@@ -1,6 +1,6 @@
 # File: ciscowebex_consts.py
 #
-# Copyright (c) 2021 Splunk Inc.
+# Copyright (c) 2021-2022 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -64,3 +64,4 @@ WEBEX_ACCESS_TOKEN_ENDPOINT = '/v1/access_token'
 WEBEX_GET_ROOMS_ENDPOINT = '/v1/rooms'
 WEBEX_GET_USER_ENDPOINT = "/v1/people?email={0}"
 WEBEX_SEND_MESSAGE_ENDPOINT = "/v1/messages"
+WEBEX_DEFAULT_TIMEOUT = 30
