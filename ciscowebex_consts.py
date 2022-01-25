@@ -1,17 +1,29 @@
 # File: ciscowebex_consts.py
 #
-# Copyright (c) 2021 Splunk Inc.
+# Copyright (c) 2021-2022 Splunk Inc.
 #
-# Licensed under Apache 2.0 (https://www.apache.org/licenses/LICENSE-2.0.txt)
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# --
-
-SCOPE = 'spark-admin%3Abroadworks_subscribers_write%20meeting%3Arecordings_read%20meeting%3Aadmin_preferences_write%20spark%3Aall%20meeting%3Aadmin_preferences_read%20meeting' \
-        '%3Aparticipants_read%20analytics%3Aread_all%20meeting%3Aadmin_participants_read%20meeting%3Apreferences_write%20meeting%3Aadmin_recordings_read%20meeting' \
-        '%3Atranscripts_read%20meeting%3Aschedules_write%20meeting%3Acontrols_read%20spark-admin%3Ahybrid_clusters_read%20spark-admin%3Abroadworks_enterprises_write%20meeting' \
-        '%3Aadmin_schedule_read%20spark-compliance%3Ameetings_write%20meeting%3Aadmin_schedule_write%20meeting%3Aschedules_read%20spark-admin%3Aroles_read%20meeting' \
-        '%3Arecordings_write%20meeting%3Apreferences_read%20spark-compliance%3Arooms_read%20spark-admin%3Abroadworks_subscribers_read%20spark%3Akms%20meeting%3Acontrols_write' \
-        '%20meeting%3Aadmin_recordings_write%20spark-admin%3Ahybrid_connectors_read%20audit%3Aevents_read%20meeting%3Aparticipants_write%20spark-compliance%3Arooms_write' \
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software distributed under
+# the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+# either express or implied. See the License for the specific language governing permissions
+# and limitations under the License.
+SCOPE = 'spark-admin%3Abroadworks_subscribers_write%20meeting%3Arecordings_read%20meeting%3Aadmin_preferences_write%20spark%3Aall%20meeting' \
+        '%3Aadmin_preferences_read%20meeting' \
+        '%3Aparticipants_read%20analytics%3Aread_all%20meeting%3Aadmin_participants_read%20meeting%3Apreferences_write%20meeting%3' \
+        'Aadmin_recordings_read%20meeting' \
+        '%3Atranscripts_read%20meeting%3Aschedules_write%20meeting%3Acontrols_read%20spark-admin%3Ahybrid_clusters_read%20spark-admin%3' \
+        'Abroadworks_enterprises_write%20meeting' \
+        '%3Aadmin_schedule_read%20spark-compliance%3Ameetings_write%20meeting%3Aadmin_schedule_write%20meeting%3' \
+        'Aschedules_read%20spark-admin%3Aroles_read%20meeting' \
+        '%3Arecordings_write%20meeting%3Apreferences_read%20spark-compliance%3Arooms_read%20spark-admin%3Abroadworks_subscribers_read%20s' \
+        'park%3Akms%20meeting%3Acontrols_write' \
+        '%20meeting%3Aadmin_recordings_write%20spark-admin%3Ahybrid_connectors_read%20audit%3Aevents_read%20meeting%3' \
+        'Aparticipants_write%20spark-compliance%3Arooms_write' \
         '%20meeting%3Aadmin_transcripts_read '
 BASE_URL = 'https://webexapis.com'
 AUTHORIZATION_URL = '/v1/authorize?client_id={client_id}&response_type={response_type}&redirect_uri={redirect_uri}&scope={scope}&state={state}'
@@ -52,3 +64,4 @@ WEBEX_ACCESS_TOKEN_ENDPOINT = '/v1/access_token'
 WEBEX_GET_ROOMS_ENDPOINT = '/v1/rooms'
 WEBEX_GET_USER_ENDPOINT = "/v1/people?email={0}"
 WEBEX_SEND_MESSAGE_ENDPOINT = "/v1/messages"
+WEBEX_DEFAULT_TIMEOUT = 30
