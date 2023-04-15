@@ -38,24 +38,24 @@ def _get_error_message_from_exception(e):
     :param e: Exception object
     :return: error code and message
     """
-    error_msg = UNKNOWN_ERROR_MESSAGE
+    error_message = UNKNOWN_ERROR_MESSAGE
     error_code = UNKNOWN_ERROR_CODE_MESSAGE
     try:
         if e.args:
             if len(e.args) > 1:
                 error_code = e.args[0]
-                error_msg = e.args[1]
+                error_message = e.args[1]
             elif len(e.args) == 1:
                 error_code = UNKNOWN_ERROR_CODE_MESSAGE
-                error_msg = e.args[0]
+                error_message = e.args[0]
         else:
             error_code = UNKNOWN_ERROR_CODE_MESSAGE
-            error_msg = UNKNOWN_ERROR_MESSAGE
+            error_message = UNKNOWN_ERROR_MESSAGE
     except:
         error_code = UNKNOWN_ERROR_CODE_MESSAGE
-        error_msg = UNKNOWN_ERROR_MESSAGE
+        error_message = UNKNOWN_ERROR_MESSAGE
 
-    return error_code, error_msg
+    return error_code, error_message
 
 
 def _handle_rest_request(request, path_parts):
@@ -176,8 +176,8 @@ def _load_app_state(asset_id, app_connector=None):
             state = json.load(state_file_obj)
     except Exception as e:
         if app_connector:
-            error_code, error_msg = _get_error_message_from_exception(e)
-            app_connector.debug_print('In _load_app_state: Error Code: {0}. Error Message: {1}'.format(error_code, error_msg))
+            error_code, error_message = _get_error_message_from_exception(e)
+            app_connector.debug_print('In _load_app_state: Error Code: {0}. Error Message: {1}'.format(error_code, error_message))
 
     if app_connector:
         app_connector.debug_print('Loaded state: ', state)
@@ -216,9 +216,9 @@ def _save_app_state(state, asset_id, app_connector=None):
         with open(real_state_file_path, 'w+') as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
-        error_code, error_msg = _get_error_message_from_exception(e)
+        error_code, error_message = _get_error_message_from_exception(e)
         if app_connector:
-            app_connector.debug_print('Unable to save state file: Error Code: {0}. Error Message: {1}'.format(error_code, error_msg))
+            app_connector.debug_print('Unable to save state file: Error Code: {0}. Error Message: {1}'.format(error_code, error_message))
         return phantom.APP_ERROR
 
     return phantom.APP_SUCCESS
@@ -347,9 +347,9 @@ class CiscoWebexConnector(BaseConnector):
         try:
             r = request_func(endpoint, json=data, headers=headers, verify=verify, params=params)
         except Exception as e:
-            error_msg = _get_error_message_from_exception(e)
+            error_message = _get_error_message_from_exception(e)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}"
-                                                   .format(error_msg)), resp_json)
+                                                   .format(error_message)), resp_json)
 
         return self._process_response(r, action_result)
 
