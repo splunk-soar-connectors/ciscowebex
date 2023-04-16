@@ -2,7 +2,7 @@
 # Cisco Webex
 
 Publisher: Splunk  
-Connector Version: 1.0.6  
+Connector Version: 1.0.7  
 Product Vendor: Cisco  
 Product Name: Cisco Webex  
 Product Version Supported (regex): ".\*"  
@@ -11,7 +11,7 @@ Minimum Product Version: 5.5.0
 This app integrates with Cisco Webex to implement investigative and genric actions
 
 [comment]: # " File: README.md"
-[comment]: # "  Copyright (c) 2021-2022 Splunk Inc."
+[comment]: # "  Copyright (c) 2021-2023 Splunk Inc."
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."
 [comment]: # "You may obtain a copy of the License at"
