@@ -38,24 +38,24 @@ def _get_error_message_from_exception(e):
     :param e: Exception object
     :return: error code and message
     """
-    error_msg = UNKNOWN_ERR_MSG
-    error_code = UNKNOWN_ERR_CODE_MSG
+    error_message = UNKNOWN_ERROR_MESSAGE
+    error_code = UNKNOWN_ERROR_CODE_MESSAGE
     try:
         if e.args:
             if len(e.args) > 1:
                 error_code = e.args[0]
-                error_msg = e.args[1]
+                error_message = e.args[1]
             elif len(e.args) == 1:
-                error_code = UNKNOWN_ERR_CODE_MSG
-                error_msg = e.args[0]
+                error_code = UNKNOWN_ERROR_CODE_MESSAGE
+                error_message = e.args[0]
         else:
-            error_code = UNKNOWN_ERR_CODE_MSG
-            error_msg = UNKNOWN_ERR_MSG
+            error_code = UNKNOWN_ERROR_CODE_MESSAGE
+            error_message = UNKNOWN_ERROR_MESSAGE
     except:
-        error_code = UNKNOWN_ERR_CODE_MSG
-        error_msg = UNKNOWN_ERR_MSG
+        error_code = UNKNOWN_ERROR_CODE_MESSAGE
+        error_message = UNKNOWN_ERROR_MESSAGE
 
-    return error_code, error_msg
+    return error_code, error_message
 
 
 def _handle_rest_request(request, path_parts):
@@ -176,8 +176,8 @@ def _load_app_state(asset_id, app_connector=None):
             state = json.load(state_file_obj)
     except Exception as e:
         if app_connector:
-            error_code, error_msg = _get_error_message_from_exception(e)
-            app_connector.debug_print('In _load_app_state: Error Code: {0}. Error Message: {1}'.format(error_code, error_msg))
+            error_code, error_message = _get_error_message_from_exception(e)
+            app_connector.debug_print('In _load_app_state: Error Code: {0}. Error Message: {1}'.format(error_code, error_message))
 
     if app_connector:
         app_connector.debug_print('Loaded state: ', state)
@@ -216,9 +216,9 @@ def _save_app_state(state, asset_id, app_connector=None):
         with open(real_state_file_path, 'w+') as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
-        error_code, error_msg = _get_error_message_from_exception(e)
+        error_code, error_message = _get_error_message_from_exception(e)
         if app_connector:
-            app_connector.debug_print('Unable to save state file: Error Code: {0}. Error Message: {1}'.format(error_code, error_msg))
+            app_connector.debug_print('Unable to save state file: Error Code: {0}. Error Message: {1}'.format(error_code, error_message))
         return phantom.APP_ERROR
 
     return phantom.APP_SUCCESS
@@ -262,7 +262,7 @@ class CiscoWebexConnector(BaseConnector):
         if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR, WEBEX_ERR_EMPTY_RESPONSE), None)
+        return RetVal(action_result.set_status(phantom.APP_ERROR, WEBEX_ERROR_EMPTY_RESPONSE), None)
 
     def _process_html_response(self, response, action_result):
 
@@ -347,9 +347,9 @@ class CiscoWebexConnector(BaseConnector):
         try:
             r = request_func(endpoint, json=data, headers=headers, verify=verify, params=params)
         except Exception as e:
-            error_msg = _get_error_message_from_exception(e)
+            error_message = _get_error_message_from_exception(e)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}"
-                                                   .format(error_msg)), resp_json)
+                                                   .format(error_message)), resp_json)
 
         return self._process_response(r, action_result)
 
@@ -370,7 +370,7 @@ class CiscoWebexConnector(BaseConnector):
 
         asset_name = resp_json.get('name')
         if not asset_name:
-            return action_result.set_status(phantom.APP_ERROR, WEBEX_ERR_ASSET_NAME_NOT_FOUND.format(asset_id), None)
+            return action_result.set_status(phantom.APP_ERROR, WEBEX_ERROR_ASSET_NAME_NOT_FOUND.format(asset_id), None)
 
         return phantom.APP_SUCCESS, asset_name
 
@@ -389,7 +389,7 @@ class CiscoWebexConnector(BaseConnector):
 
         phantom_base_url = resp_json.get('base_url')
         if not phantom_base_url:
-            return action_result.set_status(phantom.APP_ERROR, WEBEX_ERR_PHANTOM_BASE_URL_NOT_FOUND), None
+            return action_result.set_status(phantom.APP_ERROR, WEBEX_ERROR_PHANTOM_BASE_URL_NOT_FOUND), None
 
         return phantom.APP_SUCCESS, phantom_base_url.rstrip('/')
 
@@ -485,7 +485,7 @@ s
             time.sleep(OAUTH_WAIT_TIME)
 
         if not time_out:
-            return action_result.set_status(phantom.APP_ERROR, status_message=WEBEX_ERR_TIMEOUT)
+            return action_result.set_status(phantom.APP_ERROR, status_message=WEBEX_ERROR_TIMEOUT)
         self.send_progress('Authenticated')
         return phantom.APP_SUCCESS
 
@@ -518,7 +518,7 @@ s
         if not self._access_token:
             if not self._refresh_token:
                 # If none of the access_token and refresh_token is available
-                return action_result.set_status(phantom.APP_ERROR, status_message=WEBEX_ERR_TOKEN_NOT_AVAILABLE), None
+                return action_result.set_status(phantom.APP_ERROR, status_message=WEBEX_ERROR_TOKEN_NOT_AVAILABLE), None
 
             # If refresh_token is available and access_token is not available, generate new access_token
             status = self._generate_new_access_token(action_result=action_result, data=token_data)
@@ -559,7 +559,7 @@ s
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(WEBEX_GET_ROOMS_ENDPOINT, action_result, params=None)
             if phantom.is_fail(ret_val):
-                self.save_progress(WEBEX_ERR_TEST_CONNECTIVITY)
+                self.save_progress(WEBEX_ERROR_TEST_CONNECTIVITY)
                 return action_result.get_status()
 
             self.save_progress(WEBEX_SUCCESS_TEST_CONNECTIVITY)
@@ -611,7 +611,7 @@ s
 
         # if code is not available in the state file
         if not self._state or not self._state.get(WEBEX_STR_CODE):
-            return action_result.set_status(phantom.APP_ERROR, status_message=WEBEX_ERR_TEST_CONNECTIVITY)
+            return action_result.set_status(phantom.APP_ERROR, status_message=WEBEX_ERROR_TEST_CONNECTIVITY)
 
         current_code = self._state[WEBEX_STR_CODE]
         self.save_state(self._state)
@@ -631,7 +631,7 @@ s
         ret_val = self._generate_new_access_token(action_result=action_result, data=data)
 
         if phantom.is_fail(ret_val):
-            self.save_progress(WEBEX_ERR_TEST_CONNECTIVITY)
+            self.save_progress(WEBEX_ERROR_TEST_CONNECTIVITY)
             return action_result.get_status()
 
         self.save_progress('Getting info about the rooms to verify token')
@@ -640,7 +640,7 @@ s
         ret_val, response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(ret_val):
-            self.save_progress(WEBEX_ERR_TEST_CONNECTIVITY)
+            self.save_progress(WEBEX_ERROR_TEST_CONNECTIVITY)
             return action_result.get_status()
 
         self.save_progress('Got room details successfully')
@@ -713,7 +713,7 @@ s
             return action_result.get_status()
 
         if not is_user_found:
-            return action_result.set_status(phantom.APP_ERROR, WEBEX_ERR_USER_NOT_FOUND)
+            return action_result.set_status(phantom.APP_ERROR, WEBEX_ERROR_USER_NOT_FOUND)
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -788,10 +788,10 @@ s
         self._refresh_token = self._state.get(WEBEX_STR_TOKEN, {}).get(WEBEX_STR_REFRESH_TOKEN)
 
         if not self._api_key and (not self._client_id and not self._client_secret):
-            return self.set_status(phantom.APP_ERROR, status_message=WEBEX_ERR_REQUIRED_CONFIG_PARAMS)
+            return self.set_status(phantom.APP_ERROR, status_message=WEBEX_ERROR_REQUIRED_CONFIG_PARAMS)
 
         if not self._api_key and ((self._client_id and not self._client_secret) or (self._client_secret and not self._client_id)):
-            return self.set_status(phantom.APP_ERROR, status_message=WEBEX_ERR_REQUIRED_CONFIG_PARAMS)
+            return self.set_status(phantom.APP_ERROR, status_message=WEBEX_ERROR_REQUIRED_CONFIG_PARAMS)
 
         return phantom.APP_SUCCESS
 

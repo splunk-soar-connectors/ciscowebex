@@ -1,1 +1,2 @@
 **Unreleased**
+* Updated wheels folder for SOAR compatibility [PAPP-30182]
