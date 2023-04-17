@@ -671,6 +671,7 @@ s
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        self.debug_print("Updating the summary")
         summary = action_result.update_summary({'total_rooms': 0})
         resp_value = response.get('items', [])
         if type(resp_value) != list:
@@ -700,6 +701,7 @@ s
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
+        self.debug_print("Updating the summary")
         summary = action_result.update_summary({'found_user': False})
         resp_value = response.get('items', [])
 
@@ -745,6 +747,8 @@ s
         action_result.add_data(response)
 
         message = WEBEX_SUCCESS_SEND_MESSAGE
+
+        self.debug_print("Updating the summary")
         summary = action_result.update_summary({})
         summary['message'] = message
 
