@@ -259,6 +259,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **endpoint_id** |  required  | User or Room ID | string |  `webex user id`  `webex room id` 
 **destination_type** |  required  | Destination Type | string | 
 **message** |  required  | Message | string | 
+**is_markdown** |  optional | Set as true if the message is Markdown formatted | boolean | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES

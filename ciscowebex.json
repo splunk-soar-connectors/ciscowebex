@@ -377,6 +377,12 @@
                     "data_type": "string",
                     "required": true,
                     "order": 2
+                },
+                "is_markdown": {
+                    "description": "Is the message Markdown formatted",
+                    "data_type": "boolean",
+                    "required": false,
+                    "order": 3
                 }
             },
             "output": [

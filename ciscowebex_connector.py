@@ -731,16 +731,18 @@ s
 
         action_result = self.add_action_result(ActionResult(dict(param)))
         type = param['destination_type']
+        is_markdown = param['is_markdown']
+        message_field = 'markdown' if is_markdown else 'text'
         if type == "user":
             uri_endpoint = WEBEX_SEND_MESSAGE_ENDPOINT
             user_id = param['endpoint_id']
             message = param['message']
-            data = {'toPersonId': user_id, 'text': message}
+            data = {'toPersonId': user_id, message_field: message}
         else:
             uri_endpoint = WEBEX_SEND_MESSAGE_ENDPOINT
             user_id = param['endpoint_id']
             message = param['message']
-            data = {"roomId": user_id, "text": message}
+            data = {'roomId': user_id, message_field: message}
 
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(uri_endpoint, action_result, data=data, method="post")
