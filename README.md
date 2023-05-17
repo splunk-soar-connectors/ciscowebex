@@ -2,7 +2,7 @@
 # Cisco Webex
 
 Publisher: Splunk  
-Connector Version: 1.0.7  
+Connector Version: 1.0.8  
 Product Vendor: Cisco  
 Product Name: Cisco Webex  
 Product Version Supported (regex): ".\*"  
