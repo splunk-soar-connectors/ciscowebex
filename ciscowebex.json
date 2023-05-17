@@ -13,9 +13,9 @@
       {
         "name": "Vašek Lorenc"
       }
-    ],    
+    ],
     "license": "Copyright (c) 2021-2023 Splunk Inc.",
-    "app_version": "1.0.7",
+    "app_version": "1.0.8",
     "utctime_updated": "2023-04-16T01:53:48.000000Z",
     "package_name": "phantom_ciscowebex",
     "main_module": "ciscowebex_connector.py",
