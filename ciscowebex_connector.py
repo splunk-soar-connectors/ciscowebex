@@ -731,7 +731,7 @@ s
 
         action_result = self.add_action_result(ActionResult(dict(param)))
         dest_type = param['destination_type']
-        is_markdown = param['is_markdown']
+        is_markdown = param.get('is_markdown', False)
 
         sendto_field = 'toPersonId' if (dest_type == 'user') else 'roomId'
         message_field = 'markdown' if is_markdown else 'text'
