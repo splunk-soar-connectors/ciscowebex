@@ -15,7 +15,7 @@
         }
     ],
     "license": "Copyright (c) 2021-2023 Splunk Inc.",
-    "app_version": "1.0.8",
+    "app_version": "1.1.0",
     "utctime_updated": "2023-04-16T01:53:48.000000Z",
     "package_name": "phantom_ciscowebex",
     "main_module": "ciscowebex_connector.py",
@@ -25,7 +25,7 @@
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cisco webex api v1 tested on 15 April, 2023"
+        "Cisco webex api v1 tested on 29 May, 2023"
     ],
     "configuration": {
         "authorization_key": {
@@ -386,7 +386,6 @@
                 "is_markdown": {
                     "description": "Is the message Markdown formatted",
                     "data_type": "boolean",
-                    "default": false,
                     "order": 3
                 }
             },
@@ -428,6 +427,14 @@
                     "example_values": [
                         "Compile Test",
                         "hello room"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.is_markdown",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
                     ]
                 },
                 {
