@@ -859,7 +859,7 @@ if __name__ == '__main__':
             r2 = requests.post(BaseConnector._get_phantom_base_url(), verify=verify, data=data, headers=headers, timeout=WEBEX_DEFAULT_TIMEOUT)
             session_id = r2.cookies['sessionid']
         except Exception as e:
-            print("Unable to get session id from the platfrom. Error: " + str(e))
+            print("Unable to get session id from the platform. Error: " + str(e))
             sys.exit(1)
 
     if len(sys.argv) < 2:
