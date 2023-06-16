@@ -199,9 +199,6 @@ def _load_app_state(asset_id, app_connector=None, message=consts.WEBEX_INVALID_A
             app_connector.debug_print("{}: {}".format(consts.WEBEX_DECRYPTION_ERROR,
                                                       _get_error_message_from_exception(ex)))
 
-    if consts.WEBEX_STR_CODE in state:
-        state[consts.WEBEX_STR_CODE] = decrypt(state[consts.WEBEX_STR_CODE], asset_id)
-
     return state
 
 
