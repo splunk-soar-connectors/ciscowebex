@@ -191,6 +191,14 @@ def _load_app_state(asset_id, app_connector=None, message=consts.WEBEX_INVALID_A
     if app_connector:
         app_connector.debug_print('Loaded state: ', state)
 
+    try:
+        if consts.WEBEX_STR_CODE in state:
+            state[consts.WEBEX_STR_CODE] = decrypt(state[consts.WEBEX_STR_CODE], asset_id)
+    except Exception as ex:
+        if app_connector:
+            app_connector.debug_print("{}: {}".format(consts.WEBEX_DECRYPTION_ERROR,
+                                                      _get_error_message_from_exception(ex)))
+
     if consts.WEBEX_STR_CODE in state:
         state[consts.WEBEX_STR_CODE] = decrypt(state[consts.WEBEX_STR_CODE], asset_id)
 
@@ -221,8 +229,13 @@ def _save_app_state(state, asset_id, app_connector=None, message=consts.WEBEX_IN
             app_connector.debug_print(message)
         return {}
 
-    if consts.WEBEX_STR_CODE in state:
-        state[consts.WEBEX_STR_CODE] = encrypt(state[consts.WEBEX_STR_CODE], asset_id)
+    try:
+        if consts.WEBEX_STR_CODE in state:
+            state[consts.WEBEX_STR_CODE] = encrypt(state[consts.WEBEX_STR_CODE], asset_id)
+    except Exception as ex:
+        if app_connector:
+            app_connector.debug_print("{}: {}".format(consts.WEBEX_ENCRYPTION_ERROR,
+                                                      _get_error_message_from_exception(ex)))
 
     if app_connector:
         app_connector.debug_print('Saving state: ', state)
