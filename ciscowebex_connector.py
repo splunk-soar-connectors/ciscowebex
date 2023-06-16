@@ -475,7 +475,6 @@ s
         # after successful generation of the new token are the same or not.
 
         if self._access_token != self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN):
-            self.save_progress("Not equal")
             message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
             message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
             message += "user should have the correct access rights and ownership for the corresponding state file \
@@ -604,7 +603,7 @@ s
         # Authorization URL used to make request for getting code which is used to generate access token
         authorization_url = consts.AUTHORIZATION_URL.format(client_id=self._client_id,
                                                             redirect_uri=redirect_uri,
-                                                            e_type=consts.WEBEX_STR_CODE,
+                                                            response_type=consts.WEBEX_STR_CODE,
                                                             state=self._asset_id,
                                                             scope=consts.SCOPE)
 
@@ -664,7 +663,6 @@ s
 
         # For first time access, new access token is generated
         ret_val = self._generate_new_access_token(action_result=action_result, data=data)
-        self.save_progress("Token: {}".format(self._access_token))
         if phantom.is_fail(ret_val):
             self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
             return action_result.get_status()
@@ -876,11 +874,8 @@ s
 
         if not self._api_key:
             self.decrypt_state()
-
-        self.debug_print("AP state: {}".format(self._state))
-
-        self._access_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
-        self._refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
+            self._access_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
+            self._refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
 
         return phantom.APP_SUCCESS
 
