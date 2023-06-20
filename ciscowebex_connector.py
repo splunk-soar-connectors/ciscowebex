@@ -35,13 +35,15 @@ class RetVal(tuple):
         return tuple.__new__(RetVal, (val1, val2))
 
 
-def _get_error_message_from_exception(e):
+def _get_error_message_from_exception(e, app_connector=None):
     """ This function is used to get appropriate error message from the exception.
     :param e: Exception object
     :return: error code and message
     """
     error_message = consts.UNKNOWN_ERROR_MESSAGE
     error_code = consts.UNKNOWN_ERROR_CODE_MESSAGE
+    if app_connector:
+        app_connector.error_print("Exception occurred.", dump_object=e)
     try:
         if e.args:
             if len(e.args) > 1:
@@ -186,7 +188,8 @@ def _load_app_state(asset_id, app_connector=None, message=consts.WEBEX_INVALID_A
     except Exception as e:
         if app_connector:
             error_code, error_message = _get_error_message_from_exception(e)
-            app_connector.debug_print('In _load_app_state: Error Code: {0}. Error Message: {1}'.format(error_code, error_message))
+            app_connector.debug_print('In _load_app_state: Error Code: {0}. Error Message: {1}'
+                                      .format(error_code, error_message))
 
     if app_connector:
         app_connector.debug_print('Loaded state: ', state)
@@ -243,7 +246,8 @@ def _save_app_state(state, asset_id, app_connector=None, message=consts.WEBEX_IN
     except Exception as e:
         error_code, error_message = _get_error_message_from_exception(e)
         if app_connector:
-            app_connector.debug_print('Unable to save state file: Error Code: {0}. Error Message: {1}'.format(error_code, error_message))
+            app_connector.debug_print('Unable to save state file: Error Code: {0}. Error Message: {1}'
+                                      .format(error_code, error_message))
         return phantom.APP_ERROR
 
     return phantom.APP_SUCCESS
@@ -830,7 +834,8 @@ s
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = decrypt(access_token, self._asset_id)
             except Exception as ex:
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_DECRYPTION_ERROR, self._get_error_message_from_exception(ex)))
+                                 .format(consts.WEBEX_DECRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
+                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = None
 
         refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
         if refresh_token:
@@ -838,7 +843,8 @@ s
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = decrypt(refresh_token, self._asset_id)
             except Exception as ex:
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_DECRYPTION_ERROR, self._get_error_message_from_exception(ex)))
+                                 .format(consts.WEBEX_DECRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
+                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = None
 
     def encrypt_state(self):
         access_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
@@ -847,7 +853,7 @@ s
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = encrypt(access_token, self._asset_id)
             except Exception as ex:
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_ENCRYPTION_ERROR, self._get_error_message_from_exception(ex)))
+                                 .format(consts.WEBEX_ENCRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
 
         refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
         if refresh_token:
@@ -855,7 +861,7 @@ s
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = encrypt(refresh_token, self._asset_id)
             except Exception as ex:
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_ENCRYPTION_ERROR, self._get_error_message_from_exception(ex)))
+                                 .format(consts.WEBEX_ENCRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
 
         self._state[consts.WEBEX_STR_IS_ENCRYPTED] = True
 
