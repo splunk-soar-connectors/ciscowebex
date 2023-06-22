@@ -384,7 +384,7 @@ class CiscoWebexConnector(BaseConnector):
         try:
             r = request_func(endpoint, json=data, headers=headers, verify=verify, params=params)
         except Exception as e:
-            error_message = _get_error_message_from_exception(e)
+            error_message = _get_error_message_from_exception(e, self)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}"
                                                    .format(error_message)), resp_json)
 

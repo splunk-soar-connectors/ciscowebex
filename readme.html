@@ -32,7 +32,13 @@ To enable OAuth and to retrieve Client ID and Client Secret, we need to follow t
       <li>You'll need to provide some basic information like your integration's name, description, and logo.</li>
       <li>After successful registration, you'll be taken to a different screen containing your integration's newly created Client ID and Client Secret.</li>
       <li>The Client Secret will only be shown once so please copy and keep it safe!</li>
-      <li>Give the required scope which defines the level of access that your integration requires. </li>
+      <li>Give the below required scope which defines the level of access that your integration requires. </li>
+        <ul>
+          <li>spark:messages_write</li>
+          <li>spark:people_read</li>
+          <li>spark:rooms_read</li>
+          <li>spark-admin:people_read</li>
+        </ul>
     </ol>
   </li>
 </ul>
@@ -41,7 +47,7 @@ While creating the asset for this authentication method, provide the Client ID a
 <br>
 A new field called <b>POST incoming for Cisco Webex to this location</b> will appear in the <b>Asset Settings</b> tab. Take the URL found in this field and place it in the <b>Redirect URI(s)</b> field of your registered app. To this URL, add <b>/result</b> at the end. After doing so the URL should look something like:
 <p>
-  https://&lt;phantom_host&gt;/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/&lt;asset_name&gt;/result
+  https://&lt;soar_host&gt;/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/&lt;asset_name&gt;/result
 </p>
 
 <h2>Method to run Test Connectivity</h2>
@@ -76,7 +82,7 @@ A new field called <b>POST incoming for Cisco Webex to this location</b> will ap
               <ul>
 				<li>Configure the Cisco Webex app's asset with appropriate values for [client_id] and [client_secret] configuration parameters.</li>
                 <li>Internally, the connectivity creates a URL for hitting the /v1/authorize endpoint for the generation of the authorization code and displays it on the connectivity pop-up window. The user is requested to hit this URL in a browser new tab and complete the authorization request successfully resulting in the generation of an authorization code.</li>
-                <li>The authorization code generated in the above step is used by the connectivity to make the next API call to generate the [access_token] and [refresh_token] pair. The generated authorization code, [access_token], and [refresh_token] are stored in the state file of the app on the Phantom server.</li>
+                <li>The authorization code generated in the above step is used by the connectivity to make the next API call to generate the [access_token] and [refresh_token] pair. The generated authorization code, [access_token], and [refresh_token] are stored in the state file of the app on the SOAR server.</li>
                 <li>The authorization code can be used only once to generate the pair of [access_token] and [refresh_token]. If the [access_token] expires, then the [refresh_token] is used internally automatically by the application to re-generate the [access_token] by making the corresponding API call. This entire autonomous workflow will seamlessly work until the [refresh_token] does not get expired. Once the [refresh_token] expires, the user will have to run the test connectivity action once again to generate the authorization code followed by the generation of an entirely fresh pair of [access_token] and [refresh_token].</li>
                 <li>The successful run of the Test Connectivity ensures that a valid pair of [access_token] and [refresh_token] has been generated and stored in the app's state file. These tokens will be used in all the actions' execution flow to authorize their API calls to the Cisco Webex instance.</li>
               </ul>
@@ -89,13 +95,12 @@ A new field called <b>POST incoming for Cisco Webex to this location</b> will ap
   Please check the permissions for the state file as mentioned below.
   <h4>State file path</h4>
   <ul>
-    <li>For Non-NRI instance: /opt/phantom/local_data/app_states/&lt;appid&gt;/&lt;asset_id&gt;_state.json</li>
-    <li>For NRI instance: /&lt;PHANTOM_HOME_DIRECTORY&gt;/local_data/app_states/&lt;appid&gt;/&lt;asset_id&gt;_state.json</li>
+    <li>For Unprivileged install: /&lt;SOAR_HOME_DIRECTORY&gt;/local_data/app_states/&lt;appid&gt;/&lt;asset_id&gt;_state.json</li>
   </ul>
   <h4>State file permissions</h4>
   <ul>
-    <li>File rights: rw-rw-r-- (664) (The phantom user should have read and write access for the state file)</li>
-    <li>File owner: Appropriate phantom user</li>
+    <li>File rights: rw-rw-r-- (664) (The soar user should have read and write access for the state file)</li>
+    <li>File owner: Appropriate soar user</li>
   </ul>
 </p>
 <h3>Notes:</h3>
