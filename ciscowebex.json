@@ -11,7 +11,7 @@
     "publisher": "Splunk",
     "contributors": [
         {
-            "name": "Va\u0161ek Lorenc"
+            "name": "Vašek Lorenc"
         }
     ],
     "license": "Copyright (c) 2021-2023 Splunk Inc.",
@@ -90,7 +90,7 @@
                         "creater id"
                     ],
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM"
+                        "L2lzY69zcBFyazoxL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM"
                     ]
                 },
                 {
@@ -100,7 +100,7 @@
                         "webex room id"
                     ],
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi"
+                        "L2lzY69zcGFylsdovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi"
                     ],
                     "column_name": "ID",
                     "column_order": 1
@@ -125,7 +125,7 @@
                     "data_path": "action_result.data.*.ownerId",
                     "data_type": "string",
                     "example_value": [
-                        "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi9hOGY3ZDhlMi04MjY1LTQ4OWEtOWE1My00NzlkZjQ1NTFkNWE"
+                        "L2lzY29zcAByazovL3VzL09SR0FOSVpABCElPTi9hOGY3ZDhlMi04MjY1LTQ4OWEtOWE1My00NzlkZjQ1NTFkNWE"
                     ]
                 },
                 {
@@ -213,8 +213,7 @@
                     "column_name": "Email Address",
                     "column_order": 1,
                     "example_values": [
-                        "monielynn@theharlanfamily.org",
-                        "herman@contoso.com"
+                        "examplemail@gmail.com"
                     ]
                 },
                 {
@@ -228,7 +227,7 @@
                     "data_path": "action_result.data.*.displayName",
                     "data_type": "string",
                     "example_values": [
-                        "Monika Harlan"
+                        "Test User"
                     ],
                     "column_name": "User Name",
                     "column_order": 2
@@ -247,7 +246,7 @@
                         "webex user id"
                     ],
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU"
+                        "L2lzY29zcAByazovL3VzL1690T1BMRS9hMzMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU"
                     ],
                     "column_name": "ID",
                     "column_order": 3
@@ -277,7 +276,7 @@
                     "data_path": "action_result.data.*.emails",
                     "data_type": "string",
                     "example_values": [
-                        "monielynn@theharlanfamily.org"
+                        "examplemail@gmail.com"
                     ],
                     "contains": [
                         "email"
@@ -294,14 +293,14 @@
                     "data_path": "action_result.data.*.nickName",
                     "data_type": "string",
                     "example_values": [
-                        "Monika"
+                        "Test User"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.orgId",
                     "data_type": "string",
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi9jb25zdW1lcg"
+                        "L2lzY29zcABCazovL3VzL09SR0FOSVpBVElPTi9jb25zdW1lcg"
                     ]
                 },
                 {
@@ -417,8 +416,7 @@
                     ],
                     "column_order": 0,
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU",
-                        "Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi"
+                        "L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5"
                     ]
                 },
                 {
@@ -449,15 +447,14 @@
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL01FU1NBR0UvYmM0MGQ3YjAtZjRiYS0xMWU3LWI5NGEtMzMxMmE4MmI4ZmVl",
-                        "Y2lzY29zcGFyazovL3VzL01FU1NBR0UvMzIxMjA5YTAtMzQ0OS0xMWU4LWJjNmUtMWJkNzlhODNjMTY3"
+                        "L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.personEmail",
                     "data_type": "string",
                     "example_values": [
-                        "herman@contoso.com"
+                        "examplemail@gmail.com"
                     ],
                     "contains": [
                         "email"
@@ -467,15 +464,14 @@
                     "data_path": "action_result.data.*.personId",
                     "data_type": "string",
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM"
+                        "L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.roomId",
                     "data_type": "string",
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1JPT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5",
-                        "Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi"
+                        "L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5"
                     ]
                 },
                 {
@@ -498,7 +494,7 @@
                     "data_path": "action_result.data.*.toPersonId",
                     "data_type": "string",
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU"
+                        "L2lzY1zcAByazovL3VzL1HNT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU"
                     ]
                 },
                 {
