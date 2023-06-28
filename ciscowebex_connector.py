@@ -198,9 +198,9 @@ def _load_app_state(asset_id, app_connector=None, message=consts.WEBEX_INVALID_A
         if consts.WEBEX_STR_CODE in state:
             state[consts.WEBEX_STR_CODE] = decrypt(state[consts.WEBEX_STR_CODE], asset_id)
     except Exception as ex:
+        _, error_message = _get_error_message_from_exception(ex)
         if app_connector:
-            app_connector.debug_print("{}: {}".format(consts.WEBEX_DECRYPTION_ERROR,
-                                                      _get_error_message_from_exception(ex)))
+            app_connector.debug_print("{}: {}".format(consts.WEBEX_DECRYPTION_ERROR, error_message))
 
     return state
 
@@ -233,9 +233,9 @@ def _save_app_state(state, asset_id, app_connector=None, message=consts.WEBEX_IN
         if consts.WEBEX_STR_CODE in state:
             state[consts.WEBEX_STR_CODE] = encrypt(state[consts.WEBEX_STR_CODE], asset_id)
     except Exception as ex:
+        _, error_message = _get_error_message_from_exception(ex)
         if app_connector:
-            app_connector.debug_print("{}: {}".format(consts.WEBEX_ENCRYPTION_ERROR,
-                                                      _get_error_message_from_exception(ex)))
+            app_connector.debug_print("{}: {}".format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
 
     if app_connector:
         app_connector.debug_print('Saving state: ', state)
@@ -384,7 +384,7 @@ class CiscoWebexConnector(BaseConnector):
         try:
             r = request_func(endpoint, json=data, headers=headers, verify=verify, params=params)
         except Exception as e:
-            error_message = _get_error_message_from_exception(e, self)
+            _, error_message = _get_error_message_from_exception(e, self)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}"
                                                    .format(error_message)), resp_json)
 
@@ -833,8 +833,9 @@ s
             try:
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = decrypt(access_token, self._asset_id)
             except Exception as ex:
+                _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_DECRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
+                                 .format(consts.WEBEX_DECRYPTION_ERROR, error_message))
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = None
 
         refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
@@ -842,8 +843,9 @@ s
             try:
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = decrypt(refresh_token, self._asset_id)
             except Exception as ex:
+                _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_DECRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
+                                 .format(consts.WEBEX_DECRYPTION_ERROR, error_message))
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = None
 
     def encrypt_state(self):
@@ -852,16 +854,18 @@ s
             try:
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = encrypt(access_token, self._asset_id)
             except Exception as ex:
+                _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_ENCRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
+                                 .format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
 
         refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
         if refresh_token:
             try:
                 self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = encrypt(refresh_token, self._asset_id)
             except Exception as ex:
+                _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_ENCRYPTION_ERROR, _get_error_message_from_exception(ex, self)))
+                                 .format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
 
         self._state[consts.WEBEX_STR_IS_ENCRYPTED] = True
 
