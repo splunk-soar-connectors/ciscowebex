@@ -165,7 +165,9 @@ Please check the permissions for the state file as mentioned below.
 
 #### The app is configured and ready to be used now.
 
-### LDAP Ports Requirements (Based on Standard Guidelines of <a
+### LDAP Ports Requirements
+
+(Based on Standard Guidelines of <a
 href="https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml"
 target="_blank">IANA ORG</a> )
 
@@ -214,8 +216,8 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
 action_result.data.\*.created | string |  |   2018-01-05T02:43:33.032Z 
-action_result.data.\*.creatorId | string |  `creater id`  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM 
-action_result.data.\*.id | string |  `webex room id`  |   Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi 
+action_result.data.\*.creatorId | string |  `creater id`  |   L2lzY69zcBFyazoxL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM 
+action_result.data.\*.id | string |  `webex room id`  |   L2lzY69zcGFylsdovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi 
 action_result.data.\*.isLocked | boolean |  |   True  False 
 action_result.data.\*.lastActivity | string |  |   2018-01-08T21:26:38.851Z  2018-01-16T18:37:12.037Z 
 action_result.data.\*.ownerId | string |  |  
@@ -241,18 +243,18 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
-action_result.parameter.email_address | string |  `email`  |   monielynn@theharlanfamily.org  herman@contoso.com 
+action_result.parameter.email_address | string |  `email`  |   examplemail@gmail.com 
 action_result.data.\*.created | string |  |  
-action_result.data.\*.displayName | string |  |   Monika Harlan 
+action_result.data.\*.displayName | string |  |   Test User 
 action_result.data.\*.firstName | string |  |  
-action_result.data.\*.id | string |  `webex user id`  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU 
+action_result.data.\*.id | string |  `webex user id`  |   L2lzY29zcAByazovL3VzL1690T1BMRS9hMzMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU 
 action_result.data.\*.lastModified | string |  |  
 action_result.data.\*.lastName | string |  |  
 action_result.data.\*.created | string |  |   2018-01-04T20:46:30.734Z 
-action_result.data.\*.emails | string |  `email`  |   monielynn@theharlanfamily.org 
+action_result.data.\*.emails | string |  `email`  |   examplemail@gmail.com 
 action_result.data.\*.lastActivity | string |  |   2018-01-05T21:04:53.424Z 
-action_result.data.\*.nickName | string |  |   Monika 
-action_result.data.\*.orgId | string |  |   Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi9jb25zdW1lcg 
+action_result.data.\*.nickName | string |  |   Test User 
+action_result.data.\*.orgId | string |  |   L2lzY29zcABCazovL3VzL09SR0FOSVpBVElPTi9jb25zdW1lcg 
 action_result.data.\*.status | string |  |   inactive 
 action_result.data.\*.type | string |  |   person 
 action_result.summary.found_user | boolean |  |  
@@ -279,17 +281,17 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
 action_result.parameter.destination_type | string |  |   room 
-action_result.parameter.endpoint_id | string |  `webex user id`  `webex room id`  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU  Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi 
+action_result.parameter.endpoint_id | string |  `webex user id`  `webex room id`  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5 
 action_result.parameter.message | string |  |   Compile Test  hello room 
 action_result.parameter.is_markdown | boolean |  |   True  False 
 action_result.data.\*.created | string |  |   2018-01-08T21:27:31.755Z  2018-03-30T18:36:01.210Z 
-action_result.data.\*.id | string |  |   Y2lzY29zcGFyazovL3VzL01FU1NBR0UvYmM0MGQ3YjAtZjRiYS0xMWU3LWI5NGEtMzMxMmE4MmI4ZmVl  Y2lzY29zcGFyazovL3VzL01FU1NBR0UvMzIxMjA5YTAtMzQ0OS0xMWU4LWJjNmUtMWJkNzlhODNjMTY3 
-action_result.data.\*.personEmail | string |  `email`  |   herman@contoso.com 
-action_result.data.\*.personId | string |  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM 
-action_result.data.\*.roomId | string |  |   Y2lzY29zcGFyazovL3VzL1JPT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5  Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi 
+action_result.data.\*.id | string |  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5 
+action_result.data.\*.personEmail | string |  `email`  |   examplemail@gmail.com 
+action_result.data.\*.personId | string |  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5 
+action_result.data.\*.roomId | string |  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5 
 action_result.data.\*.roomType | string |  |   direct  group 
 action_result.data.\*.text | string |  |   Compile Test  hello room 
-action_result.data.\*.toPersonId | string |  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU 
+action_result.data.\*.toPersonId | string |  |   L2lzY1zcAByazovL3VzL1HNT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU 
 action_result.summary.message | string |  |   Message sent successfully 
 action_result.message | string |  |   Message sent successfully 
 summary.total_objects | numeric |  |   1 

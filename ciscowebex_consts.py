@@ -12,6 +12,7 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
+
 SCOPE = 'spark%3Akms%20spark%3Apeople_read%20spark%3Arooms_read%20spark%3Amessages_write%20spark-admin%3Apeople_read'
 BASE_URL = 'https://webexapis.com'
 AUTHORIZATION_URL = '/v1/authorize?client_id={client_id}&response_type={response_type}&redirect_uri={redirect_uri}&scope={scope}&state={state}'

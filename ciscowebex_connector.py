@@ -84,10 +84,10 @@ def _handle_rest_request(request, path_parts):
         return_val = _handle_login_response(request)
         asset_id = request.GET.get('state')  # nosemgrep
         if asset_id and asset_id.isalnum():
-            app_dir = os.path.dirname(os.path.abspath(__file__))
-            auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, asset_id, 'oauth_task.out')
+            app_dir = pathlib.Path(__file__).resolve()
+            auth_status_file_path = app_dir.with_name('{0}_{1}'.format(asset_id, 'oauth_task.out'))
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
-            if not os.path.dirname(real_auth_status_file_path) == app_dir:
+            if not os.path.dirname(real_auth_status_file_path) == str(auth_status_file_path.parent):
                 return HttpResponse("Error: Invalid asset_id", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
             open(auth_status_file_path, 'w').close()
 
@@ -159,7 +159,7 @@ def _handle_login_redirect(request, key):
     return response
 
 
-def _load_app_state(asset_id, app_connector=None, message=consts.WEBEX_INVALID_ASSET_ERROR.format('load')):
+def _load_app_state(asset_id, app_connector=None):
     """ This function is used to load the current state file.
 
     :param asset_id: asset_id
@@ -170,15 +170,15 @@ def _load_app_state(asset_id, app_connector=None, message=consts.WEBEX_INVALID_A
     asset_id = str(asset_id)
     if not asset_id or not asset_id.isalnum():
         if app_connector:
-            app_connector.debug_print(message)
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('load'))
         return {}
 
-    app_dir = os.path.dirname(os.path.abspath(__file__))
-    state_file = '{0}/{1}_state.json'.format(app_dir, asset_id)
+    app_dir = pathlib.Path(__file__).resolve()
+    state_file = app_dir.with_name('{0}_state.json'.format(asset_id))
     real_state_file_path = os.path.abspath(state_file)
-    if not os.path.dirname(real_state_file_path) == app_dir:
+    if not os.path.dirname(real_state_file_path) == str(state_file.parent):
         if app_connector:
-            app_connector.debug_print(message)
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('load'))
         return {}
 
     state = {}
@@ -205,7 +205,7 @@ def _load_app_state(asset_id, app_connector=None, message=consts.WEBEX_INVALID_A
     return state
 
 
-def _save_app_state(state, asset_id, app_connector=None, message=consts.WEBEX_INVALID_ASSET_ERROR.format('save')):
+def _save_app_state(state, asset_id, app_connector=None):
     """ This function is used to save current state in file.
 
     :param state: Dictionary which contains data to write in state file
@@ -217,16 +217,16 @@ def _save_app_state(state, asset_id, app_connector=None, message=consts.WEBEX_IN
     asset_id = str(asset_id)
     if not asset_id or not asset_id.isalnum():
         if app_connector:
-            app_connector.debug_print(message)
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('save'))
         return {}
 
-    app_dir = os.path.split(__file__)[0]
-    state_file = '{0}/{1}_state.json'.format(app_dir, asset_id)
+    app_dir = pathlib.Path(__file__).resolve()
+    state_file = app_dir.with_name('{0}_state.json'.format(asset_id))
 
     real_state_file_path = os.path.abspath(state_file)
-    if not os.path.dirname(real_state_file_path) == app_dir:
+    if not os.path.dirname(real_state_file_path) == str(state_file.parent):
         if app_connector:
-            app_connector.debug_print(message)
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('save'))
         return {}
 
     try:
@@ -287,10 +287,32 @@ class CiscoWebexConnector(BaseConnector):
         # modify this as you deem fit.
         self._base_url = None
 
+    def load_state(self):
+        """
+        Load the contents of the state file to the state dictionary and decrypt it.
+        :return: loaded state
+        """
+        state = super().load_state()
+        if not isinstance(state, dict):
+            self.debug_print("Resetting the state file with the default format")
+            state = {
+                "app_version": self.get_app_json().get('app_version')
+            }
+            return state
+        return self.decrypt_state(state)
+
+    def save_state(self, state):
+        """
+        Encrypt and save the current state dictionary to the state file.
+        :param state: state dictionary
+        :return: status
+        """
+        return super().save_state(self.encrypt_state(state))
+
     @staticmethod
     def _process_empty_response(response, action_result):
 
-        if response.status_code == [200, 204]:
+        if response.status_code in [200, 204]:
             return RetVal(phantom.APP_SUCCESS, {})
 
         return RetVal(action_result.set_status(phantom.APP_ERROR,
@@ -457,7 +479,6 @@ class CiscoWebexConnector(BaseConnector):
 
     def _generate_new_access_token(self, action_result, data):
         """ This function is used to generate new access token using the code obtained on authorization.
-s
         :param action_result: object of ActionResult class
         :param data: Data to send in REST call
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS
@@ -477,23 +498,9 @@ s
             return action_result.set_status(phantom.APP_ERROR, status_message='Error while generating access_token')
 
         self._state[consts.WEBEX_STR_TOKEN] = resp_json
-
         self._access_token = resp_json[consts.WEBEX_STR_ACCESS_TOKEN]
         self._refresh_token = resp_json[consts.WEBEX_STR_REFRESH_TOKEN]
-
-        # Scenario -
-        #
-        # If the corresponding state file doesn't have the correct owner, owner group or permissions,
-        # the newly generated token is not being saved to state file and automatic workflow for the token has been stopped.
-        # So we have to check that token from response and token which is saved to state file
-        # after successful generation of the new token are the same or not.
-
-        if self._access_token != self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN):
-            message = "Error occurred while saving the newly generated access token (in place of the expired token) in the state file."
-            message += " Please check the owner, owner group, and the permissions of the state file. The Phantom "
-            message += "user should have the correct access rights and ownership for the corresponding state file \
-                (refer to the readme file for more information)."
-            return action_result.set_status(phantom.APP_ERROR, message)
+        self.save_state(self._state)
 
         return phantom.APP_SUCCESS
 
@@ -504,9 +511,9 @@ s
         :return: status (success/failed)
         """
 
-        app_dir = os.path.dirname(os.path.abspath(__file__))
+        app_dir = pathlib.Path(__file__).resolve()
         # file to check whether the request has been granted or not
-        auth_status_file_path = '{0}/{1}_{2}'.format(app_dir, self._asset_id, 'oauth_task.out')
+        auth_status_file_path = app_dir.with_name('{0}_{1}'.format(self._asset_id, 'oauth_task.out'))
         time_out = False
 
         # wait-time while request is being granted
@@ -823,61 +830,67 @@ s
 
         return ret_val
 
-    def decrypt_state(self):
+    def decrypt_state(self, state):
 
-        if not self._state.get(consts.WEBEX_STR_IS_ENCRYPTED):
-            return
+        if not state.get(consts.WEBEX_STR_IS_ENCRYPTED):
+            return state
 
-        access_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
+        access_token = state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
         if access_token:
             try:
-                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = decrypt(access_token, self._asset_id)
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = decrypt(access_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
                                  .format(consts.WEBEX_DECRYPTION_ERROR, error_message))
-                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = None
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = None
 
-        refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
+        refresh_token = state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
         if refresh_token:
             try:
-                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = decrypt(refresh_token, self._asset_id)
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = decrypt(refresh_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
                                  .format(consts.WEBEX_DECRYPTION_ERROR, error_message))
-                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = None
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = None
+        state[consts.WEBEX_STR_IS_ENCRYPTED] = False
+        return state
 
-    def encrypt_state(self):
-        access_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
+    def encrypt_state(self, state):
+
+        if state.get(consts.WEBEX_STR_IS_ENCRYPTED):
+            return state
+
+        access_token = state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
         if access_token:
             try:
-                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = encrypt(access_token, self._asset_id)
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = encrypt(access_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
                                  .format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = None
 
-        refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
+        refresh_token = state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
         if refresh_token:
             try:
-                self._state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = encrypt(refresh_token, self._asset_id)
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = encrypt(refresh_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
                 self.debug_print("{}: {}"
                                  .format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
+                state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = None
 
-        self._state[consts.WEBEX_STR_IS_ENCRYPTED] = True
+        state[consts.WEBEX_STR_IS_ENCRYPTED] = True
+        return state
 
     def initialize(self):
 
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
-        self._state = self.load_state()
         self._asset_id = self.get_asset_id()
-        if not isinstance(self._state, dict):
-            self.debug_print("Resetting the state file with the default format")
-            self._state = {"app_version": self.get_app_json().get('app_version')}
+        self._state = self.load_state()
 
         config = self.get_config()
         self._base_url = consts.BASE_URL
@@ -892,18 +905,14 @@ s
         if not self._api_key and ((self._client_id and not self._client_secret) or (self._client_secret and not self._client_id)):
             return self.set_status(phantom.APP_ERROR, status_message=consts.WEBEX_ERROR_REQUIRED_CONFIG_PARAMS)
 
-        if not self._api_key:
-            self.decrypt_state()
-            self._access_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
-            self._refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
+        self._access_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_ACCESS_TOKEN)
+        self._refresh_token = self._state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
 
         return phantom.APP_SUCCESS
 
     def finalize(self):
 
         # Save the state, this data is saved accross actions and app upgrades
-        if not self._api_key:
-            self.encrypt_state()
         self.save_state(self._state)
         return phantom.APP_SUCCESS
 
