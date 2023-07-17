@@ -18,6 +18,7 @@ import json
 import os
 import pathlib
 import time
+import urllib.parse as urllib
 
 import phantom.app as phantom
 import requests
@@ -281,6 +282,7 @@ class CiscoWebexConnector(BaseConnector):
         self._client_secret = None
         self._access_token = None
         self._refresh_token = None
+        self._scopes = ''
 
         # Variable to hold a base_url in case the app makes REST calls
         # Do note that the app json defines the asset config, so please
@@ -596,10 +598,10 @@ class CiscoWebexConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         app_state = {}
-        self.save_progress("Validating API Key")
 
         # If API key exists, skipping oAuth authentication
         if self._api_key:
+            self.save_progress("Validating API Key")
             ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_GET_ROOMS_ENDPOINT, action_result, params=None)
             if phantom.is_fail(ret_val):
                 self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
@@ -620,13 +622,20 @@ class CiscoWebexConnector(BaseConnector):
 
         self.save_progress("Using OAuth URL:")
         self.save_progress(redirect_uri)
+        try:
+            self._scopes = urllib.quote(self._scopes)
+        except Exception as ex:
+            self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
+            error_message = _get_error_message_from_exception(ex, self)
+            self.save_progress(error_message)
+            return action_result.set_status(phantom.APP_ERROR, error_message)
 
         # Authorization URL used to make request for getting code which is used to generate access token
         authorization_url = consts.AUTHORIZATION_URL.format(client_id=self._client_id,
                                                             redirect_uri=redirect_uri,
                                                             response_type=consts.WEBEX_STR_CODE,
                                                             state=self._asset_id,
-                                                            scope=consts.SCOPE)
+                                                            scope=self._scopes)
 
         authorization_url = '{}{}'.format(self._base_url, authorization_url)
         app_state['authorization_url'] = authorization_url
@@ -898,6 +907,10 @@ class CiscoWebexConnector(BaseConnector):
 
         self._client_id = config.get(consts.WEBEX_STR_CLIENT_ID, None)
         self._client_secret = config.get(consts.WEBEX_STR_SECRET, None)
+
+        scopes = list(filter(None, [scope.strip() for scope in config.get(consts.WEBEX_STR_SCOPE, '').split(' ')]))
+        if scopes:
+            self._scopes = ' '.join(scopes)
 
         if not self._api_key and (not self._client_id and not self._client_secret):
             return self.set_status(phantom.APP_ERROR, status_message=consts.WEBEX_ERROR_REQUIRED_CONFIG_PARAMS)

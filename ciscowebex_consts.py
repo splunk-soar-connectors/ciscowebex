@@ -13,8 +13,6 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 
-SCOPE = 'spark-compliance%3Amessages_write%20spark%3Akms%20spark%3Apeople_read%20spark%3Arooms_read%20' \
-        'spark%3Amessages_write%20spark-admin%3Apeople_read%20spark-compliance%3Arooms_read'
 BASE_URL = 'https://webexapis.com'
 AUTHORIZATION_URL = '/v1/authorize?client_id={client_id}&response_type={response_type}&redirect_uri={redirect_uri}&scope={scope}&state={state}'
 
@@ -33,7 +31,8 @@ WEBEX_STR_CLIENT_ID = 'client_id'
 WEBEX_STR_SECRET = 'client_secret'  # pragma: allowlist secret
 WEBEX_STR_GRANT_TYPE = 'grant_type'
 WEBEX_STR_REDIRECT_URI = 'redirect_uri'
-WEBEX_STR_IS_ENCRYPTED = "is_encrypted"
+WEBEX_STR_IS_ENCRYPTED = 'is_encrypted'
+WEBEX_STR_SCOPE = 'scope'
 
 WEBEX_SUCCESS_CODE_RECEIVED_MESSAGE = 'Code received. Please close this window, the action will continue to get new token'
 WEBEX_SUCCESS_TEST_CONNECTIVITY = "Test Connectivity Passed"
