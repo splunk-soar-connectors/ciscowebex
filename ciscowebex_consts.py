@@ -13,6 +13,7 @@
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
 
+SCOPE = 'spark:people_read spark:rooms_read spark:messages_write'
 BASE_URL = 'https://webexapis.com'
 AUTHORIZATION_URL = '/v1/authorize?client_id={client_id}&response_type={response_type}&redirect_uri={redirect_uri}&scope={scope}&state={state}'
 

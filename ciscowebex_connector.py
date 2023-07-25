@@ -282,7 +282,7 @@ class CiscoWebexConnector(BaseConnector):
         self._client_secret = None
         self._access_token = None
         self._refresh_token = None
-        self._scopes = ''
+        self._scopes = None
 
         # Variable to hold a base_url in case the app makes REST calls
         # Do note that the app json defines the asset config, so please
@@ -908,9 +908,9 @@ class CiscoWebexConnector(BaseConnector):
         self._client_id = config.get(consts.WEBEX_STR_CLIENT_ID, None)
         self._client_secret = config.get(consts.WEBEX_STR_SECRET, None)
 
-        scopes = list(filter(None, [scope.strip() for scope in config.get(consts.WEBEX_STR_SCOPE, '').split(' ')]))
-        if scopes:
-            self._scopes = ' '.join(scopes)
+        self._scopes = list(filter(None, [scope.strip() for scope in
+                                          config.get(consts.WEBEX_STR_SCOPE, consts.SCOPE).split(' ')]))
+        self._scopes = ' '.join(self._scopes)
 
         if not self._api_key and (not self._client_id and not self._client_secret):
             return self.set_status(phantom.APP_ERROR, status_message=consts.WEBEX_ERROR_REQUIRED_CONFIG_PARAMS)
