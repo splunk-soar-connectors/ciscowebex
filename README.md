@@ -2,11 +2,11 @@
 # Cisco Webex
 
 Publisher: Splunk  
-Connector Version: 1.0.7  
+Connector Version: 2.0.0  
 Product Vendor: Cisco  
 Product Name: Cisco Webex  
 Product Version Supported (regex): ".\*"  
-Minimum Product Version: 5.5.0  
+Minimum Product Version: 6.0.2  
 
 This app integrates with Cisco Webex to implement investigative and genric actions
 
@@ -21,6 +21,21 @@ This app integrates with Cisco Webex to implement investigative and genric actio
 [comment]: # "either express or implied. See the License for the specific language governing permissions"
 [comment]: # "and limitations under the License."
 [comment]: # ""
+## Backward compatibility
+
+-   v2.0.0
+
+      
+
+    -   Removed extra scopes(level of access that your app requires) and added only required scopes
+        for running all actions.
+    -   After the app is upgraded to v2.0.0, it is recommended to remove extra scopes from your
+        webex app created from the webex portal and use the scopes which are listed below in the
+        **OAuth authentication** section.
+    -   Added a new **Scopes** configuration parameter with the required scopes as the default
+        value, and you can add additional scopes if you have added them during the app creation
+        process on the [Webex portal](https://developer.webex.com/my-apps) .
+
 ## Authentication
 
 This app supports two types of authentication:
@@ -49,8 +64,20 @@ mentioned in the [developer document](https://developer.webex.com/docs/integrati
     4.  After successful registration, you'll be taken to a different screen containing your
         integration's newly created Client ID and Client Secret.
     5.  The Client Secret will only be shown once so please copy and keep it safe!
-    6.  Give the required scope which defines the level of access that your integration requires.
+    6.  Give the below **required scopes** which defines the level of access that your integration
+        requires.
+        -   spark:messages_write
+        -   spark:people_read
+        -   spark:rooms_read
+    7.  If user is **Admin** , add below scope along with above required scopes.
+        -   spark-admin:people_read
+    8.  If user is **Compliance Officer** , add below scopes along with above required scopes.
+        -   spark-compliance:messages_write
+        -   spark-compliance:rooms_read
 
+  
+NOTE: If you have added admin/ compliance officer level scopes from the above steps, add the same
+scopes in **Scopes** parameter while creating the asset.  
   
 While creating the asset for this authentication method, provide the Client ID and Client Secret
 generated during previous steps in **client_id** and **client_secret** field of asset configuration
@@ -60,7 +87,7 @@ Settings** tab. Take the URL found in this field and place it in the **Redirect 
 your registered app. To this URL, add **/result** at the end. After doing so the URL should look
 something like:
 
-https://\<phantom_host>/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/\<asset_name>/result
+https://\<soar_host>/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/\<asset_name>/result
 
 ## Method to run Test Connectivity
 
@@ -113,7 +140,7 @@ https://\<phantom_host>/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d561
         -   The authorization code generated in the above step is used by the connectivity to make
             the next API call to generate the \[access_token\] and \[refresh_token\] pair. The
             generated authorization code, \[access_token\], and \[refresh_token\] are stored in the
-            state file of the app on the Phantom server.
+            state file of the app on the SOAR server.
         -   The authorization code can be used only once to generate the pair of \[access_token\]
             and \[refresh_token\]. If the \[access_token\] expires, then the \[refresh_token\] is
             used internally automatically by the application to re-generate the \[access_token\] by
@@ -133,8 +160,7 @@ Please check the permissions for the state file as mentioned below.
 
 #### State file path
 
--   For Non-NRI instance: /opt/phantom/local_data/app_states/\<appid>/\<asset_id>\_state.json
--   For NRI instance:
+-   For Unprivileged install:
     /\<PHANTOM_HOME_DIRECTORY>/local_data/app_states/\<appid>/\<asset_id>\_state.json
 
 #### State file permissions
@@ -154,7 +180,10 @@ Please check the permissions for the state file as mentioned below.
 
 #### The app is configured and ready to be used now.
 
-### LDAP Ports Requirements (Based on Standard Guidelines of [IANA ORG](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) )
+### LDAP Ports Requirements
+
+(Based on Standard Guidelines of [IANA
+ORG](https://www.iana.org/assignments/service-names-port-numbers/service-names-port-numbers.xhtml) )
 
 -   Webex(service) TCP(transport protocol)
 -   Webex(service) UDP(transport protocol)
@@ -168,6 +197,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **authorization_key** |  optional  | password | Personal Access Token
 **client_id** |  optional  | string | Client ID
 **client_secret** |  optional  | password | Client Secret
+**scope** |  optional  | string | Scopes (Append extra space-seperated scopes which are added during app creation from webex portal)
 
 ### Supported Actions  
 [test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration  
@@ -201,8 +231,8 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
 action_result.data.\*.created | string |  |   2018-01-05T02:43:33.032Z 
-action_result.data.\*.creatorId | string |  `creater id`  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM 
-action_result.data.\*.id | string |  `webex room id`  |   Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi 
+action_result.data.\*.creatorId | string |  `creater id`  |   L2lzY69zcBFyazoxL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzcEXAMPLE 
+action_result.data.\*.id | string |  `webex room id`  |   L2lzY69zcGFylsdovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWYEXAMPLE 
 action_result.data.\*.isLocked | boolean |  |   True  False 
 action_result.data.\*.lastActivity | string |  |   2018-01-08T21:26:38.851Z  2018-01-16T18:37:12.037Z 
 action_result.data.\*.ownerId | string |  |  
@@ -228,18 +258,18 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
-action_result.parameter.email_address | string |  `email`  |   monielynn@theharlanfamily.org  herman@contoso.com 
+action_result.parameter.email_address | string |  `email`  |   examplemail@test.com 
 action_result.data.\*.created | string |  |  
-action_result.data.\*.displayName | string |  |   Monika Harlan 
+action_result.data.\*.displayName | string |  |   Test User 
 action_result.data.\*.firstName | string |  |  
-action_result.data.\*.id | string |  `webex user id`  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU 
+action_result.data.\*.id | string |  `webex user id`  |   L2lzY29zcAByazovL3VzL1690T1BMRS9hMzMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTEXAMPLE 
 action_result.data.\*.lastModified | string |  |  
 action_result.data.\*.lastName | string |  |  
 action_result.data.\*.created | string |  |   2018-01-04T20:46:30.734Z 
-action_result.data.\*.emails | string |  `email`  |   monielynn@theharlanfamily.org 
+action_result.data.\*.emails | string |  `email`  |   examplemail@test.com 
 action_result.data.\*.lastActivity | string |  |   2018-01-05T21:04:53.424Z 
-action_result.data.\*.nickName | string |  |   Monika 
-action_result.data.\*.orgId | string |  |   Y2lzY29zcGFyazovL3VzL09SR0FOSVpBVElPTi9jb25zdW1lcg 
+action_result.data.\*.nickName | string |  |   Test User 
+action_result.data.\*.orgId | string |  |   L2lzY29zcABCazovL3VzL09SR0FOSVpBVElPTi9jb2TEST 
 action_result.data.\*.status | string |  |   inactive 
 action_result.data.\*.type | string |  |   person 
 action_result.summary.found_user | boolean |  |  
@@ -259,22 +289,24 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **endpoint_id** |  required  | User or Room ID | string |  `webex user id`  `webex room id` 
 **destination_type** |  required  | Destination Type | string | 
 **message** |  required  | Message | string | 
+**is_markdown** |  optional  | Is the message Markdown formatted | boolean | 
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.status | string |  |   success  failed 
 action_result.parameter.destination_type | string |  |   room 
-action_result.parameter.endpoint_id | string |  `webex user id`  `webex room id`  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU  Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi 
+action_result.parameter.endpoint_id | string |  `webex user id`  `webex room id`  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxTEST5EXAMPLE 
 action_result.parameter.message | string |  |   Compile Test  hello room 
+action_result.parameter.is_markdown | boolean |  |   True  False 
 action_result.data.\*.created | string |  |   2018-01-08T21:27:31.755Z  2018-03-30T18:36:01.210Z 
-action_result.data.\*.id | string |  |   Y2lzY29zcGFyazovL3VzL01FU1NBR0UvYmM0MGQ3YjAtZjRiYS0xMWU3LWI5NGEtMzMxMmE4MmI4ZmVl  Y2lzY29zcGFyazovL3VzL01FU1NBR0UvMzIxMjA5YTAtMzQ0OS0xMWU4LWJjNmUtMWJkNzlhODNjMTY3 
-action_result.data.\*.personEmail | string |  `email`  |   herman@contoso.com 
-action_result.data.\*.personId | string |  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzc3ZmEwMDg2YmM 
-action_result.data.\*.roomId | string |  |   Y2lzY29zcGFyazovL3VzL1JPT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxZTk4MzBiNGY5  Y2lzY29zcGFyazovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWY3YWQ5YmJi 
+action_result.data.\*.id | string |  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDATEST4MzEXAMPLE 
+action_result.data.\*.personEmail | string |  `email`  |   examplemail@test.com 
+action_result.data.\*.personId | string |  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0TESTNDQtNDAxZTk4MzEXAMPLE 
+action_result.data.\*.roomId | string |  |   L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTESTTlhNDQtNDAxZTk4MzEXAMPLE 
 action_result.data.\*.roomType | string |  |   direct  group 
 action_result.data.\*.text | string |  |   Compile Test  hello room 
-action_result.data.\*.toPersonId | string |  |   Y2lzY29zcGFyazovL3VzL1BFT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTI4MjUzYjU 
+action_result.data.\*.toPersonId | string |  |   L2lzY1zcAByazovL3VzL1HNT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTESTWM3Zi00M2E0MTI4MjEXAMPLE 
 action_result.summary.message | string |  |   Message sent successfully 
 action_result.message | string |  |   Message sent successfully 
 summary.total_objects | numeric |  |   1 
