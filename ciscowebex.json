@@ -25,7 +25,7 @@
     "python_version": "3",
     "fips_compliant": true,
     "latest_tested_versions": [
-        "Cisco webex api v1 tested on 21th July, 2023"
+        "Cisco webex api v1 tested on 21st July, 2023"
     ],
     "configuration": {
         "authorization_key": {
