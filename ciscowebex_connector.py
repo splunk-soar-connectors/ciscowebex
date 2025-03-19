@@ -1,6 +1,6 @@
 # File: ciscowebex_connector.py
 #
-# Copyright (c) 2021-2023 Splunk Inc.
+# Copyright (c) 2021-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -37,7 +37,7 @@ class RetVal(tuple):
 
 
 def _get_error_message_from_exception(e, app_connector=None):
-    """ This function is used to get appropriate error message from the exception.
+    """This function is used to get appropriate error message from the exception.
     :param e: Exception object
     :return: error code and message
     """
@@ -64,7 +64,7 @@ def _get_error_message_from_exception(e, app_connector=None):
 
 
 def _handle_rest_request(request, path_parts):
-    """ Handle requests for authorization.
+    """Handle requests for authorization.
 
     :param request: Data given to REST endpoint
     :param path_parts: Parts of the URL passed
@@ -72,62 +72,60 @@ def _handle_rest_request(request, path_parts):
     """
 
     if len(path_parts) < 2:
-        return HttpResponse('error: True, message: Invalid REST endpoint request', content_type=consts.WEBEX_STR_TEXT, status=404)  # nosemgrep
+        return HttpResponse("error: True, message: Invalid REST endpoint request", content_type=consts.WEBEX_STR_TEXT, status=404)  # nosemgrep
 
     call_type = path_parts[1]
 
     # To handle authorize request in test connectivity action
-    if call_type == 'start_oauth':
-        return _handle_login_redirect(request, 'authorization_url')
+    if call_type == "start_oauth":
+        return _handle_login_redirect(request, "authorization_url")
 
     # To handle response from Webex login page
-    if call_type == 'result':
+    if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get('state')  # nosemgrep
+        asset_id = request.GET.get("state")  # nosemgrep
         if asset_id and asset_id.isalnum():
             app_dir = pathlib.Path(__file__).resolve()
-            auth_status_file_path = app_dir.with_name('{0}_{1}'.format(asset_id, 'oauth_task.out'))
+            auth_status_file_path = app_dir.with_name("{}_{}".format(asset_id, "oauth_task.out"))
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
             if not os.path.dirname(real_auth_status_file_path) == str(auth_status_file_path.parent):
                 return HttpResponse("Error: Invalid asset_id", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
-            open(auth_status_file_path, 'w').close()
+            open(auth_status_file_path, "w").close()
 
         return return_val
-    return HttpResponse('error: Invalid endpoint', content_type=consts.WEBEX_STR_TEXT, status=404)  # nosemgrep
+    return HttpResponse("error: Invalid endpoint", content_type=consts.WEBEX_STR_TEXT, status=404)  # nosemgrep
 
 
 def _handle_login_response(request):
-    """ This function is used to get the login response of authorization request from Webex login page.
+    """This function is used to get the login response of authorization request from Webex login page.
 
     :param request: Data given to REST endpoint
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get('state')
+    asset_id = request.GET.get("state")
     if not asset_id:
         return HttpResponse(  # nosemgrep
-            'ERROR: Asset ID not found in URL\n{}'.format(json.dumps(request.GET)), content_type=consts.WEBEX_STR_TEXT,
-            status=400
+            f"ERROR: Asset ID not found in URL\n{json.dumps(request.GET)}", content_type=consts.WEBEX_STR_TEXT, status=400
         )
 
     # Check for error in URL
-    error = request.GET.get('error')
-    error_description = request.GET.get('error_description')
+    error = request.GET.get("error")
+    error_description = request.GET.get("error_description")
 
     # If there is an error in response
     if error:
-        message = 'Error: {0}'.format(error)
+        message = f"Error: {error}"
         if error_description:
-            message = '{0} Details: {1}'.format(message, error_description)
-        return HttpResponse('Server returned {0}'.format(message), content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
+            message = f"{message} Details: {error_description}"
+        return HttpResponse(f"Server returned {message}", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
 
     code = request.GET.get(consts.WEBEX_STR_CODE)
 
     # If code is not available
     if not code:
         return HttpResponse(  # nosemgrep
-            'Error while authenticating\n{0}'.format(json.dumps(request.GET)), content_type=consts.WEBEX_STR_TEXT,
-            status=400
+            f"Error while authenticating\n{json.dumps(request.GET)}", content_type=consts.WEBEX_STR_TEXT, status=400
         )
 
     state = _load_app_state(asset_id)
@@ -138,30 +136,33 @@ def _handle_login_response(request):
 
 
 def _handle_login_redirect(request, key):
-    """ This function is used to redirect login request to Cisco webex login page.
+    """This function is used to redirect login request to Cisco webex login page.
 
     :param request: Data given to REST endpoint
     :param key: Key to search in state file
     :return: response authorization_url/admin_consent_url
     """
 
-    asset_id = request.GET.get('asset_id')
+    asset_id = request.GET.get("asset_id")
     if not asset_id:
-        return HttpResponse('ERROR: Asset ID not found in URL', content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
+        return HttpResponse("ERROR: Asset ID not found in URL", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
     state = _load_app_state(asset_id)
     if not state:
-        return HttpResponse('ERROR: Invalid asset_id', content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
+        return HttpResponse("ERROR: Invalid asset_id", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
     url = state.get(key)
     if not url:
-        return HttpResponse('App state is invalid, {key} not found.'.format(key=key),  # nosemgrep
-                            content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
+        return HttpResponse(
+            f"App state is invalid, {key} not found.",  # nosemgrep
+            content_type=consts.WEBEX_STR_TEXT,
+            status=400,
+        )  # nosemgrep
     response = HttpResponse(status=302)
-    response['Location'] = url
+    response["Location"] = url
     return response
 
 
 def _load_app_state(asset_id, app_connector=None):
-    """ This function is used to load the current state file.
+    """This function is used to load the current state file.
 
     :param asset_id: asset_id
     :param app_connector: Object of app_connector class
@@ -171,29 +172,28 @@ def _load_app_state(asset_id, app_connector=None):
     asset_id = str(asset_id)
     if not asset_id or not asset_id.isalnum():
         if app_connector:
-            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('load'))
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format("load"))
         return {}
 
     app_dir = pathlib.Path(__file__).resolve()
-    state_file = app_dir.with_name('{0}_state.json'.format(asset_id))
+    state_file = app_dir.with_name(f"{asset_id}_state.json")
     real_state_file_path = os.path.abspath(state_file)
     if not os.path.dirname(real_state_file_path) == str(state_file.parent):
         if app_connector:
-            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('load'))
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format("load"))
         return {}
 
     state = {}
     try:
-        with open(real_state_file_path, 'r') as state_file_obj:
+        with open(real_state_file_path) as state_file_obj:
             state = json.load(state_file_obj)
     except Exception as e:
         if app_connector:
             error_code, error_message = _get_error_message_from_exception(e)
-            app_connector.debug_print('In _load_app_state: Error Code: {0}. Error Message: {1}'
-                                      .format(error_code, error_message))
+            app_connector.debug_print(f"In _load_app_state: Error Code: {error_code}. Error Message: {error_message}")
 
     if app_connector:
-        app_connector.debug_print('Loaded state: ', state)
+        app_connector.debug_print("Loaded state: ", state)
 
     try:
         if consts.WEBEX_STR_CODE in state:
@@ -201,13 +201,13 @@ def _load_app_state(asset_id, app_connector=None):
     except Exception as ex:
         _, error_message = _get_error_message_from_exception(ex)
         if app_connector:
-            app_connector.debug_print("{}: {}".format(consts.WEBEX_DECRYPTION_ERROR, error_message))
+            app_connector.debug_print(f"{consts.WEBEX_DECRYPTION_ERROR}: {error_message}")
 
     return state
 
 
 def _save_app_state(state, asset_id, app_connector=None):
-    """ This function is used to save current state in file.
+    """This function is used to save current state in file.
 
     :param state: Dictionary which contains data to write in state file
     :param asset_id: asset_id
@@ -218,16 +218,16 @@ def _save_app_state(state, asset_id, app_connector=None):
     asset_id = str(asset_id)
     if not asset_id or not asset_id.isalnum():
         if app_connector:
-            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('save'))
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format("save"))
         return {}
 
     app_dir = pathlib.Path(__file__).resolve()
-    state_file = app_dir.with_name('{0}_state.json'.format(asset_id))
+    state_file = app_dir.with_name(f"{asset_id}_state.json")
 
     real_state_file_path = os.path.abspath(state_file)
     if not os.path.dirname(real_state_file_path) == str(state_file.parent):
         if app_connector:
-            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format('save'))
+            app_connector.debug_print(consts.WEBEX_INVALID_ASSET_ERROR.format("save"))
         return {}
 
     try:
@@ -236,44 +236,41 @@ def _save_app_state(state, asset_id, app_connector=None):
     except Exception as ex:
         _, error_message = _get_error_message_from_exception(ex)
         if app_connector:
-            app_connector.debug_print("{}: {}".format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
+            app_connector.debug_print(f"{consts.WEBEX_ENCRYPTION_ERROR}: {error_message}")
 
     if app_connector:
-        app_connector.debug_print('Saving state: ', state)
+        app_connector.debug_print("Saving state: ", state)
 
     try:
-        with open(real_state_file_path, 'w+') as state_file_obj:
+        with open(real_state_file_path, "w+") as state_file_obj:
             state_file_obj.write(json.dumps(state))
     except Exception as e:
         error_code, error_message = _get_error_message_from_exception(e)
         if app_connector:
-            app_connector.debug_print('Unable to save state file: Error Code: {0}. Error Message: {1}'
-                                      .format(error_code, error_message))
+            app_connector.debug_print(f"Unable to save state file: Error Code: {error_code}. Error Message: {error_message}")
         return phantom.APP_ERROR
 
     return phantom.APP_SUCCESS
 
 
 def _get_dir_name_from_app_name(app_name):
-    """ Get name of the directory for the app.
+    """Get name of the directory for the app.
 
     :param app_name: Name of the application for which directory name is required
     :return: app_name: Name of the directory for the application
     """
 
-    app_name = ''.join([x for x in app_name if x.isalnum()])
+    app_name = "".join([x for x in app_name if x.isalnum()])
     app_name = app_name.lower()
     if not app_name:
-        app_name = 'app_for_phantom'
+        app_name = "app_for_phantom"
     return app_name
 
 
 class CiscoWebexConnector(BaseConnector):
-
     def __init__(self):
-
         # Call the BaseConnectors init first
-        super(CiscoWebexConnector, self).__init__()
+        super().__init__()
 
         self._asset_id = None
         self._api_key = None
@@ -297,9 +294,7 @@ class CiscoWebexConnector(BaseConnector):
         state = super().load_state()
         if not isinstance(state, dict):
             self.debug_print("Resetting the state file with the default format")
-            state = {
-                "app_version": self.get_app_json().get('app_version')
-            }
+            state = {"app_version": self.get_app_json().get("app_version")}
             return state
         return self.decrypt_state(state)
 
@@ -313,16 +308,13 @@ class CiscoWebexConnector(BaseConnector):
 
     @staticmethod
     def _process_empty_response(response, action_result):
-
         if response.status_code in [200, 204]:
             return RetVal(phantom.APP_SUCCESS, {})
 
-        return RetVal(action_result.set_status(phantom.APP_ERROR,
-                                               consts.WEBEX_ERROR_EMPTY_RESPONSE.format(response.status_code)), None)
+        return RetVal(action_result.set_status(phantom.APP_ERROR, consts.WEBEX_ERROR_EMPTY_RESPONSE.format(response.status_code)), None)
 
     @staticmethod
     def _process_html_response(response, action_result):
-
         # An html response, treat it like an error
         status_code = response.status_code
 
@@ -332,34 +324,32 @@ class CiscoWebexConnector(BaseConnector):
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
             error_text = soup.text
-            split_lines = error_text.split('\n')
+            split_lines = error_text.split("\n")
             split_lines = [x.strip() for x in split_lines if x.strip()]
-            error_text = '\n'.join(split_lines)
+            error_text = "\n".join(split_lines)
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
+        message = f"Status Code: {status_code}. Data from server:\n{error_text}\n"
 
-        message = message.replace('{', '{{').replace('}', '}}')
+        message = message.replace("{", "{{").replace("}", "}}")
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     @staticmethod
     def _process_json_response(r, action_result):
-
         # Try a json parse
         try:
             resp_json = r.json()
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse JSON response. Error: {0}".format(str(e))), None)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Unable to parse JSON response. Error: {e!s}"), None)
 
         # Please specify the status codes here
         if 200 <= r.status_code < 399:
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
         # You should process the error returned in the json
-        message = "Error from server. Status Code: {0} Data from server: {1}".format(
-            r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
+        message = "Error from server. Status Code: {} Data from server: {}".format(r.status_code, r.text.replace("{", "{{").replace("}", "}}"))
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
@@ -368,22 +358,22 @@ class CiscoWebexConnector(BaseConnector):
         if r.status_code == 401:
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Access token is expired or invalid"), None)
 
-        if hasattr(action_result, 'add_debug_data'):
-            action_result.add_debug_data({'r_status_code': r.status_code})
-            action_result.add_debug_data({'r_text': r.text})
-            action_result.add_debug_data({'r_headers': r.headers})
+        if hasattr(action_result, "add_debug_data"):
+            action_result.add_debug_data({"r_status_code": r.status_code})
+            action_result.add_debug_data({"r_text": r.text})
+            action_result.add_debug_data({"r_headers": r.headers})
 
         # Process each 'Content-Type' of response separately
 
         # Process a json response
-        if 'json' in r.headers.get('Content-Type', ''):
+        if "json" in r.headers.get("Content-Type", ""):
             return self._process_json_response(r, action_result)
 
         # Process an HTML response, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
-        if 'html' in r.headers.get('Content-Type', ''):
+        if "html" in r.headers.get("Content-Type", ""):
             return self._process_html_response(r, action_result)
 
         # it's not content-type that is to be parsed, handle an empty response
@@ -391,31 +381,30 @@ class CiscoWebexConnector(BaseConnector):
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
-        message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-            r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
+        message = "Can't process response from server. Status Code: {} Data from server: {}".format(
+            r.status_code, r.text.replace("{", "{{").replace("}", "}}")
+        )
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _make_rest_call(self, endpoint, action_result, headers=None, params=None, data=None, method="get", verify=False):
-
         resp_json = None
 
         try:
             request_func = getattr(requests, method)
         except AttributeError:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Invalid method: {0}".format(method)), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Invalid method: {method}"), resp_json)
 
         try:
             r = request_func(endpoint, json=data, headers=headers, verify=verify, params=params)
         except Exception as e:
             _, error_message = _get_error_message_from_exception(e, self)
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error Connecting to server. Details: {0}"
-                                                   .format(error_message)), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {error_message}"), resp_json)
 
         return self._process_response(r, action_result)
 
     def _get_asset_name(self, action_result):
-        """ Get name of the asset using Phantom URL.
+        """Get name of the asset using Phantom URL.
 
         :param action_result: object of ActionResult class
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message), asset name
@@ -423,39 +412,39 @@ class CiscoWebexConnector(BaseConnector):
 
         asset_id = self.get_asset_id()
         rest_endpoint = consts.PHANTOM_ASSET_ENDPOINT.format(asset_id=asset_id)
-        url = '{}{}'.format(self.get_phantom_base_url() + 'rest', rest_endpoint)
+        url = "{}{}".format(self.get_phantom_base_url() + "rest", rest_endpoint)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(ret_val):
             return ret_val, None
 
-        asset_name = resp_json.get('name')
+        asset_name = resp_json.get("name")
         if not asset_name:
             return action_result.set_status(phantom.APP_ERROR, consts.WEBEX_ERROR_ASSET_NAME_NOT_FOUND.format(asset_id), None)
 
         return phantom.APP_SUCCESS, asset_name
 
     def _get_phantom_base_url(self, action_result):
-        """ Get base url of phantom.
+        """Get base url of phantom.
 
         :param action_result: object of ActionResult class
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message),
         base url of phantom
         """
 
-        url = '{0}{1}{2}'.format(BaseConnector._get_phantom_base_url(), 'rest', consts.PHANTOM_SYSTEM_INFO_ENDPOINT)
+        url = "{}{}{}".format(BaseConnector._get_phantom_base_url(), "rest", consts.PHANTOM_SYSTEM_INFO_ENDPOINT)
         ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=url, verify=False)
         if phantom.is_fail(ret_val):
             return ret_val, None
 
-        phantom_base_url = resp_json.get('base_url')
+        phantom_base_url = resp_json.get("base_url")
         if not phantom_base_url:
             return action_result.set_status(phantom.APP_ERROR, consts.WEBEX_ERROR_PHANTOM_BASE_URL_NOT_FOUND), None
 
-        return phantom.APP_SUCCESS, phantom_base_url.rstrip('/')
+        return phantom.APP_SUCCESS, phantom_base_url.rstrip("/")
 
     def _get_app_rest_url(self, action_result):
-        """ Get URL for making rest calls.
+        """Get URL for making rest calls.
 
         :param action_result: object of ActionResult class
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS(along with appropriate message),
@@ -470,34 +459,32 @@ class CiscoWebexConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
-        self.save_progress('Using Phantom base URL as: {0}'.format(phantom_base_url))
+        self.save_progress(f"Using Phantom base URL as: {phantom_base_url}")
         app_json = self.get_app_json()
-        app_name = app_json['name']
+        app_name = app_json["name"]
 
         app_dir_name = _get_dir_name_from_app_name(app_name)
-        url_to_app_rest = '{0}/rest/handler/{1}_{2}/{3}'.format(phantom_base_url, app_dir_name, app_json['appid'],
-                                                                asset_name)
+        url_to_app_rest = "{}/rest/handler/{}_{}/{}".format(phantom_base_url, app_dir_name, app_json["appid"], asset_name)
         return phantom.APP_SUCCESS, url_to_app_rest
 
     def _generate_new_access_token(self, action_result, data):
-        """ This function is used to generate new access token using the code obtained on authorization.
+        """This function is used to generate new access token using the code obtained on authorization.
         :param action_result: object of ActionResult class
         :param data: Data to send in REST call
         :return: status phantom.APP_ERROR/phantom.APP_SUCCESS
         """
 
-        req_url = '{}{}'.format(self._base_url, consts.WEBEX_ACCESS_TOKEN_ENDPOINT)
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url,
-                                                  data=data, method='post')
+        req_url = f"{self._base_url}{consts.WEBEX_ACCESS_TOKEN_ENDPOINT}"
+        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url, data=data, method="post")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         # If there is any error while generating access_token, API returns 200 with error and error_description fields
         if not resp_json.get(consts.WEBEX_STR_ACCESS_TOKEN):
-            if resp_json.get('message'):
-                return action_result.set_status(phantom.APP_ERROR, status_message=resp_json['message'])
+            if resp_json.get("message"):
+                return action_result.set_status(phantom.APP_ERROR, status_message=resp_json["message"])
 
-            return action_result.set_status(phantom.APP_ERROR, status_message='Error while generating access_token')
+            return action_result.set_status(phantom.APP_ERROR, status_message="Error while generating access_token")
 
         self._state[consts.WEBEX_STR_TOKEN] = resp_json
         self._access_token = resp_json[consts.WEBEX_STR_ACCESS_TOKEN]
@@ -507,7 +494,7 @@ class CiscoWebexConnector(BaseConnector):
         return phantom.APP_SUCCESS
 
     def _wait(self, action_result):
-        """ This function is used to hold the action till user login.
+        """This function is used to hold the action till user login.
 
         :param action_result: Object of ActionResult class
         :return: status (success/failed)
@@ -515,12 +502,12 @@ class CiscoWebexConnector(BaseConnector):
 
         app_dir = pathlib.Path(__file__).resolve()
         # file to check whether the request has been granted or not
-        auth_status_file_path = app_dir.with_name('{0}_{1}'.format(self._asset_id, 'oauth_task.out'))
+        auth_status_file_path = app_dir.with_name("{}_{}".format(self._asset_id, "oauth_task.out"))
         time_out = False
 
         # wait-time while request is being granted
         for _ in range(consts.OAUTH_WAIT_INTERVALS):
-            self.send_progress('Waiting...')
+            self.send_progress("Waiting...")
             if os.path.isfile(auth_status_file_path):
                 time_out = True
                 os.unlink(auth_status_file_path)
@@ -529,11 +516,11 @@ class CiscoWebexConnector(BaseConnector):
 
         if not time_out:
             return action_result.set_status(phantom.APP_ERROR, status_message=consts.WEBEX_ERROR_TIMEOUT)
-        self.send_progress('Authenticated')
+        self.send_progress("Authenticated")
         return phantom.APP_SUCCESS
 
-    def _update_request(self, action_result, endpoint, headers=None, params=None, data=None, method='get'):
-        """ This function is used to update the headers with access_token before making REST call.
+    def _update_request(self, action_result, endpoint, headers=None, params=None, data=None, method="get"):
+        """This function is used to update the headers with access_token before making REST call.
 
         :param endpoint: REST endpoint that needs to appended to the service address
         :param action_result: object of ActionResult class
@@ -546,7 +533,7 @@ class CiscoWebexConnector(BaseConnector):
         """
 
         if not endpoint.startswith(self._base_url):
-            endpoint = '{0}{1}'.format(self._base_url, endpoint)
+            endpoint = f"{self._base_url}{endpoint}"
 
         if headers is None:
             headers = {}
@@ -555,7 +542,7 @@ class CiscoWebexConnector(BaseConnector):
             consts.WEBEX_STR_CLIENT_ID: self._client_id,
             consts.WEBEX_STR_SECRET: self._client_secret,
             consts.WEBEX_STR_GRANT_TYPE: consts.WEBEX_STR_REFRESH_TOKEN,
-            consts.WEBEX_STR_REFRESH_TOKEN: self._refresh_token
+            consts.WEBEX_STR_REFRESH_TOKEN: self._refresh_token,
         }
 
         if not self._access_token:
@@ -570,31 +557,32 @@ class CiscoWebexConnector(BaseConnector):
             if phantom.is_fail(status):
                 return action_result.get_status(), None
 
-        headers.update({'Authorization': 'Bearer {0}'.format(self._access_token)})
-        if not headers.get('Content-Type'):
-            headers.update({'Content-Type': 'application/json'})
+        headers.update({"Authorization": f"Bearer {self._access_token}"})
+        if not headers.get("Content-Type"):
+            headers.update({"Content-Type": "application/json"})
 
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=endpoint, headers=headers,
-                                                  params=params, data=data, method=method)
+        ret_val, resp_json = self._make_rest_call(
+            action_result=action_result, endpoint=endpoint, headers=headers, params=params, data=data, method=method
+        )
 
         # If token is expired, generate new token
-        if 'Access token is expired or invalid' in action_result.get_message():
+        if "Access token is expired or invalid" in action_result.get_message():
             self.debug_print("Token is invalid, generating new token")
             status = self._generate_new_access_token(action_result=action_result, data=token_data)
 
             if phantom.is_fail(status):
                 return action_result.get_status(), None
 
-            headers.update({'Authorization': 'Bearer {0}'.format(self._access_token)})
-            ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=endpoint, headers=headers,
-                                                      params=params, data=data, method=method)
+            headers.update({"Authorization": f"Bearer {self._access_token}"})
+            ret_val, resp_json = self._make_rest_call(
+                action_result=action_result, endpoint=endpoint, headers=headers, params=params, data=data, method=method
+            )
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
 
         return phantom.APP_SUCCESS, resp_json
 
     def _handle_test_connectivity(self, param):
-
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         app_state = {}
@@ -613,11 +601,11 @@ class CiscoWebexConnector(BaseConnector):
         # Get initial REST URL
         ret_val, app_rest_url = self._get_app_rest_url(action_result)
         if phantom.is_fail(ret_val):
-            self.save_progress("Rest URL not available. Error: {error}".format(error=action_result.get_message()))
+            self.save_progress(f"Rest URL not available. Error: {action_result.get_message()}")
             return action_result.set_status(phantom.APP_ERROR, status_message=consts.WEBEX_ERROR_TEST_CONNECTIVITY)
 
         # Append /result to create redirect_uri
-        redirect_uri = '{0}/result'.format(app_rest_url)
+        redirect_uri = f"{app_rest_url}/result"
         app_state[consts.WEBEX_STR_REDIRECT_URI] = redirect_uri
 
         self.save_progress("Using OAuth URL:")
@@ -631,20 +619,18 @@ class CiscoWebexConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         # Authorization URL used to make request for getting code which is used to generate access token
-        authorization_url = consts.AUTHORIZATION_URL.format(client_id=self._client_id,
-                                                            redirect_uri=redirect_uri,
-                                                            response_type=consts.WEBEX_STR_CODE,
-                                                            state=self._asset_id,
-                                                            scope=self._scopes)
+        authorization_url = consts.AUTHORIZATION_URL.format(
+            client_id=self._client_id, redirect_uri=redirect_uri, response_type=consts.WEBEX_STR_CODE, state=self._asset_id, scope=self._scopes
+        )
 
-        authorization_url = '{}{}'.format(self._base_url, authorization_url)
-        app_state['authorization_url'] = authorization_url
+        authorization_url = f"{self._base_url}{authorization_url}"
+        app_state["authorization_url"] = authorization_url
 
         # URL which would be shown to the user
-        url_for_authorize_request = '{0}/start_oauth?asset_id={1}&'.format(app_rest_url, self._asset_id)
+        url_for_authorize_request = f"{app_rest_url}/start_oauth?asset_id={self._asset_id}&"
         _save_app_state(app_state, self._asset_id, self)
 
-        self.save_progress('Please authorize user in a separate tab using URL')
+        self.save_progress("Please authorize user in a separate tab using URL")
         self.save_progress(url_for_authorize_request)  # nosemgrep
 
         # Wait time for authorization
@@ -654,16 +640,16 @@ class CiscoWebexConnector(BaseConnector):
         status = self._wait(action_result=action_result)
 
         # Empty message to override last message of waiting
-        self.send_progress('')
+        self.send_progress("")
         if phantom.is_fail(status):
             return action_result.get_status()
 
-        self.save_progress('Code Received')
+        self.save_progress("Code Received")
         self._state = _load_app_state(self._asset_id, self)
 
         # Deleting the local state file because of it replicates with actual state file while installing the app
         current_file_path = pathlib.Path(__file__).resolve()
-        input_file = f'{self._asset_id}_state.json'
+        input_file = f"{self._asset_id}_state.json"
         state_file_path = current_file_path.with_name(input_file)
         state_file_path.unlink()
 
@@ -681,14 +667,14 @@ class CiscoWebexConnector(BaseConnector):
         current_code = self._state[consts.WEBEX_STR_CODE]
         self._state.pop(consts.WEBEX_STR_CODE)
 
-        self.save_progress('Generating access token')
+        self.save_progress("Generating access token")
 
         data = {
             consts.WEBEX_STR_CLIENT_ID: self._client_id,
             consts.WEBEX_STR_SECRET: self._client_secret,
-            consts.WEBEX_STR_GRANT_TYPE: 'authorization_code',
+            consts.WEBEX_STR_GRANT_TYPE: "authorization_code",
             consts.WEBEX_STR_REDIRECT_URI: redirect_uri,
-            consts.WEBEX_STR_CODE: current_code
+            consts.WEBEX_STR_CODE: current_code,
         }
 
         # For first time access, new access token is generated
@@ -697,32 +683,30 @@ class CiscoWebexConnector(BaseConnector):
             self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
             return action_result.get_status()
 
-        self.save_progress('Getting info about the rooms to verify token')
+        self.save_progress("Getting info about the rooms to verify token")
 
-        url = '{}{}'.format(self._base_url, consts.WEBEX_GET_ROOMS_ENDPOINT)
+        url = f"{self._base_url}{consts.WEBEX_GET_ROOMS_ENDPOINT}"
         ret_val, response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(ret_val):
             self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
             return action_result.get_status()
 
-        self.save_progress('Got room details successfully')
+        self.save_progress("Got room details successfully")
 
         self.save_progress(consts.WEBEX_SUCCESS_TEST_CONNECTIVITY)
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _make_rest_call_using_api_key(self, endpoint, action_result, params=None, data=None, method="get", verify=False):
-
         # Create a URL to connect to
         url = self._base_url + endpoint
         authToken = "Bearer " + self._api_key
-        headers = {'Content-Type': 'application/json', 'Authorization': authToken}
+        headers = {"Content-Type": "application/json", "Authorization": authToken}
 
         return self._make_rest_call(url, action_result, params=params, headers=headers, data=data, method=method, verify=verify)
 
     def _handle_list_rooms(self, param):
-
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
@@ -735,26 +719,25 @@ class CiscoWebexConnector(BaseConnector):
             return action_result.get_status()
 
         self.debug_print("Updating the summary")
-        summary = action_result.update_summary({'total_rooms': 0})
-        resp_value = response.get('items', [])
+        summary = action_result.update_summary({"total_rooms": 0})
+        resp_value = response.get("items", [])
         if type(resp_value) != list:
             resp_value = [resp_value]
 
         for curr_item in resp_value:
             action_result.add_data(curr_item)
 
-        summary['total_rooms'] = action_result.get_data_size()
+        summary["total_rooms"] = action_result.get_data_size()
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_user(self, param):
-
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        uri_endpoint = consts.WEBEX_GET_USER_ENDPOINT.format(param['email_address'])
+        uri_endpoint = consts.WEBEX_GET_USER_ENDPOINT.format(param["email_address"])
 
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(uri_endpoint, action_result, params=None)
@@ -765,14 +748,14 @@ class CiscoWebexConnector(BaseConnector):
             return action_result.get_status()
 
         self.debug_print("Updating the summary")
-        summary = action_result.update_summary({'found_user': False})
-        resp_value = response.get('items', [])
+        summary = action_result.update_summary({"found_user": False})
+        resp_value = response.get("items", [])
 
         for resp in resp_value:
             action_result.add_data(resp)
 
         is_user_found = True if action_result.get_data_size() > 0 else False
-        summary['found_user'] = is_user_found
+        summary["found_user"] = is_user_found
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -783,19 +766,18 @@ class CiscoWebexConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_send_message(self, param):
-
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        dest_type = param['destination_type']
-        is_markdown = param.get('is_markdown', False)
+        dest_type = param["destination_type"]
+        is_markdown = param.get("is_markdown", False)
 
-        sendto_field = 'toPersonId' if (dest_type == 'user') else 'roomId'
-        message_field = 'markdown' if is_markdown else 'text'
+        sendto_field = "toPersonId" if (dest_type == "user") else "roomId"
+        message_field = "markdown" if is_markdown else "text"
 
         uri_endpoint = consts.WEBEX_SEND_MESSAGE_ENDPOINT
-        user_id = param['endpoint_id']
-        message = param['message']
+        user_id = param["endpoint_id"]
+        message = param["message"]
         data = {sendto_field: user_id, message_field: message}
 
         if self._api_key:
@@ -812,7 +794,7 @@ class CiscoWebexConnector(BaseConnector):
 
         self.debug_print("Updating the summary")
         summary = action_result.update_summary({})
-        summary['message'] = message
+        summary["message"] = message
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -820,27 +802,25 @@ class CiscoWebexConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, message)
 
     def handle_action(self, param):
-
         ret_val = phantom.APP_SUCCESS
 
         action_id = self.get_action_identifier()
 
-        if action_id == 'test_connectivity':
+        if action_id == "test_connectivity":
             ret_val = self._handle_test_connectivity(param)
 
-        elif action_id == 'list_rooms':
+        elif action_id == "list_rooms":
             ret_val = self._handle_list_rooms(param)
 
-        elif action_id == 'get_user':
+        elif action_id == "get_user":
             ret_val = self._handle_get_user(param)
 
-        elif action_id == 'send_message':
+        elif action_id == "send_message":
             ret_val = self._handle_send_message(param)
 
         return ret_val
 
     def decrypt_state(self, state):
-
         if not state.get(consts.WEBEX_STR_IS_ENCRYPTED):
             return state
 
@@ -850,8 +830,7 @@ class CiscoWebexConnector(BaseConnector):
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = decrypt(access_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
-                self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_DECRYPTION_ERROR, error_message))
+                self.debug_print(f"{consts.WEBEX_DECRYPTION_ERROR}: {error_message}")
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = None
 
         refresh_token = state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
@@ -860,14 +839,12 @@ class CiscoWebexConnector(BaseConnector):
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = decrypt(refresh_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
-                self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_DECRYPTION_ERROR, error_message))
+                self.debug_print(f"{consts.WEBEX_DECRYPTION_ERROR}: {error_message}")
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = None
         state[consts.WEBEX_STR_IS_ENCRYPTED] = False
         return state
 
     def encrypt_state(self, state):
-
         if state.get(consts.WEBEX_STR_IS_ENCRYPTED):
             return state
 
@@ -877,8 +854,7 @@ class CiscoWebexConnector(BaseConnector):
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = encrypt(access_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
-                self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
+                self.debug_print(f"{consts.WEBEX_ENCRYPTION_ERROR}: {error_message}")
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_ACCESS_TOKEN] = None
 
         refresh_token = state.get(consts.WEBEX_STR_TOKEN, {}).get(consts.WEBEX_STR_REFRESH_TOKEN)
@@ -887,15 +863,13 @@ class CiscoWebexConnector(BaseConnector):
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = encrypt(refresh_token, self._asset_id)
             except Exception as ex:
                 _, error_message = _get_error_message_from_exception(ex, self)
-                self.debug_print("{}: {}"
-                                 .format(consts.WEBEX_ENCRYPTION_ERROR, error_message))
+                self.debug_print(f"{consts.WEBEX_ENCRYPTION_ERROR}: {error_message}")
                 state[consts.WEBEX_STR_TOKEN][consts.WEBEX_STR_REFRESH_TOKEN] = None
 
         state[consts.WEBEX_STR_IS_ENCRYPTED] = True
         return state
 
     def initialize(self):
-
         # Load the state in initialize, use it to store data
         # that needs to be accessed across actions
         self._asset_id = self.get_asset_id()
@@ -903,14 +877,13 @@ class CiscoWebexConnector(BaseConnector):
 
         config = self.get_config()
         self._base_url = consts.BASE_URL
-        self._api_key = config.get('authorization_key', None)
+        self._api_key = config.get("authorization_key", None)
 
         self._client_id = config.get(consts.WEBEX_STR_CLIENT_ID, None)
         self._client_secret = config.get(consts.WEBEX_STR_SECRET, None)
 
-        self._scopes = list(filter(None, [scope.strip() for scope in
-                                          config.get(consts.WEBEX_STR_SCOPE, consts.SCOPE).split(' ')]))
-        self._scopes = ' '.join(self._scopes)
+        self._scopes = list(filter(None, [scope.strip() for scope in config.get(consts.WEBEX_STR_SCOPE, consts.SCOPE).split(" ")]))
+        self._scopes = " ".join(self._scopes)
 
         if not self._api_key and (not self._client_id and not self._client_secret):
             return self.set_status(phantom.APP_ERROR, status_message=consts.WEBEX_ERROR_REQUIRED_CONFIG_PARAMS)
@@ -924,14 +897,12 @@ class CiscoWebexConnector(BaseConnector):
         return phantom.APP_SUCCESS
 
     def finalize(self):
-
         # Save the state, this data is saved accross actions and app upgrades
         self.save_state(self._state)
         return phantom.APP_SUCCESS
 
 
-if __name__ == '__main__':
-
+if __name__ == "__main__":
     import argparse
     import sys
 
@@ -941,10 +912,10 @@ if __name__ == '__main__':
 
     argparser = argparse.ArgumentParser()
 
-    argparser.add_argument('input_test_json', help='Input Test JSON file')
-    argparser.add_argument('-u', '--username', help='username', required=False)
-    argparser.add_argument('-p', '--password', help='password', required=False)
-    argparser.add_argument('-v', '--verify', action='store_true', help='verify', required=False, default=False)
+    argparser.add_argument("input_test_json", help="Input Test JSON file")
+    argparser.add_argument("-u", "--username", help="username", required=False)
+    argparser.add_argument("-p", "--password", help="password", required=False)
+    argparser.add_argument("-v", "--verify", action="store_true", help="verify", required=False, default=False)
 
     args = argparser.parse_args()
     session_id = None
@@ -963,21 +934,22 @@ if __name__ == '__main__':
         try:
             print("Accessing the Login page")
             r = requests.get(BaseConnector._get_phantom_base_url() + "login", verify=verify, timeout=consts.WEBEX_DEFAULT_TIMEOUT)
-            csrftoken = r.cookies['csrftoken']
+            csrftoken = r.cookies["csrftoken"]
 
             data = dict()
-            data['username'] = username
-            data['password'] = password
-            data['csrfmiddlewaretoken'] = csrftoken
+            data["username"] = username
+            data["password"] = password
+            data["csrfmiddlewaretoken"] = csrftoken
 
             headers = dict()
-            headers['Cookie'] = 'csrftoken=' + csrftoken
-            headers['Referer'] = BaseConnector._get_phantom_base_url()
+            headers["Cookie"] = "csrftoken=" + csrftoken
+            headers["Referer"] = BaseConnector._get_phantom_base_url()
 
             print("Logging into Platform to get the session id")
-            r2 = requests.post(BaseConnector._get_phantom_base_url(), verify=verify, data=data, headers=headers,
-                               timeout=consts.WEBEX_DEFAULT_TIMEOUT)
-            session_id = r2.cookies['sessionid']
+            r2 = requests.post(
+                BaseConnector._get_phantom_base_url(), verify=verify, data=data, headers=headers, timeout=consts.WEBEX_DEFAULT_TIMEOUT
+            )
+            session_id = r2.cookies["sessionid"]
         except Exception as e:
             print("Unable to get session id from the platform. Error: " + str(e))
             sys.exit(1)
@@ -995,7 +967,7 @@ if __name__ == '__main__':
         connector.print_progress_message = True
 
         if session_id is not None:
-            in_json['user_session_token'] = session_id
+            in_json["user_session_token"] = session_id
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
         print(json.dumps(json.loads(ret_val), indent=4))
