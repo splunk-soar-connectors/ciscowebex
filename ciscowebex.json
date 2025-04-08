@@ -11,7 +11,7 @@
     "publisher": "Splunk",
     "contributors": [
         {
-            "name": "Va\u0161ek Lorenc"
+            "name": "Vašek Lorenc"
         }
     ],
     "license": "Copyright (c) 2021-2025 Splunk Inc.",
@@ -541,29 +541,5 @@
     "render": {
         "type": "table"
     },
-    "versions": "EQ(*)",
-    "pip_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.3.2.post1-py3-none-any.whl"
-            }
-        ]
-    },
-    "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "beautifulsoup4",
-                "input_file": "wheels/py3/beautifulsoup4-4.9.1-py3-none-any.whl"
-            },
-            {
-                "module": "soupsieve",
-                "input_file": "wheels/py3/soupsieve-2.4.1-py3-none-any.whl"
-            }
-        ]
-    }
+    "versions": "EQ(*)"
 }
