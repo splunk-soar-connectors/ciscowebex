@@ -1,7 +1,7 @@
 # Cisco Webex
 
 Publisher: Splunk \
-Connector Version: 2.0.0 \
+Connector Version: 2.0.1 \
 Product Vendor: Cisco \
 Product Name: Cisco Webex \
 Minimum Product Version: 6.0.2
