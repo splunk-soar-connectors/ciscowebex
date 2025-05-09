@@ -14,8 +14,8 @@
 # and limitations under the License.
 
 SCOPE = "spark:people_read spark:rooms_read spark:messages_write"
-BASE_URL = "https://webexapis.com"
-AUTHORIZATION_URL = "/v1/authorize?client_id={client_id}&response_type={response_type}&redirect_uri={redirect_uri}&scope={scope}&state={state}"
+BASE_URL = "https://webexapis.com/v1"
+AUTHORIZATION_URL = "/authorize?client_id={client_id}&response_type={response_type}&redirect_uri={redirect_uri}&scope={scope}&state={state}"
 
 UNKNOWN_ERROR_MESSAGE = "Unknown error occurred. Please check the asset configuration and|or action parameters"
 UNKNOWN_ERROR_CODE_MESSAGE = "Error code unavailable"
@@ -56,8 +56,37 @@ WEBEX_AUTHORIZATION_ERROR_MESSAGE = "Authorization code not received or not give
 PHANTOM_ASSET_ENDPOINT = "/asset/{asset_id}"
 PHANTOM_SYSTEM_INFO_ENDPOINT = "/system_info"
 
-WEBEX_ACCESS_TOKEN_ENDPOINT = "/v1/access_token"
-WEBEX_GET_ROOMS_ENDPOINT = "/v1/rooms"
-WEBEX_GET_USER_ENDPOINT = "/v1/people?email={0}"
-WEBEX_SEND_MESSAGE_ENDPOINT = "/v1/messages"
+WEBEX_ACCESS_TOKEN_ENDPOINT = "/access_token"
+WEBEX_ROOMS_ENDPOINT = "/rooms"
+WEBEX_GET_USER_ENDPOINT = "/people?email={0}"
+WEBEX_MESSAGE_ENDPOINT = "/messages"
+WEBEX_GET_MESSAGES_DETAILS_ENDPOINT = "/messages/{message_id}"
+WEBEX_ADD_USER_ENDPOINT = "/memberships"
+WEBEX_SCHEDULE_MEETINGS_ENDPOINT = "/meetings"
+WEBEX_GET_MEETINGS_DETAILS = "/meetings/{meeting_id}"
+WEBEX_MEETING_PARTICIPANTS_ENDPOINT = "/meetingParticipants"
+WEBEX_GET_USER_DETAILS_ENDPOINT = "/people/{person_id}"
 WEBEX_DEFAULT_TIMEOUT = 30
+
+PARAMETER_LIST_FOR_SCHEDULE_MEETING = (
+    ("timezone", "timezone"),
+    ("description", "agenda"),
+    ("password", "password"),
+    ("enabled_auto_record_meeting", "enabledAutoRecordMeeting"),
+    ("allow_any_user_to_be_co_host", "allowAnyUserToBeCoHost"),
+    ("enabled_join_before_host", "enabledJoinBeforeHost"),
+    ("join_before_host_minutes", "joinBeforeHostMinutes"),
+    ("enable_connect_audio_before_host", "enableConnectAudioBeforeHost"),
+    ("recurrence", "recurrence"),
+    ("adhoc", "adhoc"),
+    ("room_id", "roomId"),
+    ("send_email", "sendEmail"),
+    ("host_email", "hostEmail"),
+    ("session_type_id", "sessionTypeId"),
+    ("scheduled_type", "scheduledType"),
+    ("enable_automatic_lock", "enableAutomaticLock"),
+    ("automatic_lock_minutes", "automaticLockMinutes"),
+    ("public_meeting", "publicMeeting"),
+    ("reminder_time", "reminderTime"),
+    ("unlocked_meeting_join_security", "unlockedMeetingJoinSecurity"),
+)

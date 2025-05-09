@@ -590,7 +590,7 @@ class CiscoWebexConnector(BaseConnector):
         # If API key exists, skipping oAuth authentication
         if self._api_key:
             self.save_progress("Validating API Key")
-            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_GET_ROOMS_ENDPOINT, action_result, params=None)
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result, params=None)
             if phantom.is_fail(ret_val):
                 self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
                 return action_result.get_status()
@@ -685,7 +685,7 @@ class CiscoWebexConnector(BaseConnector):
 
         self.save_progress("Getting info about the rooms to verify token")
 
-        url = f"{self._base_url}{consts.WEBEX_GET_ROOMS_ENDPOINT}"
+        url = f"{self._base_url}{consts.WEBEX_ROOMS_ENDPOINT}"
         ret_val, response = self._update_request(action_result=action_result, endpoint=url)
 
         if phantom.is_fail(ret_val):
@@ -711,9 +711,9 @@ class CiscoWebexConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         if self._api_key:
-            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_GET_ROOMS_ENDPOINT, action_result)
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result)
         else:
-            ret_val, response = self._update_request(action_result, consts.WEBEX_GET_ROOMS_ENDPOINT)
+            ret_val, response = self._update_request(action_result, consts.WEBEX_ROOMS_ENDPOINT)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -775,7 +775,7 @@ class CiscoWebexConnector(BaseConnector):
         sendto_field = "toPersonId" if (dest_type == "user") else "roomId"
         message_field = "markdown" if is_markdown else "text"
 
-        uri_endpoint = consts.WEBEX_SEND_MESSAGE_ENDPOINT
+        uri_endpoint = consts.WEBEX_MESSAGE_ENDPOINT
         user_id = param["endpoint_id"]
         message = param["message"]
         data = {sendto_field: user_id, message_field: message}
@@ -801,6 +801,273 @@ class CiscoWebexConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, message)
 
+    def _handle_create_room(self, param):
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        title = param["title"]
+        team_id = param.get("team_id", None)
+        classification_id = param.get("classification_id", None)
+        is_locked = param.get("is_locked", False)
+        is_public = param.get("is_public", False)
+        description = param.get("description", None)
+        is_announcement_only = param.get("is_announcement_only", False)
+
+        # Set up request body
+        data = {
+            "title": title,
+            "teamId": team_id,
+            "classificationId": classification_id,
+            "isLocked": is_locked,
+            "isPublic": is_public,
+            "description": description,
+            "isAnnouncementOnly": is_announcement_only,
+        }
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result, data=data, method="post")
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_ROOMS_ENDPOINT, data=data, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Room created successfully")
+
+    def _handle_add_people_to_room(self, param):
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        room_id = param.get("room_id")
+        person_id = param.get("person_id")
+        person_email = param.get("person_email")
+        is_moderator = param.get("is_moderator", False)
+
+        if not person_id and not person_email:
+            return action_result.set_status(phantom.APP_ERROR, "You must provide either 'person_id' or 'person_email'.")
+
+        data = {"roomId": room_id, "isModerator": is_moderator}
+
+        if person_id:
+            data["personId"] = person_id
+        if person_email:
+            data["personEmail"] = person_email
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ADD_USER_ENDPOINT, action_result, data=data, method="post")
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_ADD_USER_ENDPOINT, data=data, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "User added to the room successfully")
+
+    def _handle_schedule_meeting(self, param):
+        """Schedules a Webex meeting based on provided parameters."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Required parameters
+        title = param.get("title")
+        start = param.get("start")
+        end = param.get("end")
+        if not title or not start or not end:
+            return action_result.set_status(phantom.APP_ERROR, "Missing one of required parameters: 'title', 'start', 'end'.")
+
+        # Optional parameters
+        data = {
+            "title": title,
+            "start": start,
+            "end": end,
+        }
+        for src, dest in consts.PARAMETER_LIST_FOR_SCHEDULE_MEETING:
+            if src in param:
+                data[dest] = param[src]
+
+        # Invitees: comma-separated emails → list of {"email": "..."}
+        if param.get("invitees"):
+            emails = [e.strip() for e in param["invitees"].split(",") if e.strip()]
+            data["invitees"] = [{"email": e} for e in emails]
+
+        # Call Webex API
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(
+                consts.WEBEX_SCHEDULE_MEETINGS_ENDPOINT, action_result, data=data, method="post"
+            )
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_SCHEDULE_MEETINGS_ENDPOINT, data=data, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Meeting scheduled successfully")
+
+    def _handle_retrieve_meeting_participants(self, param):
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        meeting_id = param["meeting_id"]
+        breakout_session_id = param.get("breakout_session_id")
+        meeting_start_time_from = param.get("meeting_start_time_from")
+        meeting_start_time_to = param.get("meeting_start_time_to")
+        host_email = param.get("host_email")
+        join_time_from = param.get("join_time_from")
+        join_time_to = param.get("join_time_to")
+        max_participants = param.get("limit")
+
+        # Prepare query params
+        params = {"meetingId": meeting_id}
+
+        if breakout_session_id:
+            params["breakoutSessionId"] = breakout_session_id
+        if meeting_start_time_from:
+            params["meetingStartTimeFrom"] = meeting_start_time_from
+        if meeting_start_time_to:
+            params["meetingStartTimeTo"] = meeting_start_time_to
+        if host_email:
+            params["hostEmail"] = host_email
+        if join_time_from:
+            params["joinTimeFrom"] = join_time_from
+        if join_time_to:
+            params["joinTimeTo"] = join_time_to
+        if max_participants:
+            params["max"] = max_participants
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_MEETING_PARTICIPANTS_ENDPOINT, action_result, params=params)
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_MEETING_PARTICIPANTS_ENDPOINT, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        participants = response.get("items", [])
+        for participant in participants:
+            action_result.add_data(participant)
+
+        self.debug_print("Updating the summary")
+        action_result.update_summary({"message": "Participants retrieved successfully", "total_participants": len(participants)})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_list_messages(self, param):
+        """List messages from a Webex room or thread."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Extract parameters
+        room_id = param.get("room_id")
+        parent_id = param.get("parent_id")
+        before = param.get("before")
+        before_message = param.get("before_message")
+        max_messages = param.get("limit", 50)
+
+        # At least one of room_id or parent_id must be provided
+        if not room_id and not parent_id:
+            return action_result.set_status(phantom.APP_ERROR, "You must provide at least 'room_id' or 'parent_id'.")
+
+        # Build query parameters
+        query_params = {}
+
+        if room_id:
+            query_params["roomId"] = room_id
+        if parent_id:
+            query_params["parentId"] = parent_id
+        if before:
+            query_params["before"] = before
+        if before_message:
+            query_params["beforeMessage"] = before_message
+        if max_messages:
+            query_params["max"] = max_messages
+
+        # Call the Webex API
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_MESSAGE_ENDPOINT, action_result, params=query_params)
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_MESSAGE_ENDPOINT, params=query_params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        messages = response.get("items", [])
+        for message in messages:
+            action_result.add_data(message)
+
+        action_result.update_summary({"message": "Messages retrieved successfully", "total_messages": len(messages)})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_message_details(self, param):
+        """Retrieve the details of a specific Webex message by message ID."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Extract required parameter
+        message_id = param.get("message_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: message_id")
+
+        # Call the Webex API
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(
+                consts.WEBEX_GET_MESSAGES_DETAILS_ENDPOINT.format(message_id=message_id), action_result
+            )
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_GET_MESSAGES_DETAILS_ENDPOINT.format(message_id=message_id))
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # Add full message details to result
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Message details retrieved successfully")
+
+    def _handle_get_meeting_details(self, param):
+        """Retrieve details of a specific Webex meeting using meeting ID or meeting number."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        meeting_id = param.get("meeting_id")
+        current = param.get("current", False)
+        host_email = param.get("host_email")
+
+        if not meeting_id:
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: meeting_id")
+
+        # Build query parameters
+        params = {}
+        if current:
+            params["current"] = str(current).lower()  # API expects true/false in lowercase
+        if host_email:
+            params["hostEmail"] = host_email
+
+        # Make API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(
+                consts.WEBEX_GET_MEETINGS_DETAILS.format(meeting_id=meeting_id), action_result, params=params
+            )
+        else:
+            ret_val, response = self._update_request(
+                action_result, consts.WEBEX_GET_MEETINGS_DETAILS.format(meeting_id=meeting_id), params=params
+            )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # Add meeting details to action result
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved meeting details")
+
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
@@ -817,6 +1084,27 @@ class CiscoWebexConnector(BaseConnector):
 
         elif action_id == "send_message":
             ret_val = self._handle_send_message(param)
+
+        elif action_id == "create_room":
+            ret_val = self._handle_create_room(param)
+
+        elif action_id == "add_people_to_room":
+            ret_val = self._handle_add_people_to_room(param)
+
+        elif action_id == "schedule_meeting":
+            ret_val = self._handle_schedule_meeting(param)
+
+        elif action_id == "retrieve_meeting_participants":
+            ret_val = self._handle_retrieve_meeting_participants(param)
+
+        elif action_id == "list_messages":
+            ret_val = self._handle_list_messages(param)
+
+        elif action_id == "get_message_details":
+            ret_val = self._handle_get_message_details(param)
+
+        elif action_id == "get_meeting_details":
+            ret_val = self._handle_get_meeting_details(param)
 
         return ret_val
 
