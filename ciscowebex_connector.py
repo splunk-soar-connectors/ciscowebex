@@ -1068,6 +1068,61 @@ class CiscoWebexConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved meeting details")
 
+    def _handle_list_users(self, param):
+        """List people from Webex with optional filters."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Extract parameters
+        email = param.get("email")
+        display_name = param.get("display_name")
+        person_id = param.get("id")
+        org_id = param.get("org_id")
+        roles = param.get("roles")
+        calling_data = param.get("calling_data", False)
+        location_id = param.get("location_id")
+        max_people = param.get("limit", 100)
+
+        # At least one of email, display_name, or id is required (for non-admins)
+        if not any([email, display_name, person_id]):
+            self.debug_print("No filters provided (email, display_name, id). This may fail for non-admin users.")
+
+        # Build query parameters
+        query_params = {}
+        if email:
+            query_params["email"] = email
+        if display_name:
+            query_params["displayName"] = display_name
+        if person_id:
+            query_params["id"] = person_id
+        if org_id:
+            query_params["orgId"] = org_id
+        if roles:
+            query_params["roles"] = roles
+        if calling_data:
+            query_params["callingData"] = str(calling_data).lower()
+        if location_id:
+            query_params["locationId"] = location_id
+        if max_people:
+            query_params["max"] = max_people
+
+        # Make the REST API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_LIST_USERS_ENDPOINT, action_result, params=query_params)
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_LIST_USERS_ENDPOINT, params=query_params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        people = response.get("items", [])
+        for person in people:
+            action_result.add_data(person)
+
+        action_result.update_summary({"message": "Users retrieved successfully", "total_people": len(people)})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
@@ -1103,8 +1158,8 @@ class CiscoWebexConnector(BaseConnector):
         elif action_id == "get_message_details":
             ret_val = self._handle_get_message_details(param)
 
-        elif action_id == "get_meeting_details":
-            ret_val = self._handle_get_meeting_details(param)
+        elif action_id == "list_users":
+            ret_val = self._handle_list_users(param)
 
         return ret_val
 

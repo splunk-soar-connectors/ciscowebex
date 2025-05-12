@@ -8,6 +8,56 @@ Minimum Product Version: 6.3.0
 
 This app integrates with Cisco Webex to implement investigative and genric actions
 
+## Authentication
+
+This app supports two types of authentication:
+
+### 1. Personal Access Token
+
+- Use your **[Webex Personal Access Token](https://developer.webex.com/docs/getting-your-personal-access-token)**.
+- Personal access tokens are valid for **12 hours** after logging into the Developer Portal.
+
+### 2. OAuth
+
+- Use your **Client ID**, **Client Secret**, and required **Scopes**.
+- Provides long-term, secure access for multiple users.
+
+#### Steps:
+
+1. **Create a Webex App** at [https://developer.webex.com/my-apps](https://developer.webex.com/my-apps)
+1. Choose the app type: **Integration**
+1. Set **redirect URI** (for OAuth):
+   - You can find it while run the test connectivity. e.g.`https://<your-splunk-soar-url>/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/<asset_name>/result`
+1. Provide defoult required scopes `spark:people_read`, `spark:rooms_read` and `spark:messages_write`
+1. Collect:
+   - **Client ID**
+   - **Client Secret**
+   - Required **Scopes**
+1. In Splunk SOAR, create a new asset and provide credentials as per the method selected.
+
+- Webex Developer Portal: [https://developer.webex.com](https://developer.webex.com)
+- Webex Scopes: [https://developer.webex.com/docs/integrations](https://developer.webex.com/docs/integrations)
+
+**OAuth Required Scopes per Action are listed below.**
+
+## Supported Actions and Required Scopes
+
+| Action | Description | Required Scopes |
+|-----------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| **List Rooms** | List Webex rooms (spaces) | `spark:rooms_read` |
+| **Get User** | Get user ID from email address | `spark:people_read` |
+| **Send Message** | Send a message to a user or room | `spark:messages_write`, `spark:rooms_read` (if room name lookup is used) |
+| **Create a Room** | Create a new Webex room (space) | `spark:rooms_write` |
+| **Add People** | Add a person to a Webex room (as member or moderator) | `spark:memberships_write` |
+| **Schedule Meeting** | Schedule a Webex meeting with details and invitees | `meeting:schedules_write` |
+| **Retrieve Meeting Participants** | Retrieve participants in an in-progress or ended Webex meeting | `meeting:participants_read` |
+| **List Messages** | Retrieve a list of messages from a Webex room or 1:1 conversation | `spark:messages_read` |
+| **Get Message Details** | Retrieve the details of a specific Webex message by message ID | `spark:messages_read` |
+| **Get Meeting Details** | Retrieve details of a specific meeting using meeting ID or meeting number | `meeting:recordings_read` or `meeting:schedules_read` |
+| **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read` |
+
+______________________________________________________________________
+
 ### Configuration variables
 
 This table lists the configuration variables required to operate Cisco Webex. These variables are specified when configuring a Cisco Webex asset in Splunk SOAR.
@@ -27,11 +77,12 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [send message](#action-send-message) - Send message to user or room \
 [create a room](#action-create-a-room) - Create a new Webex room (space) \
 [add people](#action-add-people) - Add a people to a Webex room (space) as a member or moderator \
-[schedule meeting](#action-schedule-meeting) - Schedule a Webex meeting with specific details and invitees \
+[schedule meeting](#action-schedule-meeting) - Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting \
 [retrieve meeting participants](#action-retrieve-meeting-participants) - Retrieve all participants in an in-progress or ended Webex meeting \
 [list messages](#action-list-messages) - Retrieve a list of messages from a Webex room or 1:1 conversation \
 [get message details](#action-get-message-details) - Retrieve the details of a specific Webex message by message ID \
-[get meeting details](#action-get-meeting-details) - Retrieve details of a specific Webex meeting using meeting ID or meeting number
+[get meeting details](#action-get-meeting-details) - Retrieve details of a specific Webex meeting using meeting ID or meeting number \
+[list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location
 
 ## action: 'test connectivity'
 
@@ -177,11 +228,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.id | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.type | string | | group |
 action_result.data.\*.title | string | | test room |
 action_result.data.\*.created | string | | 2025-05-09T09:57:17.803Z |
-action_result.data.\*.ownerId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.ownerId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.isLocked | boolean | | True False |
 action_result.data.\*.isPublic | boolean | | True False |
 action_result.data.\*.creatorId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
@@ -194,7 +245,7 @@ action_result.parameter.is_public | boolean | | |
 action_result.parameter.description | string | | |
 action_result.parameter.is_announcement_only | boolean | | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
+action_result.status | string | | success failed |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
 
@@ -211,9 +262,9 @@ Adds a person to a Webex room using their ID or email. You can optionally assign
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**room_id** | required | The ID of the room to add the person to | string | |
-**person_id** | optional | The ID of the person to add (use either person_id or person_email) | string | |
-**person_email** | optional | The email address of the person to add (use either person_email or person_id) | string | |
+**room_id** | required | The ID of the room to add the person to | string | `webex room id` |
+**person_id** | optional | The ID of the person to add (use either person_id or person_email) | string | `webex user id` |
+**person_email** | optional | The email address of the person to add (use either person_email or person_id) | string | `email` |
 **is_moderator** | optional | Set to true to make the person a room moderator | boolean | |
 
 #### Action Output
@@ -221,31 +272,33 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
 action_result.data.\*.id | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.roomId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.created | string | | 2025-05-09T09:58:50.433Z |
-action_result.data.\*.personId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.roomType | string | | group |
 action_result.data.\*.isMonitor | boolean | | True False |
 action_result.data.\*.isModerator | boolean | | True False |
-action_result.data.\*.personEmail | string | | example@example.com |
-action_result.data.\*.personOrgId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
+action_result.data.\*.personOrgId | string | `webex org id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.isRoomHidden | boolean | | True False |
 action_result.data.\*.personDisplayName | string | | TEST USER |
-action_result.parameter.room_id | string | | |
-action_result.parameter.person_id | string | | |
-action_result.parameter.person_email | string | | |
+action_result.parameter.room_id | string | `webex room id` | |
+action_result.parameter.person_id | string | `webex user id` | |
+action_result.parameter.person_email | string | `email` | |
 action_result.parameter.is_moderator | boolean | | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
+action_result.status | string | | success failed |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
 
 ## action: 'schedule meeting'
 
-Schedule a Webex meeting with specific details and invitees
+Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting
 
 Type: **generic** \
 Read only: **False**
+
+<p>Admin configuration is required to allow public meetings; otherwise, setting <code>public_meeting=true</code> will result in an error.</p><p>Required OAuth scopes: <code>meeting:schedules_write</code>, <code>meeting:admin_write</code>, and appropriate host entitlements (e.g., webinar license).</p><p>  Parameter note: <code>join_before_host_minutes</code> is only valid if <code>enabled_join_before_host=true</code>.</p><p>  For ad-hoc meetings (<code>adhoc=true</code>), the <code>roomId</code> parameter is required to link the meeting to a specific Webex space. In this case <code>hostEmail</code> is ignored.</p>
 
 #### Action Parameters
 
@@ -265,7 +318,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **invitees** | optional | List of emails to invite (comma‑separated) | string | |
 **recurrence** | optional | Meeting series rule (RFC‑2445, e.g. FREQ=DAILY;INTERVAL=1) | string | |
 **adhoc** | optional | Create an ad‑hoc (instant) meeting in a room | boolean | |
-**room_id** | optional | Room (space) ID for ad‑hoc meeting | string | |
+**room_id** | optional | Room (space) ID for ad‑hoc meeting | string | `webex room id` |
 **send_email** | optional | Whether to email host & invitees | boolean | |
 **host_email** | optional | Host email (admin scopes required) | string | |
 **session_type_id** | optional | Session type ID (required for webinars) | numeric | |
@@ -280,7 +333,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | | test92d8997b4d36bc3ac1893c7ftest8 |
+action_result.data.\*.id | string | `webex meeting id` | test92d8997b4d36bc3ac1893c7ftest8 |
 action_result.data.\*.end | string | | 2025-05-10T14:24:00Z |
 action_result.data.\*.start | string | | 2025-05-10T13:24:00Z |
 action_result.data.\*.state | string | | active |
@@ -360,7 +413,7 @@ action_result.parameter.enable_connect_audio_before_host | boolean | | |
 action_result.parameter.invitees | string | | |
 action_result.parameter.recurrence | string | | |
 action_result.parameter.adhoc | boolean | | |
-action_result.parameter.room_id | string | | |
+action_result.parameter.room_id | string | `webex room id` | |
 action_result.parameter.send_email | boolean | | |
 action_result.parameter.host_email | string | | |
 action_result.parameter.session_type_id | numeric | | |
@@ -371,7 +424,7 @@ action_result.parameter.public_meeting | boolean | | |
 action_result.parameter.reminder_time | numeric | | |
 action_result.parameter.unlocked_meeting_join_security | string | | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
+action_result.status | string | | success failed |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
 
@@ -388,11 +441,11 @@ Retrieve a list of participants from a specific Webex meeting instance or series
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**meeting_id** | required | Unique identifier of the meeting (not personal room meeting) | string | |
+**meeting_id** | required | Unique identifier of the meeting (not personal room meeting) | string | `webex meeting id` |
 **breakout_session_id** | optional | Unique ID of a breakout session in an ended meeting | string | |
 **meeting_start_time_from** | optional | Start time to filter meetings (ISO 8601 format) | string | |
 **meeting_start_time_to** | optional | End time to filter meetings (ISO 8601 format) | string | |
-**host_email** | optional | Email address of the meeting host (admin-only use) | string | |
+**host_email** | optional | Email address of the meeting host (admin-only use) | string | `email` |
 **join_time_from** | optional | Start of participant join time range (ISO 8601 format) | string | |
 **join_time_to** | optional | End of participant join time range (ISO 8601 format) | string | |
 **limit** | optional | Max number of participants to return (1–100) | numeric | |
@@ -401,9 +454,9 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | | testef03e1a49be883320fe35fde314_I_65220test54323715_3118cefb-81e7-492d-8223-1fe0a353test |
+action_result.data.\*.id | string | `webex user id` | testef03e1a49be883320fe35fde314_I_65220test54323715_3118cefb-81e7-492d-8223-1fe0a353test |
 action_result.data.\*.host | boolean | | True False |
-action_result.data.\*.email | string | | example@example.com |
+action_result.data.\*.email | string | `email` | example@example.com |
 action_result.data.\*.muted | boolean | | True False |
 action_result.data.\*.state | string | | end |
 action_result.data.\*.coHost | boolean | | True False |
@@ -416,23 +469,25 @@ action_result.data.\*.invitee | boolean | | True False |
 action_result.data.\*.siteUrl | string | | example.webex.com |
 action_result.data.\*.leftTime | string | | 2025-05-08T12:40:55Z |
 action_result.data.\*.hostEmail | string | | example@example.com |
-action_result.data.\*.meetingId | string | | test2ef03e1a49be883320fe35fde314_I_65220661465432test |
+action_result.data.\*.meetingId | string | `webex meeting id` | test2ef03e1a49be883320fe35fde314_I_65220661465432test |
 action_result.data.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
 action_result.data.\*.displayName | string | | test user |
 action_result.data.\*.spaceModerator | boolean | | True False |
 action_result.data.\*.meetingStartTime | string | | 2025-05-08T12:40:49Z |
-action_result.parameter.meeting_id | string | | |
+action_result.parameter.meeting_id | string | `webex meeting id` | |
 action_result.parameter.breakout_session_id | string | | |
 action_result.parameter.meeting_start_time_from | string | | |
 action_result.parameter.meeting_start_time_to | string | | |
-action_result.parameter.host_email | string | | |
+action_result.parameter.host_email | string | `email` | |
 action_result.parameter.join_time_from | string | | |
 action_result.parameter.join_time_to | string | | |
 action_result.parameter.limit | numeric | | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
+action_result.status | string | | success failed |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+action_result.summary.message | string | | Participants retrieved successfully |
+action_result.summary.total_participants | numeric | | 1 |
 
 ## action: 'list messages'
 
@@ -445,8 +500,8 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**room_id** | required | The ID of the room to list messages from | string | |
-**parent_id** | optional | List messages in a thread by parent message ID | string | |
+**room_id** | required | The ID of the room to list messages from | string | `webex message id` |
+**parent_id** | optional | List messages in a thread by parent message ID | string | `webex message id` |
 **before** | optional | List messages sent before a specific date/time (ISO 8601 format) | string | |
 **before_message** | optional | List messages sent before a specific message ID | string | |
 **limit** | optional | The maximum number of messages to return (default 50, max 100) | numeric | |
@@ -455,25 +510,27 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
 action_result.data.\*.text | string | | hello test |
-action_result.data.\*.roomId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
-action_result.data.\*.personId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.roomType | string | | group |
-action_result.data.\*.personEmail | string | | example@example.com |
-action_result.data.\*.parentId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.meetingId | string | | 9testf03e1a49be883320fe35fde314_I_6522066146543test |
-action_result.parameter.room_id | string | | |
-action_result.parameter.parent_id | string | | |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
+action_result.data.\*.parentId | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.meetingId | string | `webex meeting id` | 9testf03e1a49be883320fe35fde314_I_6522066146543test |
+action_result.parameter.room_id | string | `webex message id` | |
+action_result.parameter.parent_id | string | `webex message id` | |
 action_result.parameter.before | string | | |
 action_result.parameter.before_message | string | | |
 action_result.parameter.limit | numeric | | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
+action_result.status | string | | success failed |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+action_result.summary.message | string | | Messages retrieved successfully |
+action_result.summary.total_messages | numeric | | 10 |
 
 ## action: 'get message details'
 
@@ -486,23 +543,23 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**message_id** | required | The unique identifier of the message to retrieve | string | |
+**message_id** | required | The unique identifier of the message to retrieve | string | `webex message id` |
 
 #### Action Output
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
 action_result.data.\*.text | string | | hello test |
-action_result.data.\*.roomId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
-action_result.data.\*.personId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.roomType | string | | group |
-action_result.data.\*.personEmail | string | | example@example.com |
-action_result.parameter.message_id | string | | |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
+action_result.parameter.message_id | string | `webex message id` | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
+action_result.status | string | | success failed |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
 
@@ -517,19 +574,19 @@ Read only: **True**
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**meeting_id** | required | The unique identifier of the meeting being requested (UUID format) | string | |
+**meeting_id** | required | The unique identifier of the meeting being requested (UUID format) | string | `webex meeting id` |
 **current** | optional | Whether to retrieve only the current scheduled meeting of the series (true or false) | boolean | |
-**host_email** | optional | Email address of the meeting host (for admin-level access) | string | |
+**host_email** | optional | Email address of the meeting host (for admin-level access) | string | `email` |
 
 #### Action Output
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | | ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z |
+action_result.data.\*.id | string | `webex meeting id` | ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z |
 action_result.data.\*.end | string | | 2025-05-09T13:20:00Z |
 action_result.data.\*.start | string | | 2025-05-09T12:20:00Z |
 action_result.data.\*.state | string | | ready |
-action_result.data.\*.title | string | | MC Default |
+action_result.data.\*.title | string | | Test meeting |
 action_result.data.\*.agenda | string | | |
 action_result.data.\*.hostKey | string | | 889047 |
 action_result.data.\*.siteUrl | string | | example.webex.com |
@@ -597,13 +654,91 @@ action_result.data.\*.simultaneousInterpretation.enabled | boolean | | True Fals
 action_result.data.\*.phoneAndVideoSystemPassword | string | | 72959979 |
 action_result.data.\*.unlockedMeetingJoinSecurity | string | | allowJoin |
 action_result.data.\*.enableConnectAudioBeforeHost | boolean | | True False |
-action_result.parameter.meeting_id | string | | |
+action_result.data.\*.hasQA | boolean | | True False |
+action_result.data.\*.hasChat | boolean | | True False |
+action_result.data.\*.hasPolls | boolean | | True False |
+action_result.data.\*.hasSlido | boolean | | True False |
+action_result.data.\*.hasRecording | boolean | | True False |
+action_result.data.\*.hasRegistrants | boolean | | True False |
+action_result.data.\*.hasRegistration | boolean | | True False |
+action_result.data.\*.hasClosedCaption | boolean | | True False |
+action_result.data.\*.hasTranscription | boolean | | True False |
+action_result.data.\*.scheduledMeetingId | string | | 937f2ef03e1a49be883320fe35fde314_20250508T140000Z |
+action_result.parameter.meeting_id | string | `webex meeting id` | |
 action_result.parameter.current | boolean | | |
-action_result.parameter.host_email | string | | |
+action_result.parameter.host_email | string | `email` | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | |
+action_result.status | string | | success failed |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+
+## action: 'list users'
+
+List users in your Webex organization using filters like email, name, ID, roles, or location
+
+Type: **generic** \
+Read only: **True**
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**email** | optional | Filter people by email address | string | `email` |
+**display_name** | optional | Filter people whose name starts with this string | string | |
+**id** | optional | Comma-separated list of person IDs to retrieve (max 85) | string | `webex user id` |
+**org_id** | optional | List users in this organization (admin only) | string | |
+**roles** | optional | Comma-separated list of role IDs to filter by (admin only) | string | |
+**calling_data** | optional | Whether to include Webex Calling data (admin only) | boolean | |
+**location_id** | optional | List users present in this location (admin only) | string | |
+**limit** | optional | Maximum number of people to return (default 100, max varies based on flags) | numeric | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.data.\*.id | string | `webex user id` | |
+action_result.data.\*.emails | string | `email` | |
+action_result.data.\*.displayName | string | | |
+action_result.data.\*.orgId | string | `webex org id` | |
+action_result.data.\*.roles | string | | |
+action_result.data.\*.status | string | | |
+action_result.data.\*.type | string | | person |
+action_result.data.\*.title | string | | Software Engineer [C] |
+action_result.data.\*.avatar | string | | https://avatar-prod-us-east-2.webexcontent.com/Avtr~V1~1eb65fdf-9643-417f-9974-ad72cae0e10f/V1~87ac1ddc08f27546e523b2945ea2f7ff368d2141b3544e232718885c17cad0d1~233f30570bbc40b193112b2c95783159~1600 |
+action_result.data.\*.created | string | | 2024-11-08T10:16:05.408Z |
+action_result.data.\*.manager | string | | Junlin Lu |
+action_result.data.\*.lastName | string | | Shah |
+action_result.data.\*.nickName | string | | Ishan |
+action_result.data.\*.addresses.\*.type | string | | work |
+action_result.data.\*.addresses.\*.region | string | | CALIFORNIA |
+action_result.data.\*.addresses.\*.country | string | | US |
+action_result.data.\*.addresses.\*.locality | string | | SAN JOSE |
+action_result.data.\*.addresses.\*.postalCode | string | | 95128 |
+action_result.data.\*.addresses.\*.streetAddress | string | | 3098 Olsen Drive |
+action_result.data.\*.firstName | string | | Ishan |
+action_result.data.\*.managerId | string | | Y2lzY29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjI1MC0xNTJjLTQzM2QtODA5Yy05YWJmNWZiNDJhYmI |
+action_result.data.\*.department | string | | 020122475 |
+action_result.data.\*.lastModified | string | | 2025-04-15T01:50:15.733Z |
+action_result.summary.message | string | | People retrieved successfully |
+action_result.summary.total_people | numeric | | 1 |
+action_result.data.\*.phoneNumbers.\*.type | string | | work |
+action_result.data.\*.phoneNumbers.\*.value | string | | +1 408-895-8524 |
+action_result.data.\*.phoneNumbers.\*.primary | boolean | | True False |
+action_result.data.\*.pronouns.value | string | | He/Him/His |
+action_result.data.\*.pronouns.visibility | string | | Internal |
+action_result.data.\*.userName | string | | ianeja@cisco.com |
+action_result.parameter.email | string | `email` | |
+action_result.parameter.display_name | string | | |
+action_result.parameter.id | string | `webex user id` | |
+action_result.parameter.limit | numeric | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
+action_result.status | string | | success failed |
+action_result.message | string | | |
+action_result.parameter.org_id | string | | |
+action_result.parameter.roles | string | | |
+action_result.parameter.calling_data | boolean | | |
+action_result.parameter.location_id | string | | |
 
 ______________________________________________________________________
 
