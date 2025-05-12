@@ -3176,7 +3176,7 @@
                     "data_path": "action_result.data.*.avatar",
                     "data_type": "string",
                     "example_values": [
-                        "https://avatar-prod-us-east-2.webexcontent.com/Avtr~V1~1eb65fdf-9643-417f-9974-ad72cae0e10f/V1~87ac1ddc08f27546e523b2945ea2f7ff368d2141b3544e232718885c17cad0d1~233f30570bbc40b193112b2c95783159~1600"
+                        "https://test-prod-us-east-2.webexcontent.com/Avtr~V1~1ebtest43-417f-9974-ad72catest/V1~test8f27546e523b2945ea2f7ff36tst141b3544e232718885c17cad0d1~test0570bbc40b193112b2c957test~1600"
                     ]
                 },
                 {
@@ -3190,21 +3190,21 @@
                     "data_path": "action_result.data.*.manager",
                     "data_type": "string",
                     "example_values": [
-                        "Junlin Lu"
+                        "Test User"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.lastName",
                     "data_type": "string",
                     "example_values": [
-                        "Shah"
+                        "Test"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.nickName",
                     "data_type": "string",
                     "example_values": [
-                        "Ishan"
+                        "User"
                     ]
                 },
                 {
@@ -3246,21 +3246,21 @@
                     "data_path": "action_result.data.*.addresses.*.streetAddress",
                     "data_type": "string",
                     "example_values": [
-                        "3098 Olsen Drive"
+                        "3098 Test Drive"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.firstName",
                     "data_type": "string",
                     "example_values": [
-                        "Ishan"
+                        "User"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.managerId",
                     "data_type": "string",
                     "example_values": [
-                        "Y2lzY29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjI1MC0xNTJjLTQzM2QtODA5Yy05YWJmNWZiNDJhYmI"
+                        "test29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjIrtestTJjLTQzM2QtODA5Yy05YWJmNWZiNDtest"
                     ]
                 },
                 {
@@ -3279,10 +3279,7 @@
                 },
                 {
                     "data_path": "action_result.summary.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "People retrieved successfully"
-                    ]
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.summary.total_people",
@@ -3302,7 +3299,7 @@
                     "data_path": "action_result.data.*.phoneNumbers.*.value",
                     "data_type": "string",
                     "example_values": [
-                        "+1 408-895-8524"
+                        "+1 000-895-000"
                     ]
                 },
                 {
@@ -3331,7 +3328,7 @@
                     "data_path": "action_result.data.*.userName",
                     "data_type": "string",
                     "example_values": [
-                        "ianeja@cisco.com"
+                        "example@example.com"
                     ]
                 },
                 {

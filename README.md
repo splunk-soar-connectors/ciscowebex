@@ -704,29 +704,29 @@ action_result.data.\*.roles | string | | |
 action_result.data.\*.status | string | | |
 action_result.data.\*.type | string | | person |
 action_result.data.\*.title | string | | Software Engineer [C] |
-action_result.data.\*.avatar | string | | https://avatar-prod-us-east-2.webexcontent.com/Avtr~V1~1eb65fdf-9643-417f-9974-ad72cae0e10f/V1~87ac1ddc08f27546e523b2945ea2f7ff368d2141b3544e232718885c17cad0d1~233f30570bbc40b193112b2c95783159~1600 |
+action_result.data.\*.avatar | string | | https://test-prod-us-east-2.webexcontent.com/Avtr~V1~1ebtest43-417f-9974-ad72catest/V1~test8f27546e523b2945ea2f7ff36tst141b3544e232718885c17cad0d1~test0570bbc40b193112b2c957test~1600 |
 action_result.data.\*.created | string | | 2024-11-08T10:16:05.408Z |
-action_result.data.\*.manager | string | | Junlin Lu |
-action_result.data.\*.lastName | string | | Shah |
-action_result.data.\*.nickName | string | | Ishan |
+action_result.data.\*.manager | string | | Test User |
+action_result.data.\*.lastName | string | | Test |
+action_result.data.\*.nickName | string | | User |
 action_result.data.\*.addresses.\*.type | string | | work |
 action_result.data.\*.addresses.\*.region | string | | CALIFORNIA |
 action_result.data.\*.addresses.\*.country | string | | US |
 action_result.data.\*.addresses.\*.locality | string | | SAN JOSE |
 action_result.data.\*.addresses.\*.postalCode | string | | 95128 |
-action_result.data.\*.addresses.\*.streetAddress | string | | 3098 Olsen Drive |
-action_result.data.\*.firstName | string | | Ishan |
-action_result.data.\*.managerId | string | | Y2lzY29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjI1MC0xNTJjLTQzM2QtODA5Yy05YWJmNWZiNDJhYmI |
+action_result.data.\*.addresses.\*.streetAddress | string | | 3098 Test Drive |
+action_result.data.\*.firstName | string | | User |
+action_result.data.\*.managerId | string | | test29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjIrtestTJjLTQzM2QtODA5Yy05YWJmNWZiNDtest |
 action_result.data.\*.department | string | | 020122475 |
 action_result.data.\*.lastModified | string | | 2025-04-15T01:50:15.733Z |
-action_result.summary.message | string | | People retrieved successfully |
+action_result.summary.message | string | | |
 action_result.summary.total_people | numeric | | 1 |
 action_result.data.\*.phoneNumbers.\*.type | string | | work |
-action_result.data.\*.phoneNumbers.\*.value | string | | +1 408-895-8524 |
+action_result.data.\*.phoneNumbers.\*.value | string | | +1 000-895-000 |
 action_result.data.\*.phoneNumbers.\*.primary | boolean | | True False |
 action_result.data.\*.pronouns.value | string | | He/Him/His |
 action_result.data.\*.pronouns.visibility | string | | Internal |
-action_result.data.\*.userName | string | | ianeja@cisco.com |
+action_result.data.\*.userName | string | | example@example.com |
 action_result.parameter.email | string | `email` | |
 action_result.parameter.display_name | string | | |
 action_result.parameter.id | string | `webex user id` | |
