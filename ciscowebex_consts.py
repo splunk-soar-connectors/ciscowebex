@@ -91,3 +91,7 @@ PARAMETER_LIST_FOR_SCHEDULE_MEETING = (
     ("reminder_time", "reminderTime"),
     ("unlocked_meeting_join_security", "unlockedMeetingJoinSecurity"),
 )
+
+ERROR_INVALID_INT_PARAM = "Please provide a valid integer value in the '{key}' parameter"
+ERROR_NEG_INT_PARAM = "Please provide a positive integer value in the '{key}' parameter"
+ERROR_ZERO_INT_PARAM = "Please provide a non-zero integer value in the '{key}' parameter"

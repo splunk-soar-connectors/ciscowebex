@@ -921,7 +921,10 @@ class CiscoWebexConnector(BaseConnector):
         host_email = param.get("host_email")
         join_time_from = param.get("join_time_from")
         join_time_to = param.get("join_time_to")
-        max_participants = param.get("limit")
+        ret_val, max_participants = self.validate_integer(action_result, param.get("limit", 100), "limit")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         # Prepare query params
         params = {"meetingId": meeting_id}
@@ -968,7 +971,10 @@ class CiscoWebexConnector(BaseConnector):
         parent_id = param.get("parent_id")
         before = param.get("before")
         before_message = param.get("before_message")
-        max_messages = param.get("limit", 50)
+        ret_val, max_messages = self.validate_integer(action_result, param.get("limit", 50), "limit")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         # At least one of room_id or parent_id must be provided
         if not room_id and not parent_id:
@@ -1081,7 +1087,10 @@ class CiscoWebexConnector(BaseConnector):
         roles = param.get("roles")
         calling_data = param.get("calling_data", False)
         location_id = param.get("location_id")
-        max_people = param.get("limit", 100)
+        ret_val, max_people = self.validate_integer(action_result, param.get("limit", 100), "limit")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
 
         # At least one of email, display_name, or id is required (for non-admins)
         if not any([email, display_name, person_id]):
@@ -1158,10 +1167,38 @@ class CiscoWebexConnector(BaseConnector):
         elif action_id == "get_message_details":
             ret_val = self._handle_get_message_details(param)
 
+        elif action_id == "get_meeting_details":
+            ret_val = self._handle_get_meeting_details(param)
+
         elif action_id == "list_users":
             ret_val = self._handle_list_users(param)
 
         return ret_val
+
+    def validate_integer(self, action_result, parameter, key, allow_zero=False, allow_negative=False):
+        """Check if the provided input parameter value is valid.
+
+        :param action_result: Action result or BaseConnector object
+        :param parameter: Input parameter value
+        :param key: Input parameter key
+        :param allow_zero: Zero is allowed or not (default True)
+        :param allow_negative: Negative values are allowed or not (default False)
+        :returns: phantom.APP_SUCCESS/phantom.APP_ERROR and parameter value itself.
+        """
+        try:
+            if not float(parameter).is_integer():
+                return action_result.set_status(phantom.APP_ERROR, consts.ERROR_INVALID_INT_PARAM.format(key=key)), None
+
+            parameter = int(parameter)
+        except Exception:
+            return action_result.set_status(phantom.APP_ERROR, consts.ERROR_INVALID_INT_PARAM.format(key=key)), None
+
+        if not allow_zero and parameter == 0:
+            return action_result.set_status(phantom.APP_ERROR, consts.ERROR_ZERO_INT_PARAM.format(key=key)), None
+        if not allow_negative and parameter < 0:
+            return action_result.set_status(phantom.APP_ERROR, consts.ERROR_NEG_INT_PARAM.format(key=key)), None
+
+        return phantom.APP_SUCCESS, parameter
 
     def decrypt_state(self, state):
         if not state.get(consts.WEBEX_STR_IS_ENCRYPTED):

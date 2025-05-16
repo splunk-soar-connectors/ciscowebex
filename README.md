@@ -43,7 +43,8 @@ This app supports two types of authentication:
 ## Supported Actions and Required Scopes
 
 | Action | Description | Required Scopes |
-|-----------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+|-----------------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| **Test Connectivity** | Verifies the app configuration and connectivity to the Webex API | `spark:people_read`, `spark:rooms_read`, `spark:messages_write` |
 | **List Rooms** | List Webex rooms (spaces) | `spark:rooms_read` |
 | **Get User** | Get user ID from email address | `spark:people_read` |
 | **Send Message** | Send a message to a user or room | `spark:messages_write`, `spark:rooms_read` (if room name lookup is used) |
@@ -57,6 +58,17 @@ This app supports two types of authentication:
 | **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read` |
 
 ______________________________________________________________________
+
+### If You Have a Free Webex Account
+
+Some features and settings are **not available** for free accounts:
+
+- **Create Room:** You cannot use `isAnnouncementOnly`, `isPublic`, `isLocked`, or `classificationId`.
+- **Add People:** You can’t set `isModerator`.
+- **List Users:** You may not be able to use `roles` or `orgId`.
+- **Schedule Meeting:** The following won’t work: `host`, `adhoc`, `roomId`, `enabledJoinBeforeHost`, `joinBeforeHostMinutes`, `recording`, `publicMeeting` (needs admin), and `sessionTypeId` (webinars only).
+
+If you want these features, you will need to upgrade to a paid [Webex plan](https://pricing.webex.com/us/en/hybrid-work/meetings/).
 
 ### Configuration variables
 
@@ -191,7 +203,7 @@ action_result.parameter.endpoint_id | string | `webex user id` `webex room id` |
 action_result.parameter.message | string | | Compile Test hello room |
 action_result.parameter.is_markdown | boolean | | True False |
 action_result.data.\*.created | string | | 2018-01-08T21:27:31.755Z 2018-03-30T18:36:01.210Z |
-action_result.data.\*.id | string | | L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDATEST4MzEXAMPLE |
+action_result.data.\*.id | string | `webex message id` | testzcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDATEST4MzEXAMPLE |
 action_result.data.\*.personEmail | string | `email` | examplemail@test.com |
 action_result.data.\*.personId | string | | L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0TESTNDQtNDAxZTk4MzEXAMPLE |
 action_result.data.\*.roomId | string | | L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTESTTlhNDQtNDAxZTk4MzEXAMPLE |
@@ -210,18 +222,18 @@ Create a new Webex room (space)
 Type: **generic** \
 Read only: **False**
 
-Creates a new Webex room with optional team, lock(moderate), public, classification, and announcement settings. Public rooms require a description. Announcement mode requires the room to be locked. Team rooms cannot be locked. Requires permissions spark:rooms_write; spark:teams:read is needed if using team_id; classification needs spark:compliance_read.
+Public rooms require a description. Announcement mode requires the room to be locked. Team rooms cannot be locked. Requires permissions spark:rooms_write; spark:teams:read is needed if using team_id; classification needs spark:compliance_read.
 
 #### Action Parameters
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **title** | required | A user-friendly name for the room | string | |
+**description** | optional | The description of the space | string | |
 **team_id** | optional | The ID for the team with which this room is associated | string | |
 **classification_id** | optional | The classification_id for the room | string | |
 **is_locked** | optional | Set the space as locked/moderated; creator becomes a moderator | boolean | |
 **is_public** | optional | If true, the room is discoverable by anyone in the org; description must be provided | boolean | |
-**description** | optional | The description of the space | string | |
 **is_announcement_only** | optional | Sets the space into announcement-only mode | boolean | |
 
 #### Action Output
@@ -298,7 +310,7 @@ Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting
 Type: **generic** \
 Read only: **False**
 
-<p>Admin configuration is required to allow public meetings; otherwise, setting <code>public_meeting=true</code> will result in an error.</p><p>Required OAuth scopes: <code>meeting:schedules_write</code>, <code>meeting:admin_write</code>, and appropriate host entitlements (e.g., webinar license).</p><p>  Parameter note: <code>join_before_host_minutes</code> is only valid if <code>enabled_join_before_host=true</code>.</p><p>  For ad-hoc meetings (<code>adhoc=true</code>), the <code>roomId</code> parameter is required to link the meeting to a specific Webex space. In this case <code>hostEmail</code> is ignored.</p>
+<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href="https://developer.webex.com/docs/integrations#scopes" target="_blank">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don’t set it, Webex will use the host’s time zone. <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href="https://developer.webex.com/docs/api/v1/meetings/create-a-meeting" target="_blank">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored — the meeting will use the Webex space owner as host.</li></ul>
 
 #### Action Parameters
 
@@ -309,20 +321,20 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **end** | required | Meeting end time (ISO 8601) | string | |
 **timezone** | optional | IANA time zone for the meeting (e.g., America/Los_Angeles) | string | |
 **description** | optional | Meeting description (max 1300 chars) | string | |
+**invitees** | optional | List of emails to invite (comma‑separated) | string | |
 **password** | optional | Password to join the meeting | string | |
+**send_email** | optional | Whether to email host & invitees | boolean | |
+**host_email** | optional | Host email (admin scopes required) | string | |
+**scheduled_type** | optional | Type of meeting: meeting, webinar, or personal_room_meeting | string | |
+**adhoc** | optional | Create an ad‑hoc (instant) meeting in a room | boolean | |
+**room_id** | optional | Room (space) ID for ad‑hoc meeting | string | `webex room id` |
+**recurrence** | optional | Meeting series rule (RFC‑2445, e.g. FREQ=DAILY;INTERVAL=1) | string | |
+**session_type_id** | optional | Session type ID (required for webinars) | numeric | |
 **enabled_auto_record_meeting** | optional | Automatically record when meeting starts | boolean | |
 **allow_any_user_to_be_co_host** | optional | Allow any qualified user to be cohost | boolean | |
 **enabled_join_before_host** | optional | Allow attendees to join before host | boolean | |
 **join_before_host_minutes** | optional | Minutes attendees can join before host (0,5,10,15) | numeric | |
 **enable_connect_audio_before_host** | optional | Allow audio connect before host | boolean | |
-**invitees** | optional | List of emails to invite (comma‑separated) | string | |
-**recurrence** | optional | Meeting series rule (RFC‑2445, e.g. FREQ=DAILY;INTERVAL=1) | string | |
-**adhoc** | optional | Create an ad‑hoc (instant) meeting in a room | boolean | |
-**room_id** | optional | Room (space) ID for ad‑hoc meeting | string | `webex room id` |
-**send_email** | optional | Whether to email host & invitees | boolean | |
-**host_email** | optional | Host email (admin scopes required) | string | |
-**session_type_id** | optional | Session type ID (required for webinars) | numeric | |
-**scheduled_type** | optional | Type of meeting: meeting, webinar, or personal_room_meeting | string | |
 **enable_automatic_lock** | optional | Automatically lock the meeting after start | boolean | |
 **automatic_lock_minutes** | optional | Minutes after start to auto‑lock | numeric | |
 **public_meeting** | optional | List on public calendar | boolean | |
@@ -432,7 +444,7 @@ summary.total_objects | numeric | | |
 
 Retrieve all participants in an in-progress or ended Webex meeting
 
-Type: **generic** \
+Type: **investigate** \
 Read only: **True**
 
 Retrieve a list of participants from a specific Webex meeting instance or series. Requires meetingId. Optional parameters include host email, time filters, and breakout session ID.
@@ -493,14 +505,14 @@ action_result.summary.total_participants | numeric | | 1 |
 
 Retrieve a list of messages from a Webex room or 1:1 conversation
 
-Type: **generic** \
+Type: **investigate** \
 Read only: **True**
 
 #### Action Parameters
 
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**room_id** | required | The ID of the room to list messages from | string | `webex message id` |
+**room_id** | required | The ID of the room to list messages from | string | `webex room id` |
 **parent_id** | optional | List messages in a thread by parent message ID | string | `webex message id` |
 **before** | optional | List messages sent before a specific date/time (ISO 8601 format) | string | |
 **before_message** | optional | List messages sent before a specific message ID | string | |
@@ -520,7 +532,7 @@ action_result.data.\*.roomType | string | | group |
 action_result.data.\*.personEmail | string | `email` | example@example.com |
 action_result.data.\*.parentId | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.meetingId | string | `webex meeting id` | 9testf03e1a49be883320fe35fde314_I_6522066146543test |
-action_result.parameter.room_id | string | `webex message id` | |
+action_result.parameter.room_id | string | `webex room id` | |
 action_result.parameter.parent_id | string | `webex message id` | |
 action_result.parameter.before | string | | |
 action_result.parameter.before_message | string | | |
@@ -536,7 +548,7 @@ action_result.summary.total_messages | numeric | | 10 |
 
 Retrieve the details of a specific Webex message by message ID
 
-Type: **generic** \
+Type: **investigate** \
 Read only: **True**
 
 #### Action Parameters
@@ -567,7 +579,7 @@ summary.total_objects | numeric | | |
 
 Retrieve details of a specific Webex meeting using meeting ID or meeting number
 
-Type: **generic** \
+Type: **investigate** \
 Read only: **True**
 
 #### Action Parameters
@@ -575,8 +587,8 @@ Read only: **True**
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **meeting_id** | required | The unique identifier of the meeting being requested (UUID format) | string | `webex meeting id` |
-**current** | optional | Whether to retrieve only the current scheduled meeting of the series (true or false) | boolean | |
 **host_email** | optional | Email address of the meeting host (for admin-level access) | string | `email` |
+**current** | optional | Whether to retrieve only the current scheduled meeting of the series (true or false) | boolean | |
 
 #### Action Output
 
@@ -676,7 +688,7 @@ summary.total_objects | numeric | | |
 
 List users in your Webex organization using filters like email, name, ID, roles, or location
 
-Type: **generic** \
+Type: **investigate** \
 Read only: **True**
 
 #### Action Parameters

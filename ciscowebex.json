@@ -452,8 +452,11 @@
                 {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
+                    "contains": [
+                        "webex message id"
+                    ],
                     "example_values": [
-                        "L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDATEST4MzEXAMPLE"
+                        "testzcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDATEST4MzEXAMPLE"
                     ]
                 },
                 {
@@ -541,7 +544,7 @@
             "action": "create a room",
             "identifier": "create_room",
             "description": "Create a new Webex room (space)",
-            "verbose": "Creates a new Webex room with optional team, lock(moderate), public, classification, and announcement settings. Public rooms require a description. Announcement mode requires the room to be locked. Team rooms cannot be locked. Requires permissions spark:rooms_write; spark:teams:read is needed if using team_id; classification needs spark:compliance_read.",
+            "verbose": "Public rooms require a description. Announcement mode requires the room to be locked. Team rooms cannot be locked. Requires permissions spark:rooms_write; spark:teams:read is needed if using team_id; classification needs spark:compliance_read.",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -551,29 +554,29 @@
                     "required": true,
                     "order": 0
                 },
+                "description": {
+                    "description": "The description of the space",
+                    "data_type": "string",
+                    "order": 1
+                },
                 "team_id": {
                     "description": "The ID for the team with which this room is associated",
                     "data_type": "string",
-                    "order": 1
+                    "order": 2
                 },
                 "classification_id": {
                     "description": "The classification_id for the room",
                     "data_type": "string",
-                    "order": 2
+                    "order": 3
                 },
                 "is_locked": {
                     "description": "Set the space as locked/moderated; creator becomes a moderator",
                     "data_type": "boolean",
-                    "order": 3
+                    "order": 4
                 },
                 "is_public": {
                     "description": "If true, the room is discoverable by anyone in the org; description must be provided",
                     "data_type": "boolean",
-                    "order": 4
-                },
-                "description": {
-                    "description": "The description of the space",
-                    "data_type": "string",
                     "order": 5
                 },
                 "is_announcement_only": {
@@ -924,7 +927,7 @@
             "action": "schedule meeting",
             "identifier": "schedule_meeting",
             "description": "Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting",
-            "verbose": "<p>Admin configuration is required to allow public meetings; otherwise, setting <code>public_meeting=true</code> will result in an error.</p><p>Required OAuth scopes: <code>meeting:schedules_write</code>, <code>meeting:admin_write</code>, and appropriate host entitlements (e.g., webinar license).</p><p>  Parameter note: <code>join_before_host_minutes</code> is only valid if <code>enabled_join_before_host=true</code>.</p><p>  For ad-hoc meetings (<code>adhoc=true</code>), the <code>roomId</code> parameter is required to link the meeting to a specific Webex space. In this case <code>hostEmail</code> is ignored.</p>",
+            "verbose": "<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href=\"https://developer.webex.com/docs/integrations#scopes\" target=\"_blank\">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don\u2019t set it, Webex will use the host\u2019s time zone. <a href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" target=\"_blank\">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href=\"https://developer.webex.com/docs/api/v1/meetings/create-a-meeting\" target=\"_blank\">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored \u2014 the meeting will use the Webex space owner as host.</li></ul>",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -956,75 +959,26 @@
                     "data_type": "string",
                     "order": 4
                 },
-                "password": {
-                    "description": "Password to join the meeting",
-                    "data_type": "string",
-                    "order": 5
-                },
-                "enabled_auto_record_meeting": {
-                    "description": "Automatically record when meeting starts",
-                    "data_type": "boolean",
-                    "order": 6
-                },
-                "allow_any_user_to_be_co_host": {
-                    "description": "Allow any qualified user to be cohost",
-                    "data_type": "boolean",
-                    "order": 7
-                },
-                "enabled_join_before_host": {
-                    "description": "Allow attendees to join before host",
-                    "data_type": "boolean",
-                    "order": 8
-                },
-                "join_before_host_minutes": {
-                    "description": "Minutes attendees can join before host (0,5,10,15)",
-                    "data_type": "numeric",
-                    "order": 9
-                },
-                "enable_connect_audio_before_host": {
-                    "description": "Allow audio connect before host",
-                    "data_type": "boolean",
-                    "order": 10
-                },
                 "invitees": {
                     "description": "List of emails to invite (comma\u2011separated)",
                     "data_type": "string",
-                    "order": 11
+                    "order": 5
                 },
-                "recurrence": {
-                    "description": "Meeting series rule (RFC\u20112445, e.g. FREQ=DAILY;INTERVAL=1)",
+                "password": {
+                    "description": "Password to join the meeting",
                     "data_type": "string",
-                    "order": 12
-                },
-                "adhoc": {
-                    "description": "Create an ad\u2011hoc (instant) meeting in a room",
-                    "data_type": "boolean",
-                    "order": 13
-                },
-                "room_id": {
-                    "description": "Room (space) ID for ad\u2011hoc meeting",
-                    "data_type": "string",
-                    "contains": [
-                        "webex room id"
-                    ],
-                    "order": 14,
-                    "primary": true
+                    "order": 6
                 },
                 "send_email": {
                     "description": "Whether to email host & invitees",
                     "data_type": "boolean",
-                    "order": 15,
+                    "order": 7,
                     "default": true
                 },
                 "host_email": {
                     "description": "Host email (admin scopes required)",
                     "data_type": "string",
-                    "order": 16
-                },
-                "session_type_id": {
-                    "description": "Session type ID (required for webinars)",
-                    "data_type": "numeric",
-                    "order": 17
+                    "order": 8
                 },
                 "scheduled_type": {
                     "description": "Type of meeting: meeting, webinar, or personal_room_meeting",
@@ -1035,6 +989,55 @@
                         "event",
                         "personalRoomMeeting"
                     ],
+                    "order": 9
+                },
+                "adhoc": {
+                    "description": "Create an ad\u2011hoc (instant) meeting in a room",
+                    "data_type": "boolean",
+                    "order": 10
+                },
+                "room_id": {
+                    "description": "Room (space) ID for ad\u2011hoc meeting",
+                    "data_type": "string",
+                    "contains": [
+                        "webex room id"
+                    ],
+                    "order": 11,
+                    "primary": true
+                },
+                "recurrence": {
+                    "description": "Meeting series rule (RFC\u20112445, e.g. FREQ=DAILY;INTERVAL=1)",
+                    "data_type": "string",
+                    "order": 12
+                },
+                "session_type_id": {
+                    "description": "Session type ID (required for webinars)",
+                    "data_type": "numeric",
+                    "order": 13
+                },
+                "enabled_auto_record_meeting": {
+                    "description": "Automatically record when meeting starts",
+                    "data_type": "boolean",
+                    "order": 14
+                },
+                "allow_any_user_to_be_co_host": {
+                    "description": "Allow any qualified user to be cohost",
+                    "data_type": "boolean",
+                    "order": 15
+                },
+                "enabled_join_before_host": {
+                    "description": "Allow attendees to join before host",
+                    "data_type": "boolean",
+                    "order": 16
+                },
+                "join_before_host_minutes": {
+                    "description": "Minutes attendees can join before host (0,5,10,15)",
+                    "data_type": "numeric",
+                    "order": 17
+                },
+                "enable_connect_audio_before_host": {
+                    "description": "Allow audio connect before host",
+                    "data_type": "boolean",
                     "order": 18
                 },
                 "enable_automatic_lock": {
@@ -1712,7 +1715,7 @@
             "identifier": "retrieve_meeting_participants",
             "description": "Retrieve all participants in an in-progress or ended Webex meeting",
             "verbose": "Retrieve a list of participants from a specific Webex meeting instance or series. Requires meetingId. Optional parameters include host email, time filters, and breakout session ID.",
-            "type": "generic",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "meeting_id": {
@@ -1762,6 +1765,7 @@
                 "limit": {
                     "description": "Max number of participants to return (1\u2013100)",
                     "data_type": "numeric",
+                    "default": 10,
                     "order": 7
                 }
             },
@@ -2014,14 +2018,14 @@
             "action": "list messages",
             "identifier": "list_messages",
             "description": "Retrieve a list of messages from a Webex room or 1:1 conversation",
-            "type": "generic",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "room_id": {
                     "description": "The ID of the room to list messages from",
                     "data_type": "string",
                     "contains": [
-                        "webex message id"
+                        "webex room id"
                     ],
                     "required": true,
                     "order": 0,
@@ -2154,7 +2158,7 @@
                     "data_path": "action_result.parameter.room_id",
                     "data_type": "string",
                     "contains": [
-                        "webex message id"
+                        "webex room id"
                     ]
                 },
                 {
@@ -2221,7 +2225,7 @@
             "action": "get message details",
             "identifier": "get_message_details",
             "description": "Retrieve the details of a specific Webex message by message ID",
-            "type": "generic",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "message_id": {
@@ -2352,7 +2356,7 @@
             "action": "get meeting details",
             "identifier": "get_meeting_details",
             "description": "Retrieve details of a specific Webex meeting using meeting ID or meeting number",
-            "type": "generic",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "meeting_id": {
@@ -2365,20 +2369,20 @@
                     "order": 0,
                     "primary": true
                 },
-                "current": {
-                    "description": "Whether to retrieve only the current scheduled meeting of the series (true or false)",
-                    "data_type": "boolean",
-                    "order": 1,
-                    "default": false
-                },
                 "host_email": {
                     "description": "Email address of the meeting host (for admin-level access)",
                     "data_type": "string",
                     "contains": [
                         "email"
                     ],
-                    "order": 2,
+                    "order": 1,
                     "primary": true
+                },
+                "current": {
+                    "description": "Whether to retrieve only the current scheduled meeting of the series (true or false)",
+                    "data_type": "boolean",
+                    "order": 2,
+                    "default": false
                 }
             },
             "output": [
@@ -3064,7 +3068,7 @@
             "action": "list users",
             "identifier": "list_users",
             "description": "List users in your Webex organization using filters like email, name, ID, roles, or location",
-            "type": "generic",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "email": {

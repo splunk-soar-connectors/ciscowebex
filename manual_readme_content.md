@@ -33,7 +33,8 @@ This app supports two types of authentication:
 ## Supported Actions and Required Scopes
 
 | Action | Description | Required Scopes |
-|-----------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------------|
+|-----------------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
+| **Test Connectivity** | Verifies the app configuration and connectivity to the Webex API | `spark:people_read`, `spark:rooms_read`, `spark:messages_write` |
 | **List Rooms** | List Webex rooms (spaces) | `spark:rooms_read` |
 | **Get User** | Get user ID from email address | `spark:people_read` |
 | **Send Message** | Send a message to a user or room | `spark:messages_write`, `spark:rooms_read` (if room name lookup is used) |
@@ -47,3 +48,14 @@ This app supports two types of authentication:
 | **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read` |
 
 ______________________________________________________________________
+
+### If You Have a Free Webex Account
+
+Some features and settings are **not available** for free accounts:
+
+- **Create Room:** You cannot use `isAnnouncementOnly`, `isPublic`, `isLocked`, or `classificationId`.
+- **Add People:** You can’t set `isModerator`.
+- **List Users:** You may not be able to use `roles` or `orgId`.
+- **Schedule Meeting:** The following won’t work: `host`, `adhoc`, `roomId`, `enabledJoinBeforeHost`, `joinBeforeHostMinutes`, `recording`, `publicMeeting` (needs admin), and `sessionTypeId` (webinars only).
+
+If you want these features, you will need to upgrade to a paid [Webex plan](https://pricing.webex.com/us/en/hybrid-work/meetings/).
