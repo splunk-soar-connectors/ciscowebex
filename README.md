@@ -20,7 +20,6 @@ This app supports two types of authentication:
 ### 2. OAuth
 
 - Use your **Client ID**, **Client Secret**, and required **Scopes**.
-- Provides long-term, secure access for multiple users.
 
 #### Steps:
 
@@ -222,7 +221,7 @@ Create a new Webex room (space)
 Type: **generic** \
 Read only: **False**
 
-Public rooms require a description. Announcement mode requires the room to be locked. Team rooms cannot be locked. Requires permissions spark:rooms_write; spark:teams:read is needed if using team_id; classification needs spark:compliance_read.
+<ul><li>Public rooms require a description.</li><li>Announcement mode requires the room to be locked.</li><li>Team rooms cannot be locked.</li><li>Requires permission: <code>spark:rooms_write</code>.</li><li>If using <code>team_id</code>, permission <code>spark:teams:read</code> is needed.</li><li>For <code>classification</code>, permission <code>spark:compliance_read</code> is needed.</li></ul>
 
 #### Action Parameters
 
@@ -317,8 +316,8 @@ Read only: **False**
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **title** | required | Title of the meeting (max 128 chars) | string | |
-**start** | required | Meeting start time (ISO 8601) | string | |
-**end** | required | Meeting end time (ISO 8601) | string | |
+**start** | required | Meeting start time (ISO 8601 format) | string | |
+**end** | required | Meeting end time (ISO 8601 format) | string | |
 **timezone** | optional | IANA time zone for the meeting (e.g., America/Los_Angeles) | string | |
 **description** | optional | Meeting description (max 1300 chars) | string | |
 **invitees** | optional | List of emails to invite (comma‑separated) | string | |
@@ -447,7 +446,7 @@ Retrieve all participants in an in-progress or ended Webex meeting
 Type: **investigate** \
 Read only: **True**
 
-Retrieve a list of participants from a specific Webex meeting instance or series. Requires meetingId. Optional parameters include host email, time filters, and breakout session ID.
+Retrieve a list of participants from a specific Webex meeting instance or series
 
 #### Action Parameters
 

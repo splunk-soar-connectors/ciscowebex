@@ -92,6 +92,31 @@ PARAMETER_LIST_FOR_SCHEDULE_MEETING = (
     ("unlocked_meeting_join_security", "unlockedMeetingJoinSecurity"),
 )
 
+PARAMETER_LIST_FOR_RETRIVE_MEETING_PARTICIPANTS = {
+    "breakoutSessionId": "breakout_session_id",
+    "meetingStartTimeFrom": "meeting_start_time_from",
+    "meetingStartTimeTo": "meeting_start_time_to",
+    "hostEmail": "host_email",
+    "joinTimeFrom": "join_time_from",
+    "joinTimeTo": "join_time_to",
+}
+
+PARAMETER_LIST_FOR_LIST_MESSAGES = {
+    "roomId": "room_id",
+    "parentId": "parent_id",
+    "before": "before",
+    "beforeMessage": "before_message",
+}
+
+PARAMETER_LIST_FOR_LIST_USERS = {
+    "email": "email",
+    "displayName": "display_name",
+    "id": "id",
+    "orgId": "org_id",
+    "roles": "roles",
+    "locationId": "location_id",
+}
+
 ERROR_INVALID_INT_PARAM = "Please provide a valid integer value in the '{key}' parameter"
 ERROR_NEG_INT_PARAM = "Please provide a positive integer value in the '{key}' parameter"
 ERROR_ZERO_INT_PARAM = "Please provide a non-zero integer value in the '{key}' parameter"

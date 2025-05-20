@@ -10,7 +10,6 @@ This app supports two types of authentication:
 ### 2. OAuth
 
 - Use your **Client ID**, **Client Secret**, and required **Scopes**.
-- Provides long-term, secure access for multiple users.
 
 #### Steps:
 

@@ -805,24 +805,18 @@ class CiscoWebexConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        title = param["title"]
-        team_id = param.get("team_id", None)
-        classification_id = param.get("classification_id", None)
-        is_locked = param.get("is_locked", False)
-        is_public = param.get("is_public", False)
-        description = param.get("description", None)
-        is_announcement_only = param.get("is_announcement_only", False)
-
-        # Set up request body
         data = {
-            "title": title,
-            "teamId": team_id,
-            "classificationId": classification_id,
-            "isLocked": is_locked,
-            "isPublic": is_public,
-            "description": description,
-            "isAnnouncementOnly": is_announcement_only,
+            "title": param["title"],
+            "teamId": param.get("team_id"),
+            "classificationId": param.get("classification_id"),
+            "isLocked": param.get("is_locked", False),
+            "isPublic": param.get("is_public", False),
+            "description": param.get("description"),
+            "isAnnouncementOnly": param.get("is_announcement_only", False),
         }
+
+        # Remove keys where the value is None or False (except for title, which is required)
+        data = {k: v for k, v in data.items() if v or k == "title"}
 
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result, data=data, method="post")
@@ -914,33 +908,20 @@ class CiscoWebexConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        meeting_id = param["meeting_id"]
-        breakout_session_id = param.get("breakout_session_id")
-        meeting_start_time_from = param.get("meeting_start_time_from")
-        meeting_start_time_to = param.get("meeting_start_time_to")
-        host_email = param.get("host_email")
-        join_time_from = param.get("join_time_from")
-        join_time_to = param.get("join_time_to")
-        ret_val, max_participants = self.validate_integer(action_result, param.get("limit", 100), "limit")
+        # Required parameter
+        params = {"meetingId": param["meeting_id"]}
 
+        # Validate limit
+        ret_val, max_participants = self.validate_integer(action_result, param.get("limit", 100), "limit")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # Prepare query params
-        params = {"meetingId": meeting_id}
+        # Add non-empty optional parameters
+        params.update(
+            {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_RETRIVE_MEETING_PARTICIPANTS.items() if param.get(value)}
+        )
 
-        if breakout_session_id:
-            params["breakoutSessionId"] = breakout_session_id
-        if meeting_start_time_from:
-            params["meetingStartTimeFrom"] = meeting_start_time_from
-        if meeting_start_time_to:
-            params["meetingStartTimeTo"] = meeting_start_time_to
-        if host_email:
-            params["hostEmail"] = host_email
-        if join_time_from:
-            params["joinTimeFrom"] = join_time_from
-        if join_time_to:
-            params["joinTimeTo"] = join_time_to
+        # Add max participants if valid
         if max_participants:
             params["max"] = max_participants
 
@@ -966,31 +947,18 @@ class CiscoWebexConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        # Extract parameters
-        room_id = param.get("room_id")
-        parent_id = param.get("parent_id")
-        before = param.get("before")
-        before_message = param.get("before_message")
         ret_val, max_messages = self.validate_integer(action_result, param.get("limit", 50), "limit")
-
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # At least one of room_id or parent_id must be provided
-        if not room_id and not parent_id:
+        # At least one of 'room_id' or 'parent_id' must be provided
+        if not param.get("room_id") and not param.get("parent_id"):
             return action_result.set_status(phantom.APP_ERROR, "You must provide at least 'room_id' or 'parent_id'.")
 
-        # Build query parameters
-        query_params = {}
+        # Required parameter (only if present)
+        query_params = {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_LIST_MESSAGES.items() if param.get(value)}
 
-        if room_id:
-            query_params["roomId"] = room_id
-        if parent_id:
-            query_params["parentId"] = parent_id
-        if before:
-            query_params["before"] = before
-        if before_message:
-            query_params["beforeMessage"] = before_message
+        # Add max messages if valid
         if max_messages:
             query_params["max"] = max_messages
 
@@ -1079,39 +1047,22 @@ class CiscoWebexConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        # Extract parameters
-        email = param.get("email")
-        display_name = param.get("display_name")
-        person_id = param.get("id")
-        org_id = param.get("org_id")
-        roles = param.get("roles")
-        calling_data = param.get("calling_data", False)
-        location_id = param.get("location_id")
+        # Validate limit
         ret_val, max_people = self.validate_integer(action_result, param.get("limit", 100), "limit")
-
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        # At least one of email, display_name, or id is required (for non-admins)
-        if not any([email, display_name, person_id]):
+        # At least one of email, display_name, or id is recommended for non-admin users
+        if not any([param.get("email"), param.get("display_name"), param.get("id")]):
             self.debug_print("No filters provided (email, display_name, id). This may fail for non-admin users.")
 
-        # Build query parameters
-        query_params = {}
-        if email:
-            query_params["email"] = email
-        if display_name:
-            query_params["displayName"] = display_name
-        if person_id:
-            query_params["id"] = person_id
-        if org_id:
-            query_params["orgId"] = org_id
-        if roles:
-            query_params["roles"] = roles
-        if calling_data:
-            query_params["callingData"] = str(calling_data).lower()
-        if location_id:
-            query_params["locationId"] = location_id
+        query_params = {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_LIST_USERS.items() if param.get(value)}
+
+        # Special handling for calling_data
+        if param.get("calling_data", False):
+            query_params["callingData"] = "true"
+
+        # Add validated max value
         if max_people:
             query_params["max"] = max_people
 
