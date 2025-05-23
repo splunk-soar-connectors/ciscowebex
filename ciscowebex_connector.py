@@ -1083,6 +1083,69 @@ class CiscoWebexConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
+    def _handle_get_recording_details(self, param):
+        """Handles the get recording details action."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Extract parameters
+        recording_id = param.get("recording_id")
+        meeting_id = param.get("meeting_id")
+        host_email = param.get("host_email")
+
+        if not recording_id and not meeting_id:
+            return action_result.set_status(
+                phantom.APP_ERROR, "Missing required parameter. please provide either 'recording_id' or 'meeting_id'"
+            )
+
+        # Prepare query parameters
+        query_params = {"hostEmail": host_email} if host_email else {}
+
+        if recording_id:
+            endpoint = consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id)
+        elif meeting_id:
+            endpoint = consts.WEBEX_RECORDING_DETAILS_BY_MEETING_ID_ENDPOINT.format(meeting_id=meeting_id)
+        # Make API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(endpoint, action_result, params=query_params)
+        else:
+            ret_val, response = self._update_request(action_result, endpoint, params=query_params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if not recording_id:
+            items = response.get("items", [])
+
+            if not items or not items[0].get("id"):
+                return action_result.set_status(phantom.APP_ERROR, f"Recording details not found for meeting id: {meeting_id}")
+
+            for item in items:
+                recording_id = item["id"]
+
+                # Make API call
+                if self._api_key:
+                    ret_val, response = self._make_rest_call_using_api_key(
+                        consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id),
+                        action_result,
+                        params=query_params,
+                    )
+                else:
+                    ret_val, response = self._update_request(
+                        action_result,
+                        consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id),
+                        params=query_params,
+                    )
+
+                if phantom.is_fail(ret_val):
+                    return action_result.get_status()
+
+                action_result.add_data(response)
+        else:
+            action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Recording details retrieved successfully")
+
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
@@ -1123,6 +1186,9 @@ class CiscoWebexConnector(BaseConnector):
 
         elif action_id == "list_users":
             ret_val = self._handle_list_users(param)
+
+        elif action_id == "get_recording_details":
+            ret_val = self._handle_get_recording_details(param)
 
         return ret_val
 

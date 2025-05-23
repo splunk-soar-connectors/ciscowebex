@@ -93,7 +93,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [list messages](#action-list-messages) - Retrieve a list of messages from a Webex room or 1:1 conversation \
 [get message details](#action-get-message-details) - Retrieve the details of a specific Webex message by message ID \
 [get meeting details](#action-get-meeting-details) - Retrieve details of a specific Webex meeting using meeting ID or meeting number \
-[list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location
+[list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location \
+[get recording details](#action-get-recording-details) - Retrieve details of a Webex meeting recording using its recording ID
 
 ## action: 'test connectivity'
 
@@ -750,6 +751,56 @@ action_result.parameter.org_id | string | | |
 action_result.parameter.roles | string | | |
 action_result.parameter.calling_data | boolean | | |
 action_result.parameter.location_id | string | | |
+
+## action: 'get recording details'
+
+Retrieve details of a Webex meeting recording using its recording ID
+
+Type: **generic** \
+Read only: **True**
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**recording_id** | optional | Unique identifier of the Webex recording. | string | `webex recording id` |
+**meeting_id** | optional | Unique identifier of the Webex meeting. | string | `webex meeting id` |
+**host_email** | optional | Email address of the meeting host (admin only). | string | `email` |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.data.\*.id | string | `webex recording id` | test06506faa48c790592a4198c3test |
+action_result.data.\*.topic | string | | soar test-20250522 0829-1 |
+action_result.data.\*.format | string | | MP4 |
+action_result.data.\*.status | string | | available |
+action_result.data.\*.siteUrl | string | | company.webex.com |
+action_result.data.\*.password | string | | testpass |
+action_result.data.\*.hostEmail | string | | example@example.com |
+action_result.data.\*.meetingId | string | | test5560719471599d7test2a4c1b72_I_6547053376test |
+action_result.data.\*.shareToMe | boolean | | False |
+action_result.data.\*.sizeBytes | numeric | | 1067115 |
+action_result.data.\*.createTime | string | | 2025-05-22T08:31:19Z |
+action_result.data.\*.downloadUrl | string | | https://company.webex.com/siteurl/lsr.php?RCID=1a417c966testaef288e9043adatest |
+action_result.data.\*.playbackUrl | string | `url` | https://company.webex.com/siteurl/ldr.php?RCID=testcc66c2ee8536aabdd0ec607test |
+action_result.data.\*.serviceType | string | | MeetingCenter |
+action_result.data.\*.timeRecorded | string | | 2025-05-22T08:23:05Z |
+action_result.data.\*.durationSeconds | numeric | | 219 |
+action_result.data.\*.meetingSeriesId | string | | test5560719471599d76418test |
+action_result.data.\*.scheduledMeetingId | string | | test60719471599d764182a4c1b7test250522T150000Z |
+action_result.data.\*.temporaryDirectDownloadLinks.expiration | string | | 2025-05-22T13:44:50Z |
+action_result.data.\*.temporaryDirectDownloadLinks.audioDownloadLink | string | | https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/audio.mp3?siteid=00240&recordid=197000062& |
+action_result.data.\*.temporaryDirectDownloadLinks.recordingDownloadLink | string | `url` | https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet?siteid=00240&recordid=197000062 |
+action_result.data.\*.temporaryDirectDownloadLinks.transcriptDownloadLink | string | `url` | https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/transcript.txt?siteid=00240&recordid=197000062&confid=6547000000000001771&from=MBS |
+action_result.status | string | | success |
+action_result.message | string | | Message: Recording details retrieved successfully, Status code: False |
+action_result.summary.message | string | | Recording details retrieved successfully |
+action_result.parameter.recording_id | string | `webex recording id` | test06506faa48c790592a4198c3test |
+action_result.parameter.meeting_id | string | `webex meeting id` | |
+action_result.parameter.host_email | string | `email` | |
+summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | |
 
 ______________________________________________________________________
 
