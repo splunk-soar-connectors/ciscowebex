@@ -49,7 +49,7 @@
         },
         "scope": {
             "description": "Scopes (Append extra space-seperated scopes which are added during app creation from webex portal)",
-            "default": "spark:people_read spark:rooms_read spark:messages_write",
+            "default": "spark:people_read spark:rooms_read spark:messages_write spark:rooms_write spark:memberships_write spark:messages_read meeting:participants_read meeting:schedules_read meeting:recordings_read meeting:schedules_write",
             "data_type": "string",
             "order": 4
         }
@@ -544,7 +544,7 @@
             "action": "create a room",
             "identifier": "create_room",
             "description": "Create a new Webex room (space)",
-            "verbose": "<ul><li>Public rooms require a description.</li><li>Announcement mode requires the room to be locked.</li><li>Team rooms cannot be locked.</li><li>Requires permission: <code>spark:rooms_write</code>.</li><li>If using <code>team_id</code>, permission <code>spark:teams:read</code> is needed.</li><li>For <code>classification</code>, permission <code>spark:compliance_read</code> is needed.</li></ul>",
+            "verbose": "<ul><li>Public rooms require a description.</li><li>Announcement mode requires the room to be locked.</li><li>Team rooms cannot be locked.</li><li>Requires permission: <code>spark:rooms_write</code>.</li></ul>",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -927,7 +927,7 @@
             "action": "schedule meeting",
             "identifier": "schedule_meeting",
             "description": "Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting",
-            "verbose": "<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href=\"https://developer.webex.com/docs/integrations#scopes\" target=\"_blank\">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don\u2019t set it, Webex will use the host\u2019s time zone. <a href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" target=\"_blank\">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href=\"https://developer.webex.com/docs/api/v1/meetings/create-a-meeting\" target=\"_blank\">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored \u2014 the meeting will use the Webex space owner as host.</li></ul>",
+            "verbose": "<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_schedule_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href=\"https://developer.webex.com/docs/integrations#scopes\" target=\"_blank\">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don\u2019t set it, Webex will use the host\u2019s time zone. <a href=\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\" target=\"_blank\">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href=\"https://developer.webex.com/docs/api/v1/meetings/create-a-meeting\" target=\"_blank\">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored \u2014 the meeting will use the Webex space owner as host.</li></ul>",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -3664,7 +3664,9 @@
                 }
             ],
             "render": {
-                "type": "table"
+                "type": "custom",
+                "view": "ciscowebex_view.display_view",
+                "title": "Get Recording Details"
             },
             "versions": "EQ(*)"
         }

@@ -17,7 +17,7 @@ This app supports two types of authentication:
 1. Choose the app type: **Integration**
 1. Set **redirect URI** (for OAuth):
    - You can find it while run the test connectivity. e.g.`https://<your-splunk-soar-url>/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/<asset_name>/result`
-1. Provide defoult required scopes `spark:people_read`, `spark:rooms_read` and `spark:messages_write`
+1. Provide default required scopes to run all actions: `spark:people_read spark:rooms_read spark:messages_write spark:rooms_write spark:memberships_write spark:messages_read meeting:participants_read meeting:schedules_read meeting:recordings_read meeting:schedules_write`.
 1. Collect:
    - **Client ID**
    - **Client Secret**
@@ -33,18 +33,18 @@ This app supports two types of authentication:
 
 | Action | Description | Required Scopes |
 |-----------------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| **Test Connectivity** | Verifies the app configuration and connectivity to the Webex API | `spark:people_read`, `spark:rooms_read`, `spark:messages_write` |
-| **List Rooms** | List Webex rooms (spaces) | `spark:rooms_read` |
-| **Get User** | Get user ID from email address | `spark:people_read` |
+| **Test Connectivity** | Verifies the app configuration and connectivity to the Webex API | `spark:people_read`, `spark:rooms_read`, `spark:messages_write`, `spark:rooms_write`, `spark:memberships_write`, `spark:messages_read`, `meeting:participants_read`, `meeting:schedules_read`, `meeting:recordings_read`, and `meeting:schedules_write` |
+| **List Rooms** | List Webex rooms (spaces) | `spark:rooms_read`|
+| **Get User** | Get user ID from email address | `spark:people_read`, for admin (`spark-admin:people_read`) |
 | **Send Message** | Send a message to a user or room | `spark:messages_write`, `spark:rooms_read` (if room name lookup is used) |
 | **Create a Room** | Create a new Webex room (space) | `spark:rooms_write` |
-| **Add People** | Add a person to a Webex room (as member or moderator) | `spark:memberships_write` |
-| **Schedule Meeting** | Schedule a Webex meeting with details and invitees | `meeting:schedules_write` |
-| **Retrieve Meeting Participants** | Retrieve participants in an in-progress or ended Webex meeting | `meeting:participants_read` |
-| **List Messages** | Retrieve a list of messages from a Webex room or 1:1 conversation | `spark:messages_read` |
-| **Get Message Details** | Retrieve the details of a specific Webex message by message ID | `spark:messages_read` |
-| **Get Meeting Details** | Retrieve details of a specific meeting using meeting ID or meeting number | `meeting:recordings_read` or `meeting:schedules_read` |
-| **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read` |
+| **Add People** | Add a person to a Webex room (as member or moderator) | `spark:memberships_write`, for admin (`spark-admin:people_read`)|
+| **Schedule Meeting** | Schedule a Webex meeting with details and invitees | `meeting:schedules_write`, for admin(`meeting:admin_schedule_write`) |
+| **Retrieve Meeting Participants** | Retrieve participants in an in-progress or ended Webex meeting | `meeting:participants_read`, for admin(`meeting:admin_participants_read`) |
+| **List Messages** | Retrieve a list of messages from a Webex room or 1:1 conversation | `spark:messages_read`, for admin (`spark-admin:messages_read`) |
+| **Get Message Details** | Retrieve the details of a specific Webex message by message ID | `spark:messages_read`, for admin (`spark-admin:messages_read`) |
+| **Get Meeting Details** | Retrieve details of a specific meeting using meeting ID or meeting number | `meeting:schedules_read`, for admin (`meeting:admin_schedule_read`) |
+| **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read`, for admin (`spark-admin:people_read`) to retrieve other user details |
 
 ______________________________________________________________________
 

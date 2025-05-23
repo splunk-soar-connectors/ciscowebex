@@ -27,7 +27,7 @@ This app supports two types of authentication:
 1. Choose the app type: **Integration**
 1. Set **redirect URI** (for OAuth):
    - You can find it while run the test connectivity. e.g.`https://<your-splunk-soar-url>/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/<asset_name>/result`
-1. Provide defoult required scopes `spark:people_read`, `spark:rooms_read` and `spark:messages_write`
+1. Provide default required scopes to run all actions: `spark:people_read spark:rooms_read spark:messages_write spark:rooms_write spark:memberships_write spark:messages_read meeting:participants_read meeting:schedules_read meeting:recordings_read meeting:schedules_write`.
 1. Collect:
    - **Client ID**
    - **Client Secret**
@@ -43,18 +43,18 @@ This app supports two types of authentication:
 
 | Action | Description | Required Scopes |
 |-----------------------------|-------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| **Test Connectivity** | Verifies the app configuration and connectivity to the Webex API | `spark:people_read`, `spark:rooms_read`, `spark:messages_write` |
-| **List Rooms** | List Webex rooms (spaces) | `spark:rooms_read` |
-| **Get User** | Get user ID from email address | `spark:people_read` |
+| **Test Connectivity** | Verifies the app configuration and connectivity to the Webex API | `spark:people_read`, `spark:rooms_read`, `spark:messages_write`, `spark:rooms_write`, `spark:memberships_write`, `spark:messages_read`, `meeting:participants_read`, `meeting:schedules_read`, `meeting:recordings_read`, and `meeting:schedules_write` |
+| **List Rooms** | List Webex rooms (spaces) | `spark:rooms_read`|
+| **Get User** | Get user ID from email address | `spark:people_read`, for admin (`spark-admin:people_read`) |
 | **Send Message** | Send a message to a user or room | `spark:messages_write`, `spark:rooms_read` (if room name lookup is used) |
 | **Create a Room** | Create a new Webex room (space) | `spark:rooms_write` |
-| **Add People** | Add a person to a Webex room (as member or moderator) | `spark:memberships_write` |
-| **Schedule Meeting** | Schedule a Webex meeting with details and invitees | `meeting:schedules_write` |
-| **Retrieve Meeting Participants** | Retrieve participants in an in-progress or ended Webex meeting | `meeting:participants_read` |
-| **List Messages** | Retrieve a list of messages from a Webex room or 1:1 conversation | `spark:messages_read` |
-| **Get Message Details** | Retrieve the details of a specific Webex message by message ID | `spark:messages_read` |
-| **Get Meeting Details** | Retrieve details of a specific meeting using meeting ID or meeting number | `meeting:recordings_read` or `meeting:schedules_read` |
-| **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read` |
+| **Add People** | Add a person to a Webex room (as member or moderator) | `spark:memberships_write`, for admin (`spark-admin:people_read`)|
+| **Schedule Meeting** | Schedule a Webex meeting with details and invitees | `meeting:schedules_write`, for admin(`meeting:admin_schedule_write`) |
+| **Retrieve Meeting Participants** | Retrieve participants in an in-progress or ended Webex meeting | `meeting:participants_read`, for admin(`meeting:admin_participants_read`) |
+| **List Messages** | Retrieve a list of messages from a Webex room or 1:1 conversation | `spark:messages_read`, for admin (`spark-admin:messages_read`) |
+| **Get Message Details** | Retrieve the details of a specific Webex message by message ID | `spark:messages_read`, for admin (`spark-admin:messages_read`) |
+| **Get Meeting Details** | Retrieve details of a specific meeting using meeting ID or meeting number | `meeting:schedules_read`, for admin (`meeting:admin_schedule_read`) |
+| **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read`, for admin (`spark-admin:people_read`) to retrieve other user details |
 
 ______________________________________________________________________
 
@@ -222,7 +222,7 @@ Create a new Webex room (space)
 Type: **generic** \
 Read only: **False**
 
-<ul><li>Public rooms require a description.</li><li>Announcement mode requires the room to be locked.</li><li>Team rooms cannot be locked.</li><li>Requires permission: <code>spark:rooms_write</code>.</li><li>If using <code>team_id</code>, permission <code>spark:teams:read</code> is needed.</li><li>For <code>classification</code>, permission <code>spark:compliance_read</code> is needed.</li></ul>
+<ul><li>Public rooms require a description.</li><li>Announcement mode requires the room to be locked.</li><li>Team rooms cannot be locked.</li><li>Requires permission: <code>spark:rooms_write</code>.</li></ul>
 
 #### Action Parameters
 
@@ -310,7 +310,7 @@ Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting
 Type: **generic** \
 Read only: **False**
 
-<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href="https://developer.webex.com/docs/integrations#scopes" target="_blank">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don’t set it, Webex will use the host’s time zone. <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href="https://developer.webex.com/docs/api/v1/meetings/create-a-meeting" target="_blank">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored — the meeting will use the Webex space owner as host.</li></ul>
+<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_schedule_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href="https://developer.webex.com/docs/integrations#scopes" target="_blank">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don’t set it, Webex will use the host’s time zone. <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href="https://developer.webex.com/docs/api/v1/meetings/create-a-meeting" target="_blank">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored — the meeting will use the Webex space owner as host.</li></ul>
 
 #### Action Parameters
 
