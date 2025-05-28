@@ -34,6 +34,7 @@ WEBEX_STR_GRANT_TYPE = "grant_type"
 WEBEX_STR_REDIRECT_URI = "redirect_uri"
 WEBEX_STR_IS_ENCRYPTED = "is_encrypted"
 WEBEX_STR_SCOPE = "scope"
+WEBEX_JSON_HEADERS = {"Content-Type": "application/json"}
 
 WEBEX_SUCCESS_CODE_RECEIVED_MESSAGE = "Code received. Please close this window, the action will continue to get new token"
 WEBEX_SUCCESS_TEST_CONNECTIVITY = "Test Connectivity Passed"
@@ -70,6 +71,7 @@ WEBEX_LIST_USERS_ENDPOINT = "/people"
 WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT = "/recordings/{recording_id}"
 WEBEX_RECORDING_DETAILS_BY_MEETING_ID_ENDPOINT = "/recordings?meetingId={meeting_id}"
 WEBEX_LIST_RECORDINGS_ENDPOINT = "/recordings"
+WEBEX_GET_AI_GENERATED_SUMMARY_ENDPOINT = "https://{site_url}/recordingservice/api/v1/recordings/{recording_id}/stream"
 WEBEX_DEFAULT_TIMEOUT = 30
 
 PARAMETER_LIST_FOR_SCHEDULE_MEETING = (

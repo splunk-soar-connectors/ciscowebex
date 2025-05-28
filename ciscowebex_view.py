@@ -58,4 +58,7 @@ def display_view(provides, all_app_runs, context):
                 continue
             results.append(ctx_result)
 
-    return "ciscowebex_get_recording_details.html"
+    if provides == "get recording details":
+        return "ciscowebex_get_recording_details.html"
+    elif provides == "ai meeting summary":
+        return "ciscowebex_ai_meeting_summary.html"

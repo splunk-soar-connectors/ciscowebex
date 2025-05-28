@@ -94,7 +94,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get message details](#action-get-message-details) - Retrieve the details of a specific Webex message by message ID \
 [get meeting details](#action-get-meeting-details) - Retrieve details of a specific Webex meeting using meeting ID or meeting number \
 [list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location \
-[get recording details](#action-get-recording-details) - Retrieve details of a Webex meeting recording using its recording ID
+[get recording details](#action-get-recording-details) - Retrieve details of a Webex meeting recording using its recording ID \
+[ai meeting summary](#action-ai-meeting-summary) - Retrieve AI-Generated meeting summary and actions items using its recording ID and site url
 
 ## action: 'test connectivity'
 
@@ -160,14 +161,14 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failed |
 action_result.parameter.email_address | string | `email` | examplemail@test.com |
 action_result.data.\*.created | string | | |
+action_result.data.\*.created | string | | 2018-01-04T20:46:30.734Z |
 action_result.data.\*.displayName | string | | Test User |
+action_result.data.\*.emails | string | `email` | examplemail@test.com |
 action_result.data.\*.firstName | string | | |
 action_result.data.\*.id | string | `webex user id` | L2lzY29zcAByazovL3VzL1690T1BMRS9hMzMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTEXAMPLE |
+action_result.data.\*.lastActivity | string | | 2018-01-05T21:04:53.424Z |
 action_result.data.\*.lastModified | string | | |
 action_result.data.\*.lastName | string | | |
-action_result.data.\*.created | string | | 2018-01-04T20:46:30.734Z |
-action_result.data.\*.emails | string | `email` | examplemail@test.com |
-action_result.data.\*.lastActivity | string | | 2018-01-05T21:04:53.424Z |
 action_result.data.\*.nickName | string | | Test User |
 action_result.data.\*.orgId | string | | L2lzY29zcABCazovL3VzL09SR0FOSVpBVElPTi9jb2TEST |
 action_result.data.\*.status | string | | inactive |
@@ -200,8 +201,8 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failed |
 action_result.parameter.destination_type | string | | room |
 action_result.parameter.endpoint_id | string | `webex user id` `webex room id` | L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxTEST5EXAMPLE |
-action_result.parameter.message | string | | Compile Test hello room |
 action_result.parameter.is_markdown | boolean | | True False |
+action_result.parameter.message | string | | Compile Test hello room |
 action_result.data.\*.created | string | | 2018-01-08T21:27:31.755Z 2018-03-30T18:36:01.210Z |
 action_result.data.\*.id | string | `webex message id` | testzcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDATEST4MzEXAMPLE |
 action_result.data.\*.personEmail | string | `email` | examplemail@test.com |
@@ -240,26 +241,31 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.type | string | | group |
-action_result.data.\*.title | string | | test room |
-action_result.data.\*.created | string | | 2025-05-09T09:57:17.803Z |
-action_result.data.\*.ownerId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.isLocked | boolean | | True False |
-action_result.data.\*.isPublic | boolean | | True False |
-action_result.data.\*.creatorId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.lastActivity | string | | 2025-05-09T09:57:17.803Z |
-action_result.parameter.title | string | | |
-action_result.parameter.team_id | string | | |
+action_result.status | string | | success failed |
 action_result.parameter.classification_id | string | | |
-action_result.parameter.is_locked | boolean | | |
-action_result.parameter.is_public | boolean | | |
 action_result.parameter.description | string | | |
 action_result.parameter.is_announcement_only | boolean | | |
-summary.total_objects_successful | numeric | | |
-action_result.status | string | | success failed |
+action_result.parameter.is_locked | boolean | | |
+action_result.parameter.is_public | boolean | | |
+action_result.parameter.team_id | string | | |
+action_result.parameter.title | string | | |
+action_result.data.\*.created | string | | 2025-05-09T09:57:17.803Z |
+action_result.data.\*.creatorId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.description | string | | test |
+action_result.data.\*.id | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.isAnnouncementOnly | boolean | | True False |
+action_result.data.\*.isLocked | boolean | | True False |
+action_result.data.\*.isPublic | boolean | | True False |
+action_result.data.\*.lastActivity | string | | 2025-05-09T09:57:17.803Z |
+action_result.data.\*.madePublic | string | | 2025-05-23T04:53:54.268Z |
+action_result.data.\*.ownerId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.teamId | string | | testzcGFyazovL3VzL1RFQU0vMDM3ZWZlZTAtMtestzc5My0xMWYwLWFhY2EtODM2Mjg3test |
+action_result.data.\*.title | string | | test room |
+action_result.data.\*.type | string | | group |
+action_result.summary | string | | |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'add people'
 
@@ -283,25 +289,26 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.status | string | | success failed |
+action_result.parameter.is_moderator | boolean | | |
+action_result.parameter.person_email | string | `email` | |
+action_result.parameter.person_id | string | `webex user id` | |
+action_result.parameter.room_id | string | `webex room id` | |
 action_result.data.\*.created | string | | 2025-05-09T09:58:50.433Z |
-action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.roomType | string | | group |
-action_result.data.\*.isMonitor | boolean | | True False |
+action_result.data.\*.id | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.isModerator | boolean | | True False |
-action_result.data.\*.personEmail | string | `email` | example@example.com |
-action_result.data.\*.personOrgId | string | `webex org id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.isMonitor | boolean | | True False |
 action_result.data.\*.isRoomHidden | boolean | | True False |
 action_result.data.\*.personDisplayName | string | | TEST USER |
-action_result.parameter.room_id | string | `webex room id` | |
-action_result.parameter.person_id | string | `webex user id` | |
-action_result.parameter.person_email | string | `email` | |
-action_result.parameter.is_moderator | boolean | | |
-summary.total_objects_successful | numeric | | |
-action_result.status | string | | success failed |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personOrgId | string | `webex org id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomType | string | | group |
+action_result.summary | string | | |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'schedule meeting'
 
@@ -345,100 +352,110 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex meeting id` | test92d8997b4d36bc3ac1893c7ftest8 |
-action_result.data.\*.end | string | | 2025-05-10T14:24:00Z |
-action_result.data.\*.start | string | | 2025-05-10T13:24:00Z |
-action_result.data.\*.state | string | | active |
-action_result.data.\*.title | string | | test meeting |
-action_result.data.\*.hostKey | string | | 210605 |
-action_result.data.\*.siteUrl | string | | example.webex.com |
-action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=m6325e89c172b9167381372a0b862a995 |
-action_result.data.\*.password | string | | testdpXhe326 |
-action_result.data.\*.timezone | string | | UTC |
-action_result.data.\*.hostEmail | string | | ishans@example.com |
-action_result.data.\*.telephony.links.\*.rel | string | | globalCallinNumbers |
-action_result.data.\*.telephony.links.\*.href | string | | /v1/meetings/atest92d8997b4d36bc3ac1893c7ftest/globalCallinNumbers |
-action_result.data.\*.telephony.links.\*.method | string | | GET |
-action_result.data.\*.telephony.accessCode | string | | 26636572133 |
-action_result.data.\*.telephony.callInNumbers.\*.label | string | | Call-in toll number (US/Canada) |
-action_result.data.\*.telephony.callInNumbers.\*.tollType | string | | toll |
-action_result.data.\*.telephony.callInNumbers.\*.callInNumber | string | | +1-000-525-6800 |
-action_result.data.\*.hostUserId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.sipAddress | string | | 2660000000133@webex.com |
-action_result.data.\*.meetingType | string | | meetingSeries |
-action_result.data.\*.meetingNumber | string | | 26600002133 |
-action_result.data.\*.publicMeeting | boolean | | True False |
-action_result.data.\*.scheduledType | string | | meeting |
-action_result.data.\*.sessionTypeId | numeric | | 159 |
-action_result.data.\*.meetingOptions.enabledChat | boolean | | True False |
-action_result.data.\*.meetingOptions.enabledVideo | boolean | | True False |
-action_result.data.\*.meetingOptions.enabledFileTransfer | boolean | | True False |
-action_result.data.\*.dialInIpAddress | string | | 173.243.2.68 |
-action_result.data.\*.excludePassword | boolean | | True False |
-action_result.data.\*.hostDisplayName | string | | test user |
-action_result.data.\*.enabledLiveStream | boolean | | True False |
+action_result.status | string | | success failed |
+action_result.parameter.adhoc | boolean | | |
+action_result.parameter.allow_any_user_to_be_co_host | boolean | | |
+action_result.parameter.automatic_lock_minutes | numeric | | |
+action_result.parameter.description | string | | |
+action_result.parameter.enable_automatic_lock | boolean | | |
+action_result.parameter.enable_connect_audio_before_host | boolean | | |
+action_result.parameter.enabled_auto_record_meeting | boolean | | |
+action_result.parameter.enabled_join_before_host | boolean | | |
+action_result.parameter.end | string | | |
+action_result.parameter.host_email | string | | |
+action_result.parameter.invitees | string | | |
+action_result.parameter.join_before_host_minutes | numeric | | |
+action_result.parameter.password | string | | |
+action_result.parameter.public_meeting | boolean | | |
+action_result.parameter.recurrence | string | | |
+action_result.parameter.reminder_time | numeric | | |
+action_result.parameter.room_id | string | `webex room id` | |
+action_result.parameter.scheduled_type | string | | |
+action_result.parameter.send_email | boolean | | |
+action_result.parameter.session_type_id | numeric | | |
+action_result.parameter.start | string | | |
+action_result.parameter.timezone | string | | |
+action_result.parameter.title | string | | |
+action_result.parameter.unlocked_meeting_join_security | string | | |
+action_result.data.\*.agenda | string | | 漢字©¬ɸѠ֍۞ਊ௵൬༃ဤᄨᇗኖᏌᔠᛯᜠឦᡤᢻᤐᦪᨃᩔ᪸᭒ᮈᯡᰦ᳀ᴞᵆᵝḈὒ⁇ℰ⅏ⅷ∰⋐⏻サイバーセキュリティインシデント日本標準時⛰⛱⛲⛳⛵✔❤ﬗ╬⎋⌚ ⅍ⅎ€ ₭⁂ᾧ҈₮₯⅏⌛ ⎎☆Ḃ平仮名, ひらがな~ |
+action_result.data.\*.allowAnyUserToBeCoHost | boolean | | True False |
+action_result.data.\*.allowAuthenticatedDevices | boolean | | True False |
+action_result.data.\*.allowFirstUserToBeCoHost | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledAnnotate | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledChatHost | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledViewAnyPage | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledSaveDocument | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledShareContent | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledChatOtherParticipants | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledChatPresenter | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledContactOperatorPrivately | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledPrintDocument | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledRemoteControl | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledViewThumbnails | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledSaveDocument | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledShareContent | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledViewAnyDocument | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledViewAnyPage | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledViewParticipantList | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledChatOtherParticipants | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledContactOperatorPrivately | boolean | | True False |
-action_result.data.\*.enableAutomaticLock | boolean | | True False |
-action_result.data.\*.enabledJoinBeforeHost | boolean | | True False |
-action_result.data.\*.joinBeforeHostMinutes | numeric | | 5 |
-action_result.data.\*.allowAnyUserToBeCoHost | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.entryAndExitTone | string | | noTone |
-action_result.data.\*.audioConnectionOptions.audioConnectionType | string | | webexAudio |
-action_result.data.\*.audioConnectionOptions.enabledGlobalCallIn | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.enabledTollFreeCallIn | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.muteAttendeeUponEntry | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.enabledAudienceCallBack | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledViewThumbnails | boolean | | True False |
 action_result.data.\*.audioConnectionOptions.allowAttendeeToUnmuteSelf | boolean | | True False |
 action_result.data.\*.audioConnectionOptions.allowHostToUnmuteParticipants | boolean | | True False |
-action_result.data.\*.enabledVisualWatermark | boolean | | True False |
-action_result.data.\*.enabledBreakoutSessions | boolean | | True False |
-action_result.data.\*.allowFirstUserToBeCoHost | boolean | | True False |
-action_result.data.\*.enabledAutoRecordMeeting | boolean | | True False |
-action_result.data.\*.allowAuthenticatedDevices | boolean | | True False |
-action_result.data.\*.simultaneousInterpretation.enabled | boolean | | True False |
-action_result.data.\*.phoneAndVideoSystemPassword | string | | 97237943 |
-action_result.data.\*.unlockedMeetingJoinSecurity | string | | allowJoin |
+action_result.data.\*.audioConnectionOptions.audioConnectionType | string | | webexAudio |
+action_result.data.\*.audioConnectionOptions.enabledAudienceCallBack | boolean | | True False |
+action_result.data.\*.audioConnectionOptions.enabledGlobalCallIn | boolean | | True False |
+action_result.data.\*.audioConnectionOptions.enabledTollFreeCallIn | boolean | | True False |
+action_result.data.\*.audioConnectionOptions.entryAndExitTone | string | | noTone |
+action_result.data.\*.audioConnectionOptions.muteAttendeeUponEntry | boolean | | True False |
+action_result.data.\*.automaticLockMinutes | numeric | | 20 |
+action_result.data.\*.dialInIpAddress | string | | 173.243.2.68 |
+action_result.data.\*.enableAutomaticLock | boolean | | True False |
 action_result.data.\*.enableConnectAudioBeforeHost | boolean | | True False |
-action_result.parameter.title | string | | |
-action_result.parameter.start | string | | |
-action_result.parameter.end | string | | |
-action_result.parameter.timezone | string | | |
-action_result.parameter.description | string | | |
-action_result.parameter.password | string | | |
-action_result.parameter.enabled_auto_record_meeting | boolean | | |
-action_result.parameter.allow_any_user_to_be_co_host | boolean | | |
-action_result.parameter.enabled_join_before_host | boolean | | |
-action_result.parameter.join_before_host_minutes | numeric | | |
-action_result.parameter.enable_connect_audio_before_host | boolean | | |
-action_result.parameter.invitees | string | | |
-action_result.parameter.recurrence | string | | |
-action_result.parameter.adhoc | boolean | | |
-action_result.parameter.room_id | string | `webex room id` | |
-action_result.parameter.send_email | boolean | | |
-action_result.parameter.host_email | string | | |
-action_result.parameter.session_type_id | numeric | | |
-action_result.parameter.scheduled_type | string | | |
-action_result.parameter.enable_automatic_lock | boolean | | |
-action_result.parameter.automatic_lock_minutes | numeric | | |
-action_result.parameter.public_meeting | boolean | | |
-action_result.parameter.reminder_time | numeric | | |
-action_result.parameter.unlocked_meeting_join_security | string | | |
-summary.total_objects_successful | numeric | | |
-action_result.status | string | | success failed |
+action_result.data.\*.enabledAutoRecordMeeting | boolean | | True False |
+action_result.data.\*.enabledBreakoutSessions | boolean | | True False |
+action_result.data.\*.enabledJoinBeforeHost | boolean | | True False |
+action_result.data.\*.enabledLiveStream | boolean | | True False |
+action_result.data.\*.enabledVisualWatermark | boolean | | True False |
+action_result.data.\*.enabledWebcastView | boolean | | True False |
+action_result.data.\*.end | string | | 2025-05-10T14:24:00Z |
+action_result.data.\*.excludePassword | boolean | | True False |
+action_result.data.\*.hostDisplayName | string | | test user |
+action_result.data.\*.hostEmail | string | | ishans@example.com |
+action_result.data.\*.hostKey | string | | 210605 |
+action_result.data.\*.hostUserId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.id | string | `webex meeting id` | test92d8997b4d36bc3ac1893c7ftest8 |
+action_result.data.\*.joinBeforeHostMinutes | numeric | | 5 |
+action_result.data.\*.maxWebinarAttendeeCapacity | numeric | | 50000 |
+action_result.data.\*.meetingNumber | string | | 26600002133 |
+action_result.data.\*.meetingOptions.enabledChat | boolean | | True False |
+action_result.data.\*.meetingOptions.enabledFileTransfer | boolean | | True False |
+action_result.data.\*.meetingOptions.enabledVideo | boolean | | True False |
+action_result.data.\*.meetingType | string | | meetingSeries |
+action_result.data.\*.panelistPassword | string | | hhQcajkb562 |
+action_result.data.\*.password | string | | testdpXhe326 |
+action_result.data.\*.phoneAndVideoSystemPanelistPassword | string | | 44722552 |
+action_result.data.\*.phoneAndVideoSystemPassword | string | | 97237943 |
+action_result.data.\*.publicMeeting | boolean | | True False |
+action_result.data.\*.reminderTime | numeric | | 10 |
+action_result.data.\*.requireAttendeeLogin | boolean | | True False |
+action_result.data.\*.restrictToInvitees | boolean | | True False |
+action_result.data.\*.scheduledType | string | | meeting |
+action_result.data.\*.sessionTypeId | numeric | | 159 |
+action_result.data.\*.simultaneousInterpretation.enabled | boolean | | True False |
+action_result.data.\*.sipAddress | string | | 2660000000133@webex.com |
+action_result.data.\*.siteUrl | string | | example.webex.com |
+action_result.data.\*.start | string | | 2025-05-10T13:24:00Z |
+action_result.data.\*.state | string | | active |
+action_result.data.\*.telephony.accessCode | string | | 26636572133 |
+action_result.data.\*.telephony.callInNumbers.\*.callInNumber | string | | +1-000-525-6800 |
+action_result.data.\*.telephony.callInNumbers.\*.label | string | | Call-in toll number (US/Canada) |
+action_result.data.\*.telephony.callInNumbers.\*.tollType | string | | toll |
+action_result.data.\*.telephony.links.\*.href | string | | /v1/meetings/atest92d8997b4d36bc3ac1893c7ftest/globalCallinNumbers |
+action_result.data.\*.telephony.links.\*.method | string | | GET |
+action_result.data.\*.telephony.links.\*.rel | string | | globalCallinNumbers |
+action_result.data.\*.timezone | string | | UTC |
+action_result.data.\*.title | string | | test meeting |
+action_result.data.\*.unlockedMeetingJoinSecurity | string | | allowJoin |
+action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=m6325e89c172b9167381372a0b862a995 |
+action_result.summary | string | | |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'retrieve meeting participants'
 
@@ -466,40 +483,40 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex user id` | testef03e1a49be883320fe35fde314_I_65220test54323715_3118cefb-81e7-492d-8223-1fe0a353test |
-action_result.data.\*.host | boolean | | True False |
-action_result.data.\*.email | string | `email` | example@example.com |
-action_result.data.\*.muted | boolean | | True False |
-action_result.data.\*.state | string | | end |
-action_result.data.\*.coHost | boolean | | True False |
-action_result.data.\*.devices.\*.leftTime | string | | 2025-05-08T12:40:55Z |
-action_result.data.\*.devices.\*.deviceType | string | | mac |
-action_result.data.\*.devices.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
-action_result.data.\*.devices.\*.correlationId | string | | test927a-496a-4678-ac62-bcbdaadctest |
-action_result.data.\*.devices.\*.durationSecond | numeric | | 6 |
-action_result.data.\*.invitee | boolean | | True False |
-action_result.data.\*.siteUrl | string | | example.webex.com |
-action_result.data.\*.leftTime | string | | 2025-05-08T12:40:55Z |
-action_result.data.\*.hostEmail | string | | example@example.com |
-action_result.data.\*.meetingId | string | `webex meeting id` | test2ef03e1a49be883320fe35fde314_I_65220661465432test |
-action_result.data.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
-action_result.data.\*.displayName | string | | test user |
-action_result.data.\*.spaceModerator | boolean | | True False |
-action_result.data.\*.meetingStartTime | string | | 2025-05-08T12:40:49Z |
-action_result.parameter.meeting_id | string | `webex meeting id` | |
+action_result.status | string | | success failed |
 action_result.parameter.breakout_session_id | string | | |
-action_result.parameter.meeting_start_time_from | string | | |
-action_result.parameter.meeting_start_time_to | string | | |
 action_result.parameter.host_email | string | `email` | |
 action_result.parameter.join_time_from | string | | |
 action_result.parameter.join_time_to | string | | |
 action_result.parameter.limit | numeric | | |
-summary.total_objects_successful | numeric | | |
-action_result.status | string | | success failed |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
+action_result.parameter.meeting_id | string | `webex meeting id` | |
+action_result.parameter.meeting_start_time_from | string | | |
+action_result.parameter.meeting_start_time_to | string | | |
+action_result.data.\*.coHost | boolean | | True False |
+action_result.data.\*.devices.\*.correlationId | string | | test927a-496a-4678-ac62-bcbdaadctest |
+action_result.data.\*.devices.\*.deviceType | string | | mac |
+action_result.data.\*.devices.\*.durationSecond | numeric | | 6 |
+action_result.data.\*.devices.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
+action_result.data.\*.devices.\*.leftTime | string | | 2025-05-08T12:40:55Z |
+action_result.data.\*.displayName | string | | test user |
+action_result.data.\*.email | string | `email` | example@example.com |
+action_result.data.\*.host | boolean | | True False |
+action_result.data.\*.hostEmail | string | | example@example.com |
+action_result.data.\*.id | string | `webex user id` | testef03e1a49be883320fe35fde314_I_65220test54323715_3118cefb-81e7-492d-8223-1fe0a353test |
+action_result.data.\*.invitee | boolean | | True False |
+action_result.data.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
+action_result.data.\*.leftTime | string | | 2025-05-08T12:40:55Z |
+action_result.data.\*.meetingId | string | `webex meeting id` | test2ef03e1a49be883320fe35fde314_I_65220661465432test |
+action_result.data.\*.meetingStartTime | string | | 2025-05-08T12:40:49Z |
+action_result.data.\*.muted | boolean | | True False |
+action_result.data.\*.siteUrl | string | | example.webex.com |
+action_result.data.\*.spaceModerator | boolean | | True False |
+action_result.data.\*.state | string | | end |
 action_result.summary.message | string | | Participants retrieved successfully |
 action_result.summary.total_participants | numeric | | 1 |
+action_result.message | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'list messages'
 
@@ -522,27 +539,27 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
-action_result.data.\*.text | string | | hello test |
-action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
-action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.roomType | string | | group |
-action_result.data.\*.personEmail | string | `email` | example@example.com |
-action_result.data.\*.parentId | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.meetingId | string | `webex meeting id` | 9testf03e1a49be883320fe35fde314_I_6522066146543test |
-action_result.parameter.room_id | string | `webex room id` | |
-action_result.parameter.parent_id | string | `webex message id` | |
+action_result.status | string | | success failed |
 action_result.parameter.before | string | | |
 action_result.parameter.before_message | string | | |
 action_result.parameter.limit | numeric | | |
-summary.total_objects_successful | numeric | | |
-action_result.status | string | | success failed |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
+action_result.parameter.parent_id | string | `webex message id` | |
+action_result.parameter.room_id | string | `webex room id` | |
+action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
+action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
+action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.meetingId | string | `webex meeting id` | 9testf03e1a49be883320fe35fde314_I_6522066146543test |
+action_result.data.\*.parentId | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomType | string | | group |
+action_result.data.\*.text | string | | hello test |
 action_result.summary.message | string | | Messages retrieved successfully |
 action_result.summary.total_messages | numeric | | 10 |
+action_result.message | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'get message details'
 
@@ -561,19 +578,20 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
-action_result.data.\*.text | string | | hello test |
-action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
-action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.roomType | string | | group |
-action_result.data.\*.personEmail | string | `email` | example@example.com |
-action_result.parameter.message_id | string | `webex message id` | |
-summary.total_objects_successful | numeric | | |
 action_result.status | string | | success failed |
+action_result.parameter.message_id | string | `webex message id` | |
+action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
+action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
+action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.roomType | string | | group |
+action_result.data.\*.text | string | | hello test |
+action_result.summary | string | | |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'get meeting details'
 
@@ -594,95 +612,96 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex meeting id` | ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z |
-action_result.data.\*.end | string | | 2025-05-09T13:20:00Z |
-action_result.data.\*.start | string | | 2025-05-09T12:20:00Z |
-action_result.data.\*.state | string | | ready |
-action_result.data.\*.title | string | | Test meeting |
+action_result.status | string | | success failed |
+action_result.parameter.current | boolean | | |
+action_result.parameter.host_email | string | `email` | |
+action_result.parameter.meeting_id | string | `webex meeting id` | |
 action_result.data.\*.agenda | string | | |
-action_result.data.\*.hostKey | string | | 889047 |
-action_result.data.\*.siteUrl | string | | example.webex.com |
-action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=me0a791a45ee400f06576ed07dd940d3e |
-action_result.data.\*.password | string | | 72Xjx9PyYKA |
-action_result.data.\*.timezone | string | | UTC |
-action_result.data.\*.hostEmail | string | | example@example.com |
-action_result.data.\*.telephony.links.\*.rel | string | | globalCallinNumbers |
-action_result.data.\*.telephony.links.\*.href | string | | /v1/meetings/testa706b64041559c664a83e6btest/globalCallinNumbers |
-action_result.data.\*.telephony.links.\*.method | string | | GET |
-action_result.data.\*.telephony.accessCode | string | | 26620031238 |
-action_result.data.\*.telephony.callInNumbers.\*.label | string | | Call-in toll number (US/Canada) |
-action_result.data.\*.telephony.callInNumbers.\*.tollType | string | | toll |
-action_result.data.\*.telephony.callInNumbers.\*.callInNumber | string | | +1-000-025-6800 |
-action_result.data.\*.hostUserId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.isModified | boolean | | True False |
-action_result.data.\*.sipAddress | string | | 26000031238@webex.com |
-action_result.data.\*.hostDidJoin | boolean | | True False |
-action_result.data.\*.meetingType | string | | scheduledMeeting |
-action_result.data.\*.reminderTime | numeric | | 15 |
-action_result.data.\*.meetingNumber | string | | 26620031238 |
-action_result.data.\*.publicMeeting | boolean | | True False |
-action_result.data.\*.scheduledType | string | | meeting |
-action_result.data.\*.sessionTypeId | numeric | | 159 |
-action_result.data.\*.meetingOptions.enabledChat | boolean | | True False |
-action_result.data.\*.meetingOptions.enabledVideo | boolean | | True False |
-action_result.data.\*.meetingOptions.enabledFileTransfer | boolean | | True False |
+action_result.data.\*.allowAnyUserToBeCoHost | boolean | | True False |
+action_result.data.\*.allowAuthenticatedDevices | boolean | | True False |
+action_result.data.\*.allowFirstUserToBeCoHost | boolean | | True False |
 action_result.data.\*.attendeeDidJoin | boolean | | True False |
-action_result.data.\*.dialInIpAddress | string | | 103.xx.xx.68 |
-action_result.data.\*.excludePassword | boolean | | True False |
-action_result.data.\*.hostDisplayName | string | | test user |
-action_result.data.\*.meetingSeriesId | string | | testa706b64041559c664a83e6btest |
-action_result.data.\*.enabledLiveStream | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledAnnotate | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledChatHost | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledViewAnyPage | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledSaveDocument | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledShareContent | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledChatOtherParticipants | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledChatPresenter | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledContactOperatorPrivately | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledPrintDocument | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledRemoteControl | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledViewThumbnails | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledSaveDocument | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledShareContent | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledViewAnyDocument | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledViewAnyPage | boolean | | True False |
 action_result.data.\*.attendeePrivileges.enabledViewParticipantList | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledChatOtherParticipants | boolean | | True False |
-action_result.data.\*.attendeePrivileges.enabledContactOperatorPrivately | boolean | | True False |
-action_result.data.\*.enableAutomaticLock | boolean | | True False |
-action_result.data.\*.enabledJoinBeforeHost | boolean | | True False |
-action_result.data.\*.joinBeforeHostMinutes | numeric | | 5 |
-action_result.data.\*.allowAnyUserToBeCoHost | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.entryAndExitTone | string | | noTone |
-action_result.data.\*.audioConnectionOptions.audioConnectionType | string | | webexAudio |
-action_result.data.\*.audioConnectionOptions.enabledGlobalCallIn | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.enabledTollFreeCallIn | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.muteAttendeeUponEntry | boolean | | True False |
-action_result.data.\*.audioConnectionOptions.enabledAudienceCallBack | boolean | | True False |
+action_result.data.\*.attendeePrivileges.enabledViewThumbnails | boolean | | True False |
 action_result.data.\*.audioConnectionOptions.allowAttendeeToUnmuteSelf | boolean | | True False |
 action_result.data.\*.audioConnectionOptions.allowHostToUnmuteParticipants | boolean | | True False |
-action_result.data.\*.enabledVisualWatermark | boolean | | True False |
-action_result.data.\*.enabledBreakoutSessions | boolean | | True False |
-action_result.data.\*.allowFirstUserToBeCoHost | boolean | | True False |
-action_result.data.\*.enabledAutoRecordMeeting | boolean | | True False |
-action_result.data.\*.allowAuthenticatedDevices | boolean | | True False |
-action_result.data.\*.simultaneousInterpretation.enabled | boolean | | True False |
-action_result.data.\*.phoneAndVideoSystemPassword | string | | 72959979 |
-action_result.data.\*.unlockedMeetingJoinSecurity | string | | allowJoin |
+action_result.data.\*.audioConnectionOptions.audioConnectionType | string | | webexAudio |
+action_result.data.\*.audioConnectionOptions.enabledAudienceCallBack | boolean | | True False |
+action_result.data.\*.audioConnectionOptions.enabledGlobalCallIn | boolean | | True False |
+action_result.data.\*.audioConnectionOptions.enabledTollFreeCallIn | boolean | | True False |
+action_result.data.\*.audioConnectionOptions.entryAndExitTone | string | | noTone |
+action_result.data.\*.audioConnectionOptions.muteAttendeeUponEntry | boolean | | True False |
+action_result.data.\*.dialInIpAddress | string | | 103.xx.xx.68 |
+action_result.data.\*.enableAutomaticLock | boolean | | True False |
 action_result.data.\*.enableConnectAudioBeforeHost | boolean | | True False |
-action_result.data.\*.hasQA | boolean | | True False |
+action_result.data.\*.enabledAutoRecordMeeting | boolean | | True False |
+action_result.data.\*.enabledBreakoutSessions | boolean | | True False |
+action_result.data.\*.enabledJoinBeforeHost | boolean | | True False |
+action_result.data.\*.enabledLiveStream | boolean | | True False |
+action_result.data.\*.enabledVisualWatermark | boolean | | True False |
+action_result.data.\*.end | string | | 2025-05-09T13:20:00Z |
+action_result.data.\*.excludePassword | boolean | | True False |
 action_result.data.\*.hasChat | boolean | | True False |
+action_result.data.\*.hasClosedCaption | boolean | | True False |
 action_result.data.\*.hasPolls | boolean | | True False |
-action_result.data.\*.hasSlido | boolean | | True False |
+action_result.data.\*.hasQA | boolean | | True False |
 action_result.data.\*.hasRecording | boolean | | True False |
 action_result.data.\*.hasRegistrants | boolean | | True False |
 action_result.data.\*.hasRegistration | boolean | | True False |
-action_result.data.\*.hasClosedCaption | boolean | | True False |
+action_result.data.\*.hasSlido | boolean | | True False |
 action_result.data.\*.hasTranscription | boolean | | True False |
+action_result.data.\*.hostDidJoin | boolean | | True False |
+action_result.data.\*.hostDisplayName | string | | test user |
+action_result.data.\*.hostEmail | string | | example@example.com |
+action_result.data.\*.hostKey | string | | 889047 |
+action_result.data.\*.hostUserId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.id | string | `webex meeting id` | ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z |
+action_result.data.\*.isModified | boolean | | True False |
+action_result.data.\*.joinBeforeHostMinutes | numeric | | 5 |
+action_result.data.\*.meetingNumber | string | | 26620031238 |
+action_result.data.\*.meetingOptions.enabledChat | boolean | | True False |
+action_result.data.\*.meetingOptions.enabledFileTransfer | boolean | | True False |
+action_result.data.\*.meetingOptions.enabledVideo | boolean | | True False |
+action_result.data.\*.meetingSeriesId | string | | testa706b64041559c664a83e6btest |
+action_result.data.\*.meetingType | string | | scheduledMeeting |
+action_result.data.\*.password | string | | 72Xjx9PyYKA |
+action_result.data.\*.phoneAndVideoSystemPassword | string | | 72959979 |
+action_result.data.\*.publicMeeting | boolean | | True False |
+action_result.data.\*.reminderTime | numeric | | 15 |
 action_result.data.\*.scheduledMeetingId | string | | 937f2ef03e1a49be883320fe35fde314_20250508T140000Z |
-action_result.parameter.meeting_id | string | `webex meeting id` | |
-action_result.parameter.current | boolean | | |
-action_result.parameter.host_email | string | `email` | |
-summary.total_objects_successful | numeric | | |
-action_result.status | string | | success failed |
+action_result.data.\*.scheduledType | string | | meeting |
+action_result.data.\*.sessionTypeId | numeric | | 159 |
+action_result.data.\*.simultaneousInterpretation.enabled | boolean | | True False |
+action_result.data.\*.sipAddress | string | | 26000031238@webex.com |
+action_result.data.\*.siteUrl | string | | example.webex.com |
+action_result.data.\*.start | string | | 2025-05-09T12:20:00Z |
+action_result.data.\*.state | string | | ready |
+action_result.data.\*.telephony.accessCode | string | | 26620031238 |
+action_result.data.\*.telephony.callInNumbers.\*.callInNumber | string | | +1-000-025-6800 |
+action_result.data.\*.telephony.callInNumbers.\*.label | string | | Call-in toll number (US/Canada) |
+action_result.data.\*.telephony.callInNumbers.\*.tollType | string | | toll |
+action_result.data.\*.telephony.links.\*.href | string | | /v1/meetings/testa706b64041559c664a83e6btest/globalCallinNumbers |
+action_result.data.\*.telephony.links.\*.method | string | | GET |
+action_result.data.\*.telephony.links.\*.rel | string | | globalCallinNumbers |
+action_result.data.\*.timezone | string | | UTC |
+action_result.data.\*.title | string | | Test meeting |
+action_result.data.\*.unlockedMeetingJoinSecurity | string | | allowJoin |
+action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=me0a791a45ee400f06576ed07dd940d3e |
+action_result.summary | string | | |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ## action: 'list users'
 
@@ -708,55 +727,64 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex user id` | |
-action_result.data.\*.emails | string | `email` | |
-action_result.data.\*.displayName | string | | |
-action_result.data.\*.orgId | string | `webex org id` | |
-action_result.data.\*.roles | string | | |
-action_result.data.\*.status | string | | |
-action_result.data.\*.type | string | | person |
-action_result.data.\*.title | string | | Software Engineer [C] |
-action_result.data.\*.avatar | string | | https://test-prod-us-east-2.webexcontent.com/Avtr~V1~1ebtest43-417f-9974-ad72catest/V1~test8f27546e523b2945ea2f7ff36tst141b3544e232718885c17cad0d1~test0570bbc40b193112b2c957test~1600 |
-action_result.data.\*.created | string | | 2024-11-08T10:16:05.408Z |
-action_result.data.\*.manager | string | | Test User |
-action_result.data.\*.lastName | string | | Test |
-action_result.data.\*.nickName | string | | User |
-action_result.data.\*.addresses.\*.type | string | | work |
-action_result.data.\*.addresses.\*.region | string | | CALIFORNIA |
+action_result.status | string | | success failed |
+action_result.parameter.calling_data | boolean | | |
+action_result.parameter.display_name | string | | |
+action_result.parameter.email | string | `email` | |
+action_result.parameter.id | string | `webex user id` | |
+action_result.parameter.limit | numeric | | |
+action_result.parameter.location_id | string | | |
+action_result.parameter.org_id | string | | |
+action_result.parameter.roles | string | | |
 action_result.data.\*.addresses.\*.country | string | | US |
 action_result.data.\*.addresses.\*.locality | string | | SAN JOSE |
 action_result.data.\*.addresses.\*.postalCode | string | | 95128 |
+action_result.data.\*.addresses.\*.region | string | | CALIFORNIA |
 action_result.data.\*.addresses.\*.streetAddress | string | | 3098 Test Drive |
-action_result.data.\*.firstName | string | | User |
-action_result.data.\*.managerId | string | | test29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjIrtestTJjLTQzM2QtODA5Yy05YWJmNWZiNDtest |
+action_result.data.\*.addresses.\*.type | string | | work |
+action_result.data.\*.avatar | string | | https://test-prod-us-east-2.webexcontent.com/Avtr~V1~1ebtest43-417f-9974-ad72catest/V1~test8f27546e523b2945ea2f7ff36tst141b3544e232718885c17cad0d1~test0570bbc40b193112b2c957test~1600 |
+action_result.data.\*.created | string | | 2024-11-08T10:16:05.408Z |
 action_result.data.\*.department | string | | 020122475 |
+action_result.data.\*.displayName | string | | |
+action_result.data.\*.emails | string | `email` | |
+action_result.data.\*.extension | string | | 3432432 |
+action_result.data.\*.firstName | string | | User |
+action_result.data.\*.id | string | `webex user id` | |
+action_result.data.\*.invitePending | boolean | | True False |
+action_result.data.\*.lastActivity | string | | 2025-05-22T08:00:26.197Z |
 action_result.data.\*.lastModified | string | | 2025-04-15T01:50:15.733Z |
-action_result.summary.message | string | | |
-action_result.summary.total_people | numeric | | 1 |
+action_result.data.\*.lastName | string | | Test |
+action_result.data.\*.locationId | string | | Y2lzY29zcGFyazovL3VzL0xPQ0FUSU9OL2YzYjJkYmI3LWQ3MTQtNGM5YS05OTkyLWVmMjA0NWNkMmQwZA |
+action_result.data.\*.loginEnabled | boolean | | True False |
+action_result.data.\*.manager | string | | Test User |
+action_result.data.\*.managerId | string | | test29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjIrtestTJjLTQzM2QtODA5Yy05YWJmNWZiNDtest |
+action_result.data.\*.nickName | string | | User |
+action_result.data.\*.orgId | string | `webex org id` | |
+action_result.data.\*.phoneNumbers.\*.primary | boolean | | True False |
 action_result.data.\*.phoneNumbers.\*.type | string | | work |
 action_result.data.\*.phoneNumbers.\*.value | string | | +1 000-895-000 |
-action_result.data.\*.phoneNumbers.\*.primary | boolean | | True False |
 action_result.data.\*.pronouns.value | string | | He/Him/His |
 action_result.data.\*.pronouns.visibility | string | | Internal |
+action_result.data.\*.roles | string | | |
+action_result.data.\*.sipAddresses.\*.primary | boolean | | True False |
+action_result.data.\*.sipAddresses.\*.type | string | | personal-room |
+action_result.data.\*.sipAddresses.\*.value | string | | 4229032891@sademo2ci.dmz.webex.com |
+action_result.data.\*.status | string | | |
+action_result.data.\*.timeZone | string | | Asia/Shanghai |
+action_result.data.\*.title | string | | Software Engineer [C] |
+action_result.data.\*.type | string | | person |
 action_result.data.\*.userName | string | | example@example.com |
-action_result.parameter.email | string | `email` | |
-action_result.parameter.display_name | string | | |
-action_result.parameter.id | string | `webex user id` | |
-action_result.parameter.limit | numeric | | |
+action_result.summary.message | string | | |
+action_result.summary.total_people | numeric | | 1 |
+action_result.message | string | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
-action_result.status | string | | success failed |
-action_result.message | string | | |
-action_result.parameter.org_id | string | | |
-action_result.parameter.roles | string | | |
-action_result.parameter.calling_data | boolean | | |
-action_result.parameter.location_id | string | | |
 
 ## action: 'get recording details'
 
 Retrieve details of a Webex meeting recording using its recording ID
 
-Type: **generic** \
+Type: **investigate** \
 Read only: **True**
 
 #### Action Parameters
@@ -771,36 +799,68 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.data.\*.id | string | `webex recording id` | test06506faa48c790592a4198c3test |
-action_result.data.\*.topic | string | | soar test-20250522 0829-1 |
-action_result.data.\*.format | string | | MP4 |
-action_result.data.\*.status | string | | available |
-action_result.data.\*.siteUrl | string | | company.webex.com |
-action_result.data.\*.password | string | | testpass |
-action_result.data.\*.hostEmail | string | | example@example.com |
-action_result.data.\*.meetingId | string | | test5560719471599d7test2a4c1b72_I_6547053376test |
-action_result.data.\*.shareToMe | boolean | | False |
-action_result.data.\*.sizeBytes | numeric | | 1067115 |
+action_result.status | string | | success |
+action_result.parameter.host_email | string | `email` | |
+action_result.parameter.meeting_id | string | `webex meeting id` | |
+action_result.parameter.recording_id | string | `webex recording id` | test06506faa48c790592a4198c3test |
 action_result.data.\*.createTime | string | | 2025-05-22T08:31:19Z |
 action_result.data.\*.downloadUrl | string | | https://company.webex.com/siteurl/lsr.php?RCID=1a417c966testaef288e9043adatest |
-action_result.data.\*.playbackUrl | string | `url` | https://company.webex.com/siteurl/ldr.php?RCID=testcc66c2ee8536aabdd0ec607test |
-action_result.data.\*.serviceType | string | | MeetingCenter |
-action_result.data.\*.timeRecorded | string | | 2025-05-22T08:23:05Z |
 action_result.data.\*.durationSeconds | numeric | | 219 |
+action_result.data.\*.format | string | | MP4 |
+action_result.data.\*.hostEmail | string | | example@example.com |
+action_result.data.\*.id | string | `webex recording id` | test06506faa48c790592a4198c3test |
+action_result.data.\*.meetingId | string | | test5560719471599d7test2a4c1b72_I_6547053376test |
 action_result.data.\*.meetingSeriesId | string | | test5560719471599d76418test |
+action_result.data.\*.password | string | | testpass |
+action_result.data.\*.playbackUrl | string | `url` | https://company.webex.com/siteurl/ldr.php?RCID=testcc66c2ee8536aabdd0ec607test |
 action_result.data.\*.scheduledMeetingId | string | | test60719471599d764182a4c1b7test250522T150000Z |
-action_result.data.\*.temporaryDirectDownloadLinks.expiration | string | | 2025-05-22T13:44:50Z |
+action_result.data.\*.serviceType | string | | MeetingCenter |
+action_result.data.\*.shareToMe | boolean | | False |
+action_result.data.\*.siteUrl | string | | company.webex.com |
+action_result.data.\*.sizeBytes | numeric | | 1067115 |
+action_result.data.\*.status | string | | available |
 action_result.data.\*.temporaryDirectDownloadLinks.audioDownloadLink | string | | https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/audio.mp3?siteid=00240&recordid=197000062& |
+action_result.data.\*.temporaryDirectDownloadLinks.expiration | string | | 2025-05-22T13:44:50Z |
 action_result.data.\*.temporaryDirectDownloadLinks.recordingDownloadLink | string | `url` | https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet?siteid=00240&recordid=197000062 |
 action_result.data.\*.temporaryDirectDownloadLinks.transcriptDownloadLink | string | `url` | https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/transcript.txt?siteid=00240&recordid=197000062&confid=6547000000000001771&from=MBS |
-action_result.status | string | | success |
-action_result.message | string | | Message: Recording details retrieved successfully, Status code: False |
+action_result.data.\*.timeRecorded | string | | 2025-05-22T08:23:05Z |
+action_result.data.\*.topic | string | | soar test-20250522 0829-1 |
 action_result.summary.message | string | | Recording details retrieved successfully |
-action_result.parameter.recording_id | string | `webex recording id` | test06506faa48c790592a4198c3test |
-action_result.parameter.meeting_id | string | `webex meeting id` | |
-action_result.parameter.host_email | string | `email` | |
-summary.total_objects_successful | numeric | | |
+action_result.message | string | | Message: Recording details retrieved successfully, Status code: False |
 summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
+
+## action: 'ai meeting summary'
+
+Retrieve AI-Generated meeting summary and actions items using its recording ID and site url
+
+Type: **investigate** \
+Read only: **True**
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**recording_id** | required | Unique identifier of the Webex recording. | string | `webex recording id` |
+**site_url** | required | Unique identifier of the Webex recording.eg: company.webex.com | string | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | |
+action_result.parameter.recording_id | string | `webex recording id` | |
+action_result.parameter.site_url | string | | |
+action_result.data.\*.actionItems | string | `webex meeting actions items` | AI-Generated actions items retrieved successfully |
+action_result.data.\*.actions_items | string | | AI-Generated actions items retrieved successfully |
+action_result.data.\*.recordingId | string | `webex recording id` | test06506faa48c790592a4198c3test |
+action_result.data.\*.recordingName | string | | test recording |
+action_result.data.\*.suggestedNote | string | `webex meeting notes` | AI-Generated meeting summary and actions items retrieved successfully |
+action_result.data.\*.summary | string | | AI-Generated meeting summary and actions items retrieved successfully |
+action_result.summary | string | | |
+action_result.message | string | | |
+summary.total_objects | numeric | | |
+summary.total_objects_successful | numeric | | |
 
 ______________________________________________________________________
 

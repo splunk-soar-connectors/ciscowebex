@@ -17,6 +17,7 @@
 import json
 import os
 import pathlib
+import re
 import time
 import urllib.parse as urllib
 
@@ -532,7 +533,7 @@ class CiscoWebexConnector(BaseConnector):
         response obtained by making an API call
         """
 
-        if not endpoint.startswith(self._base_url):
+        if not phantom.is_url(endpoint):
             endpoint = f"{self._base_url}{endpoint}"
 
         if headers is None:
@@ -559,7 +560,7 @@ class CiscoWebexConnector(BaseConnector):
 
         headers.update({"Authorization": f"Bearer {self._access_token}"})
         if not headers.get("Content-Type"):
-            headers.update({"Content-Type": "application/json"})
+            headers.update(consts.WEBEX_JSON_HEADERS)
 
         ret_val, resp_json = self._make_rest_call(
             action_result=action_result, endpoint=endpoint, headers=headers, params=params, data=data, method=method
@@ -685,8 +686,7 @@ class CiscoWebexConnector(BaseConnector):
 
         self.save_progress("Getting info about the rooms to verify token")
 
-        url = f"{self._base_url}{consts.WEBEX_ROOMS_ENDPOINT}"
-        ret_val, response = self._update_request(action_result=action_result, endpoint=url)
+        ret_val, response = self._update_request(action_result=action_result, endpoint=consts.WEBEX_ROOMS_ENDPOINT)
 
         if phantom.is_fail(ret_val):
             self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
@@ -699,7 +699,10 @@ class CiscoWebexConnector(BaseConnector):
 
     def _make_rest_call_using_api_key(self, endpoint, action_result, params=None, data=None, method="get", verify=False):
         # Create a URL to connect to
-        url = self._base_url + endpoint
+        if not phantom.is_url(endpoint):
+            url = f"{self._base_url}{endpoint}"
+        else:
+            url = endpoint
         authToken = "Bearer " + self._api_key
         headers = {"Content-Type": "application/json", "Authorization": authToken}
 
@@ -1146,6 +1149,77 @@ class CiscoWebexConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "Recording details retrieved successfully")
 
+    def _handle_ai_meeting_summary(self, param):
+        """Get AI generated meeting summary and actions items."""
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        recording_id = param.get("recording_id")
+        site_url = param.get("site_url")
+
+        if not recording_id and not site_url:
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter. Please provide either 'recording_id' or 'site_url'")
+
+        endpoint = consts.WEBEX_GET_AI_GENERATED_SUMMARY_ENDPOINT.format(recording_id=recording_id, site_url=site_url)
+
+        # Make API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(endpoint, action_result)
+        else:
+            ret_val, response = self._update_request(action_result, endpoint)
+
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(f"Failed to get recording details for given recording id : {recording_id} and site url : {site_url}")
+
+        output_response = {"recordingId": response.get("recordUUID"), "recordingName": response.get("recordName")}
+
+        suggested_url = response.get("suggestedNoteUrl")
+        if suggested_url:
+            ret_val, note_response = self._make_rest_call(suggested_url, action_result, headers=consts.WEBEX_JSON_HEADERS)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+            notes = None
+            content_str = note_response.get("content")
+            if content_str:
+                try:
+                    content = json.loads(content_str)
+                    description = content.get("description", {}).get("text", "")
+                    note_items = "".join(f"<li>{note.get('text', '')}</li>" for note in content.get("notes", []))
+                    notes = f"<p>{description}</p><ul>{note_items}</ul>"
+                except json.JSONDecodeError:
+                    notes = content_str
+
+            output_response["suggestedNote"] = notes
+
+        action_item_url = response.get("actionItemUrl")
+        if action_item_url:
+            ret_val, action_item_response = self._make_rest_call(action_item_url, action_result, headers=consts.WEBEX_JSON_HEADERS)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+            content_str = action_item_response.get("content")
+            action_items = ""
+            if content_str:
+                try:
+                    content = json.loads(content_str)
+                    for item in content:
+                        item_content = item.get("content", "")
+                        if re.search(r"<[^>]+>", item_content):
+                            action_items += item_content
+                        else:
+                            action_items += f"<p>{item_content}</p>"
+                except json.JSONDecodeError:
+                    action_items = content_str
+
+            output_response["actionItems"] = action_items
+
+        action_result.add_data(output_response)
+
+        if not (output_response.get("actionItems") or output_response.get("suggestedNote")):
+            return action_result.set_status(phantom.APP_ERROR, "AI generated meeting summary and actions items not found")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "AI generated meeting summary and actions items retrieved successfully")
+
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
@@ -1189,6 +1263,9 @@ class CiscoWebexConnector(BaseConnector):
 
         elif action_id == "get_recording_details":
             ret_val = self._handle_get_recording_details(param)
+
+        elif action_id == "ai_meeting_summary":
+            ret_val = self._handle_ai_meeting_summary(param)
 
         return ret_val
 

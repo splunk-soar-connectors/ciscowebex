@@ -230,6 +230,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.created",
+                    "data_type": "string",
+                    "example_values": [
+                        "2018-01-04T20:46:30.734Z"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.displayName",
                     "data_type": "string",
                     "example_values": [
@@ -237,6 +244,16 @@
                     ],
                     "column_name": "User Name",
                     "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.emails",
+                    "data_type": "string",
+                    "example_values": [
+                        "examplemail@test.com"
+                    ],
+                    "contains": [
+                        "email"
+                    ]
                 },
                 {
                     "data_path": "action_result.data.*.firstName",
@@ -258,6 +275,13 @@
                     "column_order": 3
                 },
                 {
+                    "data_path": "action_result.data.*.lastActivity",
+                    "data_type": "string",
+                    "example_values": [
+                        "2018-01-05T21:04:53.424Z"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.lastModified",
                     "data_type": "string",
                     "example_value": [
@@ -269,30 +293,6 @@
                     "data_type": "string",
                     "example_value": [
                         "abc"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.created",
-                    "data_type": "string",
-                    "example_values": [
-                        "2018-01-04T20:46:30.734Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.emails",
-                    "data_type": "string",
-                    "example_values": [
-                        "examplemail@test.com"
-                    ],
-                    "contains": [
-                        "email"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.lastActivity",
-                    "data_type": "string",
-                    "example_values": [
-                        "2018-01-05T21:04:53.424Z"
                     ]
                 },
                 {
@@ -426,19 +426,19 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Compile Test",
-                        "hello room"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.is_markdown",
                     "data_type": "boolean",
                     "example_values": [
                         true,
                         false
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Compile Test",
+                        "hello room"
                     ]
                 },
                 {
@@ -587,6 +587,65 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.classification_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.is_announcement_only",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.is_locked",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.is_public",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.team_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.title",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.created",
+                    "data_type": "string",
+                    "column_name": "Created At",
+                    "column_order": 5,
+                    "example_values": [
+                        "2025-05-09T09:57:17.803Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.creatorId",
+                    "data_type": "string",
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.description",
+                    "data_type": "string",
+                    "example_values": [
+                        "test"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.id",
                     "data_type": "string",
                     "column_name": "ID",
@@ -599,40 +658,11 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
+                    "data_path": "action_result.data.*.isAnnouncementOnly",
+                    "data_type": "boolean",
                     "example_values": [
-                        "group"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.title",
-                    "data_type": "string",
-                    "column_name": "Title",
-                    "column_order": 1,
-                    "example_values": [
-                        "test room"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.created",
-                    "data_type": "string",
-                    "column_name": "Created At",
-                    "column_order": 5,
-                    "example_values": [
-                        "2025-05-09T09:57:17.803Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.ownerId",
-                    "data_type": "string",
-                    "column_name": "Owner ID",
-                    "contains": [
-                        "webex user id"
-                    ],
-                    "column_order": 2,
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                        true,
+                        false
                     ]
                 },
                 {
@@ -656,13 +686,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.creatorId",
-                    "data_type": "string",
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.lastActivity",
                     "data_type": "string",
                     "example_values": [
@@ -670,44 +693,50 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.title",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.team_id",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.classification_id",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.is_locked",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.is_public",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.is_announcement_only",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.madePublic",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "2025-05-23T04:53:54.268Z"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.ownerId",
+                    "data_type": "string",
+                    "column_name": "Owner ID",
+                    "contains": [
+                        "webex user id"
+                    ],
+                    "column_order": 2,
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.teamId",
+                    "data_type": "string",
+                    "example_values": [
+                        "testzcGFyazovL3VzL1RFQU0vMDM3ZWZlZTAtMtestzc5My0xMWYwLWFhY2EtODM2Mjg3test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.title",
+                    "data_type": "string",
+                    "column_name": "Title",
+                    "column_order": 1,
+                    "example_values": [
+                        "test room"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -715,6 +744,10 @@
                 },
                 {
                     "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
             ],
@@ -768,24 +801,36 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "ID",
-                    "column_order": 0,
                     "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.roomId",
+                    "data_path": "action_result.parameter.is_moderator",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.person_email",
                     "data_type": "string",
-                    "column_name": "Room ID",
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.person_id",
+                    "data_type": "string",
+                    "contains": [
+                        "webex user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.room_id",
+                    "data_type": "string",
                     "contains": [
                         "webex room id"
-                    ],
-                    "column_order": 2,
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
                     ]
                 },
                 {
@@ -796,30 +841,12 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.personId",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "string",
-                    "column_name": "Person ID",
-                    "contains": [
-                        "webex user id"
-                    ],
-                    "column_order": 3,
+                    "column_name": "ID",
+                    "column_order": 0,
                     "example_values": [
                         "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.roomType",
-                    "data_type": "string",
-                    "example_values": [
-                        "group"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isMonitor",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
                     ]
                 },
                 {
@@ -831,27 +858,11 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.personEmail",
-                    "data_type": "string",
-                    "column_name": "Email",
-                    "contains": [
-                        "email"
-                    ],
-                    "column_order": 4,
+                    "data_path": "action_result.data.*.isMonitor",
+                    "data_type": "boolean",
                     "example_values": [
-                        "example@example.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.personOrgId",
-                    "data_type": "string",
-                    "column_name": "Person Org ID",
-                    "contains": [
-                        "webex org id"
-                    ],
-                    "column_order": 5,
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                        true,
+                        false
                     ]
                 },
                 {
@@ -872,41 +883,63 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.room_id",
+                    "data_path": "action_result.data.*.personEmail",
                     "data_type": "string",
-                    "contains": [
-                        "webex room id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.person_id",
-                    "data_type": "string",
-                    "contains": [
-                        "webex user id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.person_email",
-                    "data_type": "string",
+                    "column_name": "Email",
                     "contains": [
                         "email"
+                    ],
+                    "column_order": 4,
+                    "example_values": [
+                        "example@example.com"
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.is_moderator",
-                    "data_type": "boolean"
+                    "data_path": "action_result.data.*.personId",
+                    "data_type": "string",
+                    "column_name": "Person ID",
+                    "contains": [
+                        "webex user id"
+                    ],
+                    "column_order": 3,
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.personOrgId",
+                    "data_type": "string",
+                    "column_name": "Person Org ID",
+                    "contains": [
+                        "webex org id"
+                    ],
+                    "column_order": 5,
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.roomId",
+                    "data_type": "string",
+                    "column_name": "Room ID",
+                    "contains": [
+                        "webex room id"
+                    ],
+                    "column_order": 2,
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.roomType",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "group"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -914,6 +947,10 @@
                 },
                 {
                     "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
             ],
@@ -1073,176 +1110,121 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "ID",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.adhoc",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.allow_any_user_to_be_co_host",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.automatic_lock_minutes",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.enable_automatic_lock",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.enable_connect_audio_before_host",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.enabled_auto_record_meeting",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.enabled_join_before_host",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.end",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.host_email",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.invitees",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.join_before_host_minutes",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.password",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.public_meeting",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.recurrence",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.reminder_time",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.room_id",
+                    "data_type": "string",
                     "contains": [
-                        "webex meeting id"
-                    ],
-                    "column_order": 0,
-                    "example_values": [
-                        "test92d8997b4d36bc3ac1893c7ftest8"
+                        "webex room id"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.end",
-                    "data_type": "string",
-                    "column_name": "End Time",
-                    "column_order": 4,
-                    "example_values": [
-                        "2025-05-10T14:24:00Z"
-                    ]
+                    "data_path": "action_result.parameter.scheduled_type",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.start",
-                    "data_type": "string",
-                    "column_name": "Start Time",
-                    "column_order": 3,
-                    "example_values": [
-                        "2025-05-10T13:24:00Z"
-                    ]
+                    "data_path": "action_result.parameter.send_email",
+                    "data_type": "boolean"
                 },
                 {
-                    "data_path": "action_result.data.*.state",
-                    "data_type": "string",
-                    "example_values": [
-                        "active"
-                    ]
+                    "data_path": "action_result.parameter.session_type_id",
+                    "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.title",
-                    "data_type": "string",
-                    "column_name": "Title",
-                    "column_order": 1,
-                    "example_values": [
-                        "test meeting"
-                    ]
+                    "data_path": "action_result.parameter.start",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.hostKey",
+                    "data_path": "action_result.parameter.timezone",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.title",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.unlocked_meeting_join_security",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.agenda",
                     "data_type": "string",
                     "example_values": [
-                        "210605"
+                        "\u6f22\u5b57\u00a9\u00ac\u0278\u0460\u058d\u06de\u0a0a\u0bf5\u0d6c\u0f03\u1024\u1128\u11d7\u1296\u13cc\u1520\u16ef\u1720\u17a6\u1864\u18bb\u1910\u19aa\u1a03\u1a54\u1ab8\u1b52\u1b88\u1be1\u1c26\u1cc0\u1d1e\u1d46\u1d5d\u1e08\u1f52\u2047\u2130\u214f\u2177\u2230\u22d0\u23fb\u30b5\u30a4\u30d0\u30fc\u30bb\u30ad\u30e5\u30ea\u30c6\u30a3\u30a4\u30f3\u30b7\u30c7\u30f3\u30c8\u65e5\u672c\u6a19\u6e96\u6642\u26f0\u26f1\u26f2\u26f3\u26f5\u2714\u2764\ufb17\u256c\u238b\u231a \u214d\u214e\u20ac \u20ad\u2042\u1fa7\u0488\u20ae\u20af\u214f\u231b \u238e\u2606\u1e02\u5e73\u4eee\u540d, \u3072\u3089\u304c\u306a~"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.siteUrl",
-                    "data_type": "string",
-                    "example_values": [
-                        "example.webex.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.webLink",
-                    "data_type": "string",
-                    "column_name": "Meeting Weblink",
-                    "column_order": 2,
-                    "example_values": [
-                        "https://example.webex.com/example/j.php?MTID=m6325e89c172b9167381372a0b862a995"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "example_values": [
-                        "testdpXhe326"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.timezone",
-                    "data_type": "string",
-                    "column_name": "Time Zone",
-                    "column_order": 5,
-                    "example_values": [
-                        "UTC"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostEmail",
-                    "data_type": "string",
-                    "example_values": [
-                        "ishans@example.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.links.*.rel",
-                    "data_type": "string",
-                    "example_values": [
-                        "globalCallinNumbers"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.links.*.href",
-                    "data_type": "string",
-                    "example_values": [
-                        "/v1/meetings/atest92d8997b4d36bc3ac1893c7ftest/globalCallinNumbers"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.links.*.method",
-                    "data_type": "string",
-                    "example_values": [
-                        "GET"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.accessCode",
-                    "data_type": "string",
-                    "example_values": [
-                        "26636572133"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.callInNumbers.*.label",
-                    "data_type": "string",
-                    "example_values": [
-                        "Call-in toll number (US/Canada)"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.callInNumbers.*.tollType",
-                    "data_type": "string",
-                    "example_values": [
-                        "toll"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.callInNumbers.*.callInNumber",
-                    "data_type": "string",
-                    "example_values": [
-                        "+1-000-525-6800"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostUserId",
-                    "data_type": "string",
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sipAddress",
-                    "data_type": "string",
-                    "example_values": [
-                        "2660000000133@webex.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingType",
-                    "data_type": "string",
-                    "example_values": [
-                        "meetingSeries"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingNumber",
-                    "data_type": "string",
-                    "example_values": [
-                        "26600002133"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.publicMeeting",
+                    "data_path": "action_result.data.*.allowAnyUserToBeCoHost",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1250,21 +1232,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.scheduledType",
-                    "data_type": "string",
-                    "example_values": [
-                        "meeting"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sessionTypeId",
-                    "data_type": "numeric",
-                    "example_values": [
-                        159
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingOptions.enabledChat",
+                    "data_path": "action_result.data.*.allowAuthenticatedDevices",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1272,45 +1240,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.meetingOptions.enabledVideo",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingOptions.enabledFileTransfer",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dialInIpAddress",
-                    "data_type": "string",
-                    "example_values": [
-                        "173.243.2.68"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.excludePassword",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostDisplayName",
-                    "data_type": "string",
-                    "example_values": [
-                        "test user"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.enabledLiveStream",
+                    "data_path": "action_result.data.*.allowFirstUserToBeCoHost",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1334,23 +1264,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewAnyPage",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledSaveDocument",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledShareContent",
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledChatOtherParticipants",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1359,6 +1273,14 @@
                 },
                 {
                     "data_path": "action_result.data.*.attendeePrivileges.enabledChatPresenter",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledContactOperatorPrivately",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1382,7 +1304,15 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewThumbnails",
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledSaveDocument",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledShareContent",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1398,6 +1328,14 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewAnyPage",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.attendeePrivileges.enabledViewParticipantList",
                     "data_type": "boolean",
                     "example_values": [
@@ -1406,92 +1344,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledChatOtherParticipants",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledContactOperatorPrivately",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.enableAutomaticLock",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.enabledJoinBeforeHost",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.joinBeforeHostMinutes",
-                    "data_type": "numeric",
-                    "example_values": [
-                        5
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.allowAnyUserToBeCoHost",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.entryAndExitTone",
-                    "data_type": "string",
-                    "example_values": [
-                        "noTone"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.audioConnectionType",
-                    "data_type": "string",
-                    "example_values": [
-                        "webexAudio"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.enabledGlobalCallIn",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.enabledTollFreeCallIn",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.muteAttendeeUponEntry",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.enabledAudienceCallBack",
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewThumbnails",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1515,7 +1368,14 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.enabledVisualWatermark",
+                    "data_path": "action_result.data.*.audioConnectionOptions.audioConnectionType",
+                    "data_type": "string",
+                    "example_values": [
+                        "webexAudio"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.audioConnectionOptions.enabledAudienceCallBack",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1523,7 +1383,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.enabledBreakoutSessions",
+                    "data_path": "action_result.data.*.audioConnectionOptions.enabledGlobalCallIn",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1531,7 +1391,52 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.allowFirstUserToBeCoHost",
+                    "data_path": "action_result.data.*.audioConnectionOptions.enabledTollFreeCallIn",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.audioConnectionOptions.entryAndExitTone",
+                    "data_type": "string",
+                    "example_values": [
+                        "noTone"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.audioConnectionOptions.muteAttendeeUponEntry",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.automaticLockMinutes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        20
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dialInIpAddress",
+                    "data_type": "string",
+                    "example_values": [
+                        "173.243.2.68"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enableAutomaticLock",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enableConnectAudioBeforeHost",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -1547,11 +1452,225 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.allowAuthenticatedDevices",
+                    "data_path": "action_result.data.*.enabledBreakoutSessions",
                     "data_type": "boolean",
                     "example_values": [
                         true,
                         false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enabledJoinBeforeHost",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enabledLiveStream",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enabledVisualWatermark",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enabledWebcastView",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.end",
+                    "data_type": "string",
+                    "column_name": "End Time",
+                    "column_order": 4,
+                    "example_values": [
+                        "2025-05-10T14:24:00Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.excludePassword",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostDisplayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "test user"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostEmail",
+                    "data_type": "string",
+                    "example_values": [
+                        "ishans@example.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostKey",
+                    "data_type": "string",
+                    "example_values": [
+                        "210605"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostUserId",
+                    "data_type": "string",
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "ID",
+                    "contains": [
+                        "webex meeting id"
+                    ],
+                    "column_order": 0,
+                    "example_values": [
+                        "test92d8997b4d36bc3ac1893c7ftest8"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.joinBeforeHostMinutes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        5
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.maxWebinarAttendeeCapacity",
+                    "data_type": "numeric",
+                    "example_values": [
+                        50000
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingNumber",
+                    "data_type": "string",
+                    "example_values": [
+                        "26600002133"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingOptions.enabledChat",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingOptions.enabledFileTransfer",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingOptions.enabledVideo",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingType",
+                    "data_type": "string",
+                    "example_values": [
+                        "meetingSeries"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.panelistPassword",
+                    "data_type": "string",
+                    "example_values": [
+                        "hhQcajkb562"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.password",
+                    "data_type": "string",
+                    "example_values": [
+                        "testdpXhe326"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.phoneAndVideoSystemPanelistPassword",
+                    "data_type": "string",
+                    "example_values": [
+                        "44722552"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
+                    "data_type": "string",
+                    "example_values": [
+                        "97237943"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.publicMeeting",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.reminderTime",
+                    "data_type": "numeric",
+                    "example_values": [
+                        10
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.requireAttendeeLogin",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.restrictToInvitees",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.scheduledType",
+                    "data_type": "string",
+                    "example_values": [
+                        "meeting"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sessionTypeId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        159
                     ]
                 },
                 {
@@ -1563,10 +1682,100 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
+                    "data_path": "action_result.data.*.sipAddress",
                     "data_type": "string",
                     "example_values": [
-                        "97237943"
+                        "2660000000133@webex.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.siteUrl",
+                    "data_type": "string",
+                    "example_values": [
+                        "example.webex.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.start",
+                    "data_type": "string",
+                    "column_name": "Start Time",
+                    "column_order": 3,
+                    "example_values": [
+                        "2025-05-10T13:24:00Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.state",
+                    "data_type": "string",
+                    "example_values": [
+                        "active"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.accessCode",
+                    "data_type": "string",
+                    "example_values": [
+                        "26636572133"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.callInNumbers.*.callInNumber",
+                    "data_type": "string",
+                    "example_values": [
+                        "+1-000-525-6800"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.callInNumbers.*.label",
+                    "data_type": "string",
+                    "example_values": [
+                        "Call-in toll number (US/Canada)"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.callInNumbers.*.tollType",
+                    "data_type": "string",
+                    "example_values": [
+                        "toll"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.links.*.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "/v1/meetings/atest92d8997b4d36bc3ac1893c7ftest/globalCallinNumbers"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.links.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "GET"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.links.*.rel",
+                    "data_type": "string",
+                    "example_values": [
+                        "globalCallinNumbers"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.timezone",
+                    "data_type": "string",
+                    "column_name": "Time Zone",
+                    "column_order": 5,
+                    "example_values": [
+                        "UTC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.title",
+                    "data_type": "string",
+                    "column_name": "Title",
+                    "column_order": 1,
+                    "example_values": [
+                        "test meeting"
                     ]
                 },
                 {
@@ -1577,123 +1786,17 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.enableConnectAudioBeforeHost",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.title",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.start",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.end",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.timezone",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.description",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.password",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.enabled_auto_record_meeting",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.allow_any_user_to_be_co_host",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.enabled_join_before_host",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.join_before_host_minutes",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.parameter.enable_connect_audio_before_host",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.invitees",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.recurrence",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.adhoc",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.room_id",
+                    "data_path": "action_result.data.*.webLink",
                     "data_type": "string",
-                    "contains": [
-                        "webex room id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.send_email",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.host_email",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.session_type_id",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.parameter.scheduled_type",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.enable_automatic_lock",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.automatic_lock_minutes",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.parameter.public_meeting",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.reminder_time",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.parameter.unlocked_meeting_join_security",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
+                    "column_name": "Meeting Weblink",
+                    "column_order": 2,
                     "example_values": [
-                        "success",
-                        "failed"
+                        "https://example.webex.com/example/j.php?MTID=m6325e89c172b9167381372a0b862a995"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -1701,6 +1804,10 @@
                 },
                 {
                     "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
             ],
@@ -1771,188 +1878,15 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "column_name": "ID",
-                    "contains": [
-                        "webex user id"
-                    ],
-                    "column_order": 0,
-                    "example_values": [
-                        "testef03e1a49be883320fe35fde314_I_65220test54323715_3118cefb-81e7-492d-8223-1fe0a353test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.host",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.email",
-                    "data_type": "string",
-                    "column_name": "Email",
-                    "contains": [
-                        "email"
-                    ],
-                    "column_order": 1,
-                    "example_values": [
-                        "example@example.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.muted",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.state",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "end"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.coHost",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.devices.*.leftTime",
-                    "data_type": "string",
-                    "example_values": [
-                        "2025-05-08T12:40:55Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.devices.*.deviceType",
-                    "data_type": "string",
-                    "column_name": "Device Type",
-                    "column_order": 2,
-                    "example_values": [
-                        "mac"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.devices.*.joinedTime",
-                    "data_type": "string",
-                    "column_name": "Joined Time",
-                    "column_order": 3,
-                    "example_values": [
-                        "2025-05-08T12:40:49Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.devices.*.correlationId",
-                    "data_type": "string",
-                    "example_values": [
-                        "test927a-496a-4678-ac62-bcbdaadctest"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.devices.*.durationSecond",
-                    "data_type": "numeric",
-                    "example_values": [
-                        6
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.invitee",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.siteUrl",
-                    "data_type": "string",
-                    "example_values": [
-                        "example.webex.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.leftTime",
-                    "data_type": "string",
-                    "column_name": "Laft Time",
-                    "column_order": 4,
-                    "example_values": [
-                        "2025-05-08T12:40:55Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostEmail",
-                    "data_type": "string",
-                    "example_values": [
-                        "example@example.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingId",
-                    "data_type": "string",
-                    "column_name": "Meeting ID",
-                    "column_order": 5,
-                    "contains": [
-                        "webex meeting id"
-                    ],
-                    "example_values": [
-                        "test2ef03e1a49be883320fe35fde314_I_65220661465432test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.joinedTime",
-                    "data_type": "string",
-                    "example_values": [
-                        "2025-05-08T12:40:49Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.displayName",
-                    "data_type": "string",
-                    "example_values": [
-                        "test user"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.spaceModerator",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingStartTime",
-                    "data_type": "string",
-                    "example_values": [
-                        "2025-05-08T12:40:49Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.meeting_id",
-                    "data_type": "string",
-                    "contains": [
-                        "webex meeting id"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
                     "data_path": "action_result.parameter.breakout_session_id",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.meeting_start_time_from",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.meeting_start_time_to",
                     "data_type": "string"
                 },
                 {
@@ -1975,24 +1909,185 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.parameter.meeting_id",
                     "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
+                    "contains": [
+                        "webex meeting id"
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.parameter.meeting_start_time_from",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_path": "action_result.parameter.meeting_start_time_to",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.coHost",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.devices.*.correlationId",
+                    "data_type": "string",
+                    "example_values": [
+                        "test927a-496a-4678-ac62-bcbdaadctest"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.devices.*.deviceType",
+                    "data_type": "string",
+                    "column_name": "Device Type",
+                    "column_order": 2,
+                    "example_values": [
+                        "mac"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.devices.*.durationSecond",
+                    "data_type": "numeric",
+                    "example_values": [
+                        6
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.devices.*.joinedTime",
+                    "data_type": "string",
+                    "column_name": "Joined Time",
+                    "column_order": 3,
+                    "example_values": [
+                        "2025-05-08T12:40:49Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.devices.*.leftTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2025-05-08T12:40:55Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.displayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "test user"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.email",
+                    "data_type": "string",
+                    "column_name": "Email",
+                    "contains": [
+                        "email"
+                    ],
+                    "column_order": 1,
+                    "example_values": [
+                        "example@example.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.host",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostEmail",
+                    "data_type": "string",
+                    "example_values": [
+                        "example@example.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "ID",
+                    "contains": [
+                        "webex user id"
+                    ],
+                    "column_order": 0,
+                    "example_values": [
+                        "testef03e1a49be883320fe35fde314_I_65220test54323715_3118cefb-81e7-492d-8223-1fe0a353test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.invitee",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.joinedTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2025-05-08T12:40:49Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.leftTime",
+                    "data_type": "string",
+                    "column_name": "Laft Time",
+                    "column_order": 4,
+                    "example_values": [
+                        "2025-05-08T12:40:55Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingId",
+                    "data_type": "string",
+                    "column_name": "Meeting ID",
+                    "column_order": 5,
+                    "contains": [
+                        "webex meeting id"
+                    ],
+                    "example_values": [
+                        "test2ef03e1a49be883320fe35fde314_I_65220661465432test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingStartTime",
+                    "data_type": "string",
+                    "example_values": [
+                        "2025-05-08T12:40:49Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.muted",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.siteUrl",
+                    "data_type": "string",
+                    "example_values": [
+                        "example.webex.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.spaceModerator",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.state",
+                    "data_type": "string",
+                    "example_values": [
+                        "end"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary.message",
@@ -2007,6 +2102,18 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 }
             ],
             "render": {
@@ -2059,113 +2166,11 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
-                    "data_type": "string",
-                    "column_name": "ID",
-                    "contains": [
-                        "webex message id"
-                    ],
-                    "column_order": 0,
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.html",
+                    "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "hello <spark-mention data-object-type=\"person\" data-object-id=\"TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST\">test</spark-mention>"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.text",
-                    "data_type": "string",
-                    "column_name": "Text",
-                    "column_order": 1,
-                    "example_values": [
-                        "hello test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.roomId",
-                    "data_type": "string",
-                    "contains": [
-                        "webex room id"
-                    ],
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.created",
-                    "data_type": "string",
-                    "example_values": [
-                        "2025-05-09T05:37:36.687Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.personId",
-                    "data_type": "string",
-                    "column_name": "Person ID",
-                    "contains": [
-                        "webex user id"
-                    ],
-                    "column_order": 2,
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.roomType",
-                    "data_type": "string",
-                    "example_values": [
-                        "group"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.personEmail",
-                    "data_type": "string",
-                    "column_name": "Email",
-                    "column_order": 3,
-                    "contains": [
-                        "email"
-                    ],
-                    "example_values": [
-                        "example@example.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.parentId",
-                    "data_type": "string",
-                    "contains": [
-                        "webex message id"
-                    ],
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingId",
-                    "data_type": "string",
-                    "contains": [
-                        "webex meeting id"
-                    ],
-                    "example_values": [
-                        "9testf03e1a49be883320fe35fde314_I_6522066146543test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.room_id",
-                    "data_type": "string",
-                    "contains": [
-                        "webex room id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.parent_id",
-                    "data_type": "string",
-                    "contains": [
-                        "webex message id"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -2181,24 +2186,114 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.parameter.parent_id",
                     "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
+                    "contains": [
+                        "webex message id"
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.parameter.room_id",
+                    "data_type": "string",
+                    "contains": [
+                        "webex room id"
+                    ]
                 },
                 {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.created",
+                    "data_type": "string",
+                    "example_values": [
+                        "2025-05-09T05:37:36.687Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.html",
+                    "data_type": "string",
+                    "example_values": [
+                        "hello <spark-mention data-object-type=\"person\" data-object-id=\"TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST\">test</spark-mention>"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "ID",
+                    "contains": [
+                        "webex message id"
+                    ],
+                    "column_order": 0,
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingId",
+                    "data_type": "string",
+                    "contains": [
+                        "webex meeting id"
+                    ],
+                    "example_values": [
+                        "9testf03e1a49be883320fe35fde314_I_6522066146543test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.parentId",
+                    "data_type": "string",
+                    "contains": [
+                        "webex message id"
+                    ],
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.personEmail",
+                    "data_type": "string",
+                    "column_name": "Email",
+                    "column_order": 3,
+                    "contains": [
+                        "email"
+                    ],
+                    "example_values": [
+                        "example@example.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.personId",
+                    "data_type": "string",
+                    "column_name": "Person ID",
+                    "contains": [
+                        "webex user id"
+                    ],
+                    "column_order": 2,
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.roomId",
+                    "data_type": "string",
+                    "contains": [
+                        "webex room id"
+                    ],
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.roomType",
+                    "data_type": "string",
+                    "example_values": [
+                        "group"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.text",
+                    "data_type": "string",
+                    "column_name": "Text",
+                    "column_order": 1,
+                    "example_values": [
+                        "hello test"
+                    ]
                 },
                 {
                     "data_path": "action_result.summary.message",
@@ -2213,6 +2308,18 @@
                     "example_values": [
                         10
                     ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
                 }
             ],
             "render": {
@@ -2241,43 +2348,18 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "ID",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.message_id",
+                    "data_type": "string",
                     "contains": [
                         "webex message id"
-                    ],
-                    "column_order": 0,
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.html",
-                    "data_type": "string",
-                    "example_values": [
-                        "hello <spark-mention data-object-type=\"person\" data-object-id=\"TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST\">test</spark-mention>"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.text",
-                    "data_type": "string",
-                    "column_name": "Text",
-                    "column_order": 1,
-                    "example_values": [
-                        "hello test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.roomId",
-                    "data_type": "string",
-                    "column_name": "Room ID",
-                    "column_order": 2,
-                    "contains": [
-                        "webex room id"
-                    ],
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
                     ]
                 },
                 {
@@ -2288,22 +2370,22 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.personId",
+                    "data_path": "action_result.data.*.html",
                     "data_type": "string",
-                    "column_name": "Person ID",
-                    "column_order": 3,
-                    "contains": [
-                        "webex user id"
-                    ],
                     "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                        "hello <spark-mention data-object-type=\"person\" data-object-id=\"TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST\">test</spark-mention>"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.roomType",
+                    "data_path": "action_result.data.*.id",
                     "data_type": "string",
+                    "column_name": "ID",
+                    "contains": [
+                        "webex message id"
+                    ],
+                    "column_order": 0,
                     "example_values": [
-                        "group"
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
                     ]
                 },
                 {
@@ -2319,23 +2401,48 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.message_id",
+                    "data_path": "action_result.data.*.personId",
                     "data_type": "string",
+                    "column_name": "Person ID",
+                    "column_order": 3,
                     "contains": [
-                        "webex message id"
+                        "webex user id"
+                    ],
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
                     ]
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.roomId",
+                    "data_type": "string",
+                    "column_name": "Room ID",
+                    "column_order": 2,
+                    "contains": [
+                        "webex room id"
+                    ],
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.roomType",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "group"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.text",
+                    "data_type": "string",
+                    "column_name": "Text",
+                    "column_order": 1,
+                    "example_values": [
+                        "hello test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -2343,6 +2450,10 @@
                 },
                 {
                     "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
             ],
@@ -2387,49 +2498,29 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "ID",
+                    "example_values": [
+                        "success",
+                        "failed"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.current",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.host_email",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.meeting_id",
+                    "data_type": "string",
                     "contains": [
                         "webex meeting id"
-                    ],
-                    "column_order": 0,
-                    "example_values": [
-                        "ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.end",
-                    "data_type": "string",
-                    "column_name": "End Time",
-                    "column_order": 4,
-                    "example_values": [
-                        "2025-05-09T13:20:00Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.start",
-                    "data_type": "string",
-                    "column_name": "Start Time",
-                    "column_order": 3,
-                    "example_values": [
-                        "2025-05-09T12:20:00Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.state",
-                    "data_type": "string",
-                    "example_values": [
-                        "ready"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.title",
-                    "data_type": "string",
-                    "column_name": "Title",
-                    "column_order": 1,
-                    "example_values": [
-                        "Test meeting"
                     ]
                 },
                 {
@@ -2437,109 +2528,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.hostKey",
-                    "data_type": "string",
-                    "example_values": [
-                        "889047"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.siteUrl",
-                    "data_type": "string",
-                    "example_values": [
-                        "example.webex.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.webLink",
-                    "data_type": "string",
-                    "column_name": "Meeting Weblink",
-                    "column_order": 2,
-                    "example_values": [
-                        "https://example.webex.com/example/j.php?MTID=me0a791a45ee400f06576ed07dd940d3e"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "example_values": [
-                        "72Xjx9PyYKA"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.timezone",
-                    "data_type": "string",
-                    "column_name": "Time Zone",
-                    "column_order": 5,
-                    "example_values": [
-                        "UTC"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostEmail",
-                    "data_type": "string",
-                    "example_values": [
-                        "example@example.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.links.*.rel",
-                    "data_type": "string",
-                    "example_values": [
-                        "globalCallinNumbers"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.links.*.href",
-                    "data_type": "string",
-                    "example_values": [
-                        "/v1/meetings/testa706b64041559c664a83e6btest/globalCallinNumbers"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.links.*.method",
-                    "data_type": "string",
-                    "example_values": [
-                        "GET"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.accessCode",
-                    "data_type": "string",
-                    "example_values": [
-                        "26620031238"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.callInNumbers.*.label",
-                    "data_type": "string",
-                    "example_values": [
-                        "Call-in toll number (US/Canada)"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.callInNumbers.*.tollType",
-                    "data_type": "string",
-                    "example_values": [
-                        "toll"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.telephony.callInNumbers.*.callInNumber",
-                    "data_type": "string",
-                    "example_values": [
-                        "+1-000-025-6800"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostUserId",
-                    "data_type": "string",
-                    "example_values": [
-                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.isModified",
+                    "data_path": "action_result.data.*.allowAnyUserToBeCoHost",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2547,14 +2536,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.sipAddress",
-                    "data_type": "string",
-                    "example_values": [
-                        "26000031238@webex.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostDidJoin",
+                    "data_path": "action_result.data.*.allowAuthenticatedDevices",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2562,66 +2544,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.meetingType",
-                    "data_type": "string",
-                    "example_values": [
-                        "scheduledMeeting"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.reminderTime",
-                    "data_type": "numeric",
-                    "example_values": [
-                        15
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingNumber",
-                    "data_type": "string",
-                    "example_values": [
-                        "26620031238"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.publicMeeting",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.scheduledType",
-                    "data_type": "string",
-                    "example_values": [
-                        "meeting"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sessionTypeId",
-                    "data_type": "numeric",
-                    "example_values": [
-                        159
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingOptions.enabledChat",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingOptions.enabledVideo",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingOptions.enabledFileTransfer",
+                    "data_path": "action_result.data.*.allowFirstUserToBeCoHost",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2630,43 +2553,6 @@
                 },
                 {
                     "data_path": "action_result.data.*.attendeeDidJoin",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.dialInIpAddress",
-                    "data_type": "string",
-                    "example_values": [
-                        "103.xx.xx.68"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.excludePassword",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostDisplayName",
-                    "data_type": "string",
-                    "example_values": [
-                        "test user"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingSeriesId",
-                    "data_type": "string",
-                    "example_values": [
-                        "testa706b64041559c664a83e6btest"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.enabledLiveStream",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2690,23 +2576,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewAnyPage",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledSaveDocument",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledShareContent",
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledChatOtherParticipants",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2715,6 +2585,14 @@
                 },
                 {
                     "data_path": "action_result.data.*.attendeePrivileges.enabledChatPresenter",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledContactOperatorPrivately",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2738,7 +2616,15 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewThumbnails",
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledSaveDocument",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledShareContent",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2754,6 +2640,14 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewAnyPage",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.attendeePrivileges.enabledViewParticipantList",
                     "data_type": "boolean",
                     "example_values": [
@@ -2762,92 +2656,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledChatOtherParticipants",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.attendeePrivileges.enabledContactOperatorPrivately",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.enableAutomaticLock",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.enabledJoinBeforeHost",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.joinBeforeHostMinutes",
-                    "data_type": "numeric",
-                    "example_values": [
-                        5
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.allowAnyUserToBeCoHost",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.entryAndExitTone",
-                    "data_type": "string",
-                    "example_values": [
-                        "noTone"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.audioConnectionType",
-                    "data_type": "string",
-                    "example_values": [
-                        "webexAudio"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.enabledGlobalCallIn",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.enabledTollFreeCallIn",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.muteAttendeeUponEntry",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.audioConnectionOptions.enabledAudienceCallBack",
+                    "data_path": "action_result.data.*.attendeePrivileges.enabledViewThumbnails",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2871,7 +2680,14 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.enabledVisualWatermark",
+                    "data_path": "action_result.data.*.audioConnectionOptions.audioConnectionType",
+                    "data_type": "string",
+                    "example_values": [
+                        "webexAudio"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.audioConnectionOptions.enabledAudienceCallBack",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2879,7 +2695,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.enabledBreakoutSessions",
+                    "data_path": "action_result.data.*.audioConnectionOptions.enabledGlobalCallIn",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2887,7 +2703,45 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.allowFirstUserToBeCoHost",
+                    "data_path": "action_result.data.*.audioConnectionOptions.enabledTollFreeCallIn",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.audioConnectionOptions.entryAndExitTone",
+                    "data_type": "string",
+                    "example_values": [
+                        "noTone"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.audioConnectionOptions.muteAttendeeUponEntry",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.dialInIpAddress",
+                    "data_type": "string",
+                    "example_values": [
+                        "103.xx.xx.68"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enableAutomaticLock",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enableConnectAudioBeforeHost",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2903,7 +2757,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.allowAuthenticatedDevices",
+                    "data_path": "action_result.data.*.enabledBreakoutSessions",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2911,7 +2765,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.simultaneousInterpretation.enabled",
+                    "data_path": "action_result.data.*.enabledJoinBeforeHost",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2919,29 +2773,32 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
+                    "data_path": "action_result.data.*.enabledLiveStream",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.enabledVisualWatermark",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.end",
                     "data_type": "string",
+                    "column_name": "End Time",
+                    "column_order": 4,
                     "example_values": [
-                        "72959979"
+                        "2025-05-09T13:20:00Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.unlockedMeetingJoinSecurity",
-                    "data_type": "string",
-                    "example_values": [
-                        "allowJoin"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.enableConnectAudioBeforeHost",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hasQA",
+                    "data_path": "action_result.data.*.excludePassword",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2957,6 +2814,14 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.hasClosedCaption",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.hasPolls",
                     "data_type": "boolean",
                     "example_values": [
@@ -2965,7 +2830,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.hasSlido",
+                    "data_path": "action_result.data.*.hasQA",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -2997,7 +2862,7 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.hasClosedCaption",
+                    "data_path": "action_result.data.*.hasSlido",
                     "data_type": "boolean",
                     "example_values": [
                         true,
@@ -3013,6 +2878,143 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.hostDidJoin",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostDisplayName",
+                    "data_type": "string",
+                    "example_values": [
+                        "test user"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostEmail",
+                    "data_type": "string",
+                    "example_values": [
+                        "example@example.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostKey",
+                    "data_type": "string",
+                    "example_values": [
+                        "889047"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostUserId",
+                    "data_type": "string",
+                    "example_values": [
+                        "TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "ID",
+                    "contains": [
+                        "webex meeting id"
+                    ],
+                    "column_order": 0,
+                    "example_values": [
+                        "ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.isModified",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.joinBeforeHostMinutes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        5
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingNumber",
+                    "data_type": "string",
+                    "example_values": [
+                        "26620031238"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingOptions.enabledChat",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingOptions.enabledFileTransfer",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingOptions.enabledVideo",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingSeriesId",
+                    "data_type": "string",
+                    "example_values": [
+                        "testa706b64041559c664a83e6btest"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingType",
+                    "data_type": "string",
+                    "example_values": [
+                        "scheduledMeeting"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.password",
+                    "data_type": "string",
+                    "example_values": [
+                        "72Xjx9PyYKA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
+                    "data_type": "string",
+                    "example_values": [
+                        "72959979"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.publicMeeting",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.reminderTime",
+                    "data_type": "numeric",
+                    "example_values": [
+                        15
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.scheduledMeetingId",
                     "data_type": "string",
                     "example_values": [
@@ -3020,34 +3022,143 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.meeting_id",
-                    "data_type": "string",
-                    "contains": [
-                        "webex meeting id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.current",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.host_email",
-                    "data_type": "string",
-                    "contains": [
-                        "email"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.scheduledType",
                     "data_type": "string",
                     "example_values": [
-                        "success",
-                        "failed"
+                        "meeting"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.sessionTypeId",
+                    "data_type": "numeric",
+                    "example_values": [
+                        159
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.simultaneousInterpretation.enabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sipAddress",
+                    "data_type": "string",
+                    "example_values": [
+                        "26000031238@webex.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.siteUrl",
+                    "data_type": "string",
+                    "example_values": [
+                        "example.webex.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.start",
+                    "data_type": "string",
+                    "column_name": "Start Time",
+                    "column_order": 3,
+                    "example_values": [
+                        "2025-05-09T12:20:00Z"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.state",
+                    "data_type": "string",
+                    "example_values": [
+                        "ready"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.accessCode",
+                    "data_type": "string",
+                    "example_values": [
+                        "26620031238"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.callInNumbers.*.callInNumber",
+                    "data_type": "string",
+                    "example_values": [
+                        "+1-000-025-6800"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.callInNumbers.*.label",
+                    "data_type": "string",
+                    "example_values": [
+                        "Call-in toll number (US/Canada)"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.callInNumbers.*.tollType",
+                    "data_type": "string",
+                    "example_values": [
+                        "toll"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.links.*.href",
+                    "data_type": "string",
+                    "example_values": [
+                        "/v1/meetings/testa706b64041559c664a83e6btest/globalCallinNumbers"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.links.*.method",
+                    "data_type": "string",
+                    "example_values": [
+                        "GET"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.telephony.links.*.rel",
+                    "data_type": "string",
+                    "example_values": [
+                        "globalCallinNumbers"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.timezone",
+                    "data_type": "string",
+                    "column_name": "Time Zone",
+                    "column_order": 5,
+                    "example_values": [
+                        "UTC"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.title",
+                    "data_type": "string",
+                    "column_name": "Title",
+                    "column_order": 1,
+                    "example_values": [
+                        "Test meeting"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.unlockedMeetingJoinSecurity",
+                    "data_type": "string",
+                    "example_values": [
+                        "allowJoin"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.webLink",
+                    "data_type": "string",
+                    "column_name": "Meeting Weblink",
+                    "column_order": 2,
+                    "example_values": [
+                        "https://example.webex.com/example/j.php?MTID=me0a791a45ee400f06576ed07dd940d3e"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -3055,6 +3166,10 @@
                 },
                 {
                     "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
             ],
@@ -3124,106 +3239,50 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.status",
                     "data_type": "string",
-                    "column_name": "User ID",
-                    "column_order": 0,
-                    "contains": [
-                        "webex user id"
+                    "example_values": [
+                        "success",
+                        "failed"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.emails",
+                    "data_path": "action_result.parameter.calling_data",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.display_name",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.email",
                     "data_type": "string",
-                    "column_name": "Emails",
-                    "column_order": 1,
                     "contains": [
                         "email"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.displayName",
-                    "data_type": "string",
-                    "column_name": "Display Name",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.data.*.orgId",
+                    "data_path": "action_result.parameter.id",
                     "data_type": "string",
                     "contains": [
-                        "webex org id"
+                        "webex user id"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.roles",
+                    "data_path": "action_result.parameter.limit",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.location_id",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.status",
+                    "data_path": "action_result.parameter.org_id",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "person"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.title",
-                    "data_type": "string",
-                    "example_values": [
-                        "Software Engineer [C]"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.avatar",
-                    "data_type": "string",
-                    "example_values": [
-                        "https://test-prod-us-east-2.webexcontent.com/Avtr~V1~1ebtest43-417f-9974-ad72catest/V1~test8f27546e523b2945ea2f7ff36tst141b3544e232718885c17cad0d1~test0570bbc40b193112b2c957test~1600"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.created",
-                    "data_type": "string",
-                    "example_values": [
-                        "2024-11-08T10:16:05.408Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.manager",
-                    "data_type": "string",
-                    "example_values": [
-                        "Test User"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.lastName",
-                    "data_type": "string",
-                    "example_values": [
-                        "Test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.nickName",
-                    "data_type": "string",
-                    "example_values": [
-                        "User"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.addresses.*.type",
-                    "data_type": "string",
-                    "example_values": [
-                        "work"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.addresses.*.region",
-                    "data_type": "string",
-                    "example_values": [
-                        "CALIFORNIA"
-                    ]
+                    "data_path": "action_result.parameter.roles",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.addresses.*.country",
@@ -3247,6 +3306,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.addresses.*.region",
+                    "data_type": "string",
+                    "example_values": [
+                        "CALIFORNIA"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.addresses.*.streetAddress",
                     "data_type": "string",
                     "example_values": [
@@ -3254,17 +3320,24 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.firstName",
+                    "data_path": "action_result.data.*.addresses.*.type",
                     "data_type": "string",
                     "example_values": [
-                        "User"
+                        "work"
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.managerId",
+                    "data_path": "action_result.data.*.avatar",
                     "data_type": "string",
                     "example_values": [
-                        "test29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjIrtestTJjLTQzM2QtODA5Yy05YWJmNWZiNDtest"
+                        "https://test-prod-us-east-2.webexcontent.com/Avtr~V1~1ebtest43-417f-9974-ad72catest/V1~test8f27546e523b2945ea2f7ff36tst141b3544e232718885c17cad0d1~test0570bbc40b193112b2c957test~1600"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.created",
+                    "data_type": "string",
+                    "example_values": [
+                        "2024-11-08T10:16:05.408Z"
                     ]
                 },
                 {
@@ -3275,6 +3348,59 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.displayName",
+                    "data_type": "string",
+                    "column_name": "Display Name",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.data.*.emails",
+                    "data_type": "string",
+                    "column_name": "Emails",
+                    "column_order": 1,
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.extension",
+                    "data_type": "string",
+                    "example_values": [
+                        "3432432"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.firstName",
+                    "data_type": "string",
+                    "example_values": [
+                        "User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "column_name": "User ID",
+                    "column_order": 0,
+                    "contains": [
+                        "webex user id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.invitePending",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.lastActivity",
+                    "data_type": "string",
+                    "example_values": [
+                        "2025-05-22T08:00:26.197Z"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.lastModified",
                     "data_type": "string",
                     "example_values": [
@@ -3282,14 +3408,61 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.summary.message",
-                    "data_type": "string"
+                    "data_path": "action_result.data.*.lastName",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test"
+                    ]
                 },
                 {
-                    "data_path": "action_result.summary.total_people",
-                    "data_type": "numeric",
+                    "data_path": "action_result.data.*.locationId",
+                    "data_type": "string",
                     "example_values": [
-                        1
+                        "Y2lzY29zcGFyazovL3VzL0xPQ0FUSU9OL2YzYjJkYmI3LWQ3MTQtNGM5YS05OTkyLWVmMjA0NWNkMmQwZA"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.loginEnabled",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.manager",
+                    "data_type": "string",
+                    "example_values": [
+                        "Test User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.managerId",
+                    "data_type": "string",
+                    "example_values": [
+                        "test29zcGFyazovL3VzL1BFT1BMRS8wMDI3MjIrtestTJjLTQzM2QtODA5Yy05YWJmNWZiNDtest"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.nickName",
+                    "data_type": "string",
+                    "example_values": [
+                        "User"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.orgId",
+                    "data_type": "string",
+                    "contains": [
+                        "webex org id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.phoneNumbers.*.primary",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
                     ]
                 },
                 {
@@ -3307,14 +3480,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.phoneNumbers.*.primary",
-                    "data_type": "boolean",
-                    "example_values": [
-                        true,
-                        false
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.pronouns.value",
                     "data_type": "string",
                     "example_values": [
@@ -3329,6 +3494,57 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.roles",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.sipAddresses.*.primary",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sipAddresses.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "personal-room"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sipAddresses.*.value",
+                    "data_type": "string",
+                    "example_values": [
+                        "4229032891@sademo2ci.dmz.webex.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.timeZone",
+                    "data_type": "string",
+                    "example_values": [
+                        "Asia/Shanghai"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.title",
+                    "data_type": "string",
+                    "example_values": [
+                        "Software Engineer [C]"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.type",
+                    "data_type": "string",
+                    "example_values": [
+                        "person"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.userName",
                     "data_type": "string",
                     "example_values": [
@@ -3336,26 +3552,19 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.email",
-                    "data_type": "string",
-                    "contains": [
-                        "email"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.display_name",
+                    "data_path": "action_result.summary.message",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.parameter.id",
-                    "data_type": "string",
-                    "contains": [
-                        "webex user id"
+                    "data_path": "action_result.summary.total_people",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.limit",
-                    "data_type": "numeric"
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
@@ -3364,34 +3573,6 @@
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "success",
-                        "failed"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.org_id",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.roles",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.calling_data",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.parameter.location_id",
-                    "data_type": "string"
                 }
             ],
             "render": {
@@ -3404,7 +3585,7 @@
             "action": "get recording details",
             "identifier": "get_recording_details",
             "description": "Retrieve details of a Webex meeting recording using its recording ID",
-            "type": "generic",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "recording_id": {
@@ -3434,80 +3615,34 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.id",
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.host_email",
+                    "data_type": "string",
+                    "contains": [
+                        "email"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.meeting_id",
+                    "data_type": "string",
+                    "contains": [
+                        "webex meeting id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.recording_id",
                     "data_type": "string",
                     "example_values": [
                         "test06506faa48c790592a4198c3test"
                     ],
-                    "column_name": "Recording ID",
-                    "column_order": 0,
                     "contains": [
                         "webex recording id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.topic",
-                    "data_type": "string",
-                    "example_values": [
-                        "soar test-20250522 0829-1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.format",
-                    "data_type": "string",
-                    "example_values": [
-                        "MP4"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.status",
-                    "data_type": "string",
-                    "example_values": [
-                        "available"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.siteUrl",
-                    "data_type": "string",
-                    "example_values": [
-                        "company.webex.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "column_name": "Password",
-                    "column_order": 1,
-                    "example_values": [
-                        "testpass"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.hostEmail",
-                    "data_type": "string",
-                    "example_values": [
-                        "example@example.com"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingId",
-                    "data_type": "string",
-                    "example_values": [
-                        "test5560719471599d7test2a4c1b72_I_6547053376test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.shareToMe",
-                    "data_type": "boolean",
-                    "example_values": [
-                        false
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sizeBytes",
-                    "data_type": "numeric",
-                    "example_values": [
-                        1067115
                     ]
                 },
                 {
@@ -3525,6 +3660,62 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.durationSeconds",
+                    "data_type": "numeric",
+                    "example_values": [
+                        219
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.format",
+                    "data_type": "string",
+                    "example_values": [
+                        "MP4"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.hostEmail",
+                    "data_type": "string",
+                    "example_values": [
+                        "example@example.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.id",
+                    "data_type": "string",
+                    "example_values": [
+                        "test06506faa48c790592a4198c3test"
+                    ],
+                    "column_name": "Recording ID",
+                    "column_order": 0,
+                    "contains": [
+                        "webex recording id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingId",
+                    "data_type": "string",
+                    "example_values": [
+                        "test5560719471599d7test2a4c1b72_I_6547053376test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.meetingSeriesId",
+                    "data_type": "string",
+                    "example_values": [
+                        "test5560719471599d76418test"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.password",
+                    "data_type": "string",
+                    "column_name": "Password",
+                    "column_order": 1,
+                    "example_values": [
+                        "testpass"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.playbackUrl",
                     "data_type": "string",
                     "example_values": [
@@ -3537,34 +3728,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.serviceType",
-                    "data_type": "string",
-                    "example_values": [
-                        "MeetingCenter"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.timeRecorded",
-                    "data_type": "string",
-                    "example_values": [
-                        "2025-05-22T08:23:05Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.durationSeconds",
-                    "data_type": "numeric",
-                    "example_values": [
-                        219
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.meetingSeriesId",
-                    "data_type": "string",
-                    "example_values": [
-                        "test5560719471599d76418test"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.scheduledMeetingId",
                     "data_type": "string",
                     "example_values": [
@@ -3572,10 +3735,38 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.temporaryDirectDownloadLinks.expiration",
+                    "data_path": "action_result.data.*.serviceType",
                     "data_type": "string",
                     "example_values": [
-                        "2025-05-22T13:44:50Z"
+                        "MeetingCenter"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.shareToMe",
+                    "data_type": "boolean",
+                    "example_values": [
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.siteUrl",
+                    "data_type": "string",
+                    "example_values": [
+                        "company.webex.com"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.sizeBytes",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1067115
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "available"
                     ]
                 },
                 {
@@ -3583,6 +3774,13 @@
                     "data_type": "string",
                     "example_values": [
                         "https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/audio.mp3?siteid=00240&recordid=197000062&"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.temporaryDirectDownloadLinks.expiration",
+                    "data_type": "string",
+                    "example_values": [
+                        "2025-05-22T13:44:50Z"
                     ]
                 },
                 {
@@ -3610,17 +3808,17 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.timeRecorded",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "2025-05-22T08:23:05Z"
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
+                    "data_path": "action_result.data.*.topic",
                     "data_type": "string",
                     "example_values": [
-                        "Message: Recording details retrieved successfully, Status code: False"
+                        "soar test-20250522 0829-1"
                     ]
                 },
                 {
@@ -3631,35 +3829,18 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.parameter.recording_id",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "test06506faa48c790592a4198c3test"
-                    ],
-                    "contains": [
-                        "webex recording id"
+                        "Message: Recording details retrieved successfully, Status code: False"
                     ]
-                },
-                {
-                    "data_path": "action_result.parameter.meeting_id",
-                    "data_type": "string",
-                    "contains": [
-                        "webex meeting id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.host_email",
-                    "data_type": "string",
-                    "contains": [
-                        "email"
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
                 },
                 {
                     "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 }
             ],
@@ -3667,6 +3848,128 @@
                 "type": "custom",
                 "view": "ciscowebex_view.display_view",
                 "title": "Get Recording Details"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "ai meeting summary",
+            "identifier": "ai_meeting_summary",
+            "description": "Retrieve AI-Generated meeting summary and actions items using its recording ID and site url",
+            "type": "investigate",
+            "read_only": true,
+            "parameters": {
+                "recording_id": {
+                    "description": "Unique identifier of the Webex recording.",
+                    "data_type": "string",
+                    "contains": [
+                        "webex recording id"
+                    ],
+                    "order": 0,
+                    "primary": true,
+                    "required": true
+                },
+                "site_url": {
+                    "description": "Unique identifier of the Webex recording.eg: company.webex.com",
+                    "data_type": "string",
+                    "order": 1,
+                    "primary": true,
+                    "required": true
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.recording_id",
+                    "data_type": "string",
+                    "contains": [
+                        "webex recording id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.site_url",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.actionItems",
+                    "data_type": "string",
+                    "example_values": [
+                        "AI-Generated actions items retrieved successfully"
+                    ],
+                    "column_name": "Action Items",
+                    "column_order": 2,
+                    "contains": [
+                        "webex meeting actions items"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.actions_items",
+                    "data_type": "string",
+                    "example_values": [
+                        "AI-Generated actions items retrieved successfully"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.recordingId",
+                    "data_type": "string",
+                    "example_values": [
+                        "test06506faa48c790592a4198c3test"
+                    ],
+                    "contains": [
+                        "webex recording id"
+                    ],
+                    "column_name": "Recording ID",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.data.*.recordingName",
+                    "data_type": "string",
+                    "example_values": [
+                        "test recording"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.suggestedNote",
+                    "data_type": "string",
+                    "example_values": [
+                        "AI-Generated meeting summary and actions items retrieved successfully"
+                    ],
+                    "column_name": "Suggested Note",
+                    "column_order": 1,
+                    "contains": [
+                        "webex meeting notes"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.summary",
+                    "data_type": "string",
+                    "example_values": [
+                        "AI-Generated meeting summary and actions items retrieved successfully"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                }
+            ],
+            "render": {
+                "type": "custom",
+                "view": "ciscowebex_view.display_view",
+                "title": "Get AI Meeting Summary"
             },
             "versions": "EQ(*)"
         }
