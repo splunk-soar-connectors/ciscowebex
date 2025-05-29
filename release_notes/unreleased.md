@@ -8,3 +8,5 @@
   * Get Message Details
   * Get Meeting Details
   * List Users
+  * Get Recording Details
+  * AI Meeting Summary

@@ -55,6 +55,8 @@ This app supports two types of authentication:
 | **Get Message Details** | Retrieve the details of a specific Webex message by message ID | `spark:messages_read`, for admin (`spark-admin:messages_read`) |
 | **Get Meeting Details** | Retrieve details of a specific meeting using meeting ID or meeting number | `meeting:schedules_read`, for admin (`meeting:admin_schedule_read`) |
 | **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read`, for admin (`spark-admin:people_read`) to retrieve other user details |
+| **Get Recording Details** | Retrieve details of a Webex meeting recording using its recording ID | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
+| **AI Meeting Summary** | Retrieve AI-Generated meeting summary and actions items using its recording ID and site url | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
 
 ______________________________________________________________________
 
@@ -66,6 +68,7 @@ Some features and settings are **not available** for free accounts:
 - **Add People:** You can’t set `isModerator`.
 - **List Users:** You may not be able to use `roles` or `orgId`.
 - **Schedule Meeting:** The following won’t work: `host`, `adhoc`, `roomId`, `enabledJoinBeforeHost`, `joinBeforeHostMinutes`, `recording`, `publicMeeting` (needs admin), and `sessionTypeId` (webinars only).
+- **AI Meeting Summary:** You can't perform this action.
 
 If you want these features, you will need to upgrade to a paid [Webex plan](https://pricing.webex.com/us/en/hybrid-work/meetings/).
 
