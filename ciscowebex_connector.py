@@ -533,7 +533,7 @@ class CiscoWebexConnector(BaseConnector):
         response obtained by making an API call
         """
 
-        if not phantom.is_url(endpoint):
+        if not endpoint.startswith("https"):
             endpoint = f"{self._base_url}{endpoint}"
 
         if headers is None:
@@ -699,12 +699,11 @@ class CiscoWebexConnector(BaseConnector):
 
     def _make_rest_call_using_api_key(self, endpoint, action_result, params=None, data=None, method="get", verify=False):
         # Create a URL to connect to
-        if not phantom.is_url(endpoint):
+        if not endpoint.startswith("https"):
             url = f"{self._base_url}{endpoint}"
         else:
             url = endpoint
-        authToken = "Bearer " + self._api_key
-        headers = {"Content-Type": "application/json", "Authorization": authToken}
+        headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self._access_token}"}
 
         return self._make_rest_call(url, action_result, params=params, headers=headers, data=data, method=method, verify=verify)
 
@@ -921,7 +920,7 @@ class CiscoWebexConnector(BaseConnector):
 
         # Add non-empty optional parameters
         params.update(
-            {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_RETRIVE_MEETING_PARTICIPANTS.items() if param.get(value)}
+            {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_RETRIEVE_MEETING_PARTICIPANTS.items() if param.get(value)}
         )
 
         # Add max participants if valid

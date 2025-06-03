@@ -97,7 +97,7 @@ PARAMETER_LIST_FOR_SCHEDULE_MEETING = (
     ("unlocked_meeting_join_security", "unlockedMeetingJoinSecurity"),
 )
 
-PARAMETER_LIST_FOR_RETRIVE_MEETING_PARTICIPANTS = {
+PARAMETER_LIST_FOR_RETRIEVE_MEETING_PARTICIPANTS = {
     "breakoutSessionId": "breakout_session_id",
     "meetingStartTimeFrom": "meeting_start_time_from",
     "meetingStartTimeTo": "meeting_start_time_to",
