@@ -703,7 +703,7 @@ class CiscoWebexConnector(BaseConnector):
             url = f"{self._base_url}{endpoint}"
         else:
             url = endpoint
-        headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self._access_token}"}
+        headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self._api_key}"}
 
         return self._make_rest_call(url, action_result, params=params, headers=headers, data=data, method=method, verify=verify)
 
