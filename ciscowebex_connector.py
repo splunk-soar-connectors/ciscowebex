@@ -17,6 +17,7 @@
 import json
 import os
 import pathlib
+import re
 import time
 import urllib.parse as urllib
 
@@ -532,7 +533,7 @@ class CiscoWebexConnector(BaseConnector):
         response obtained by making an API call
         """
 
-        if not endpoint.startswith(self._base_url):
+        if not endpoint.startswith("https"):
             endpoint = f"{self._base_url}{endpoint}"
 
         if headers is None:
@@ -559,7 +560,7 @@ class CiscoWebexConnector(BaseConnector):
 
         headers.update({"Authorization": f"Bearer {self._access_token}"})
         if not headers.get("Content-Type"):
-            headers.update({"Content-Type": "application/json"})
+            headers.update(consts.WEBEX_JSON_HEADERS)
 
         ret_val, resp_json = self._make_rest_call(
             action_result=action_result, endpoint=endpoint, headers=headers, params=params, data=data, method=method
@@ -590,7 +591,7 @@ class CiscoWebexConnector(BaseConnector):
         # If API key exists, skipping oAuth authentication
         if self._api_key:
             self.save_progress("Validating API Key")
-            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_GET_ROOMS_ENDPOINT, action_result, params=None)
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result, params=None)
             if phantom.is_fail(ret_val):
                 self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
                 return action_result.get_status()
@@ -685,8 +686,7 @@ class CiscoWebexConnector(BaseConnector):
 
         self.save_progress("Getting info about the rooms to verify token")
 
-        url = f"{self._base_url}{consts.WEBEX_GET_ROOMS_ENDPOINT}"
-        ret_val, response = self._update_request(action_result=action_result, endpoint=url)
+        ret_val, response = self._update_request(action_result=action_result, endpoint=consts.WEBEX_ROOMS_ENDPOINT)
 
         if phantom.is_fail(ret_val):
             self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
@@ -699,9 +699,11 @@ class CiscoWebexConnector(BaseConnector):
 
     def _make_rest_call_using_api_key(self, endpoint, action_result, params=None, data=None, method="get", verify=False):
         # Create a URL to connect to
-        url = self._base_url + endpoint
-        authToken = "Bearer " + self._api_key
-        headers = {"Content-Type": "application/json", "Authorization": authToken}
+        if not endpoint.startswith("https"):
+            url = f"{self._base_url}{endpoint}"
+        else:
+            url = endpoint
+        headers = {"Content-Type": "application/json", "Authorization": f"Bearer {self._api_key}"}
 
         return self._make_rest_call(url, action_result, params=params, headers=headers, data=data, method=method, verify=verify)
 
@@ -711,9 +713,9 @@ class CiscoWebexConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         if self._api_key:
-            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_GET_ROOMS_ENDPOINT, action_result)
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result)
         else:
-            ret_val, response = self._update_request(action_result, consts.WEBEX_GET_ROOMS_ENDPOINT)
+            ret_val, response = self._update_request(action_result, consts.WEBEX_ROOMS_ENDPOINT)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -775,7 +777,7 @@ class CiscoWebexConnector(BaseConnector):
         sendto_field = "toPersonId" if (dest_type == "user") else "roomId"
         message_field = "markdown" if is_markdown else "text"
 
-        uri_endpoint = consts.WEBEX_SEND_MESSAGE_ENDPOINT
+        uri_endpoint = consts.WEBEX_MESSAGE_ENDPOINT
         user_id = param["endpoint_id"]
         message = param["message"]
         data = {sendto_field: user_id, message_field: message}
@@ -801,6 +803,422 @@ class CiscoWebexConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, message)
 
+    def _handle_create_room(self, param):
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        data = {
+            "title": param["title"],
+            "teamId": param.get("team_id"),
+            "classificationId": param.get("classification_id"),
+            "isLocked": param.get("is_locked", False),
+            "isPublic": param.get("is_public", False),
+            "description": param.get("description"),
+            "isAnnouncementOnly": param.get("is_announcement_only", False),
+        }
+
+        # Remove keys where the value is None or False (except for title, which is required)
+        data = {k: v for k, v in data.items() if v or k == "title"}
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result, data=data, method="post")
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_ROOMS_ENDPOINT, data=data, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Room created successfully")
+
+    def _handle_add_people_to_room(self, param):
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        room_id = param.get("room_id")
+        person_id = param.get("person_id")
+        person_email = param.get("person_email")
+        is_moderator = param.get("is_moderator", False)
+
+        if not person_id and not person_email:
+            return action_result.set_status(phantom.APP_ERROR, "You must provide either 'person_id' or 'person_email'.")
+
+        data = {"roomId": room_id, "isModerator": is_moderator}
+
+        if person_id:
+            data["personId"] = person_id
+        if person_email:
+            data["personEmail"] = person_email
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ADD_USER_ENDPOINT, action_result, data=data, method="post")
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_ADD_USER_ENDPOINT, data=data, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "User added to the room successfully")
+
+    def _handle_schedule_meeting(self, param):
+        """Schedules a Webex meeting based on provided parameters."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Required parameters
+        title = param.get("title")
+        start = param.get("start")
+        end = param.get("end")
+        if not title or not start or not end:
+            return action_result.set_status(phantom.APP_ERROR, "Missing one of required parameters: 'title', 'start', 'end'.")
+
+        # Optional parameters
+        data = {
+            "title": title,
+            "start": start,
+            "end": end,
+        }
+        for src, dest in consts.PARAMETER_LIST_FOR_SCHEDULE_MEETING:
+            if src in param:
+                data[dest] = param[src]
+
+        # Invitees: comma-separated emails → list of {"email": "..."}
+        if param.get("invitees"):
+            emails = [e.strip() for e in param["invitees"].split(",") if e.strip()]
+            data["invitees"] = [{"email": e} for e in emails]
+
+        # Call Webex API
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(
+                consts.WEBEX_SCHEDULE_MEETINGS_ENDPOINT, action_result, data=data, method="post"
+            )
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_SCHEDULE_MEETINGS_ENDPOINT, data=data, method="post")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Meeting scheduled successfully")
+
+    def _handle_retrieve_meeting_participants(self, param):
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+        # Required parameter
+        params = {"meetingId": param["meeting_id"]}
+
+        # Validate limit
+        ret_val, max_participants = self.validate_integer(action_result, param.get("limit", 100), "limit")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # Add non-empty optional parameters
+        params.update(
+            {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_RETRIEVE_MEETING_PARTICIPANTS.items() if param.get(value)}
+        )
+
+        # Add max participants if valid
+        if max_participants:
+            params["max"] = max_participants
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_MEETING_PARTICIPANTS_ENDPOINT, action_result, params=params)
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_MEETING_PARTICIPANTS_ENDPOINT, params=params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        participants = response.get("items", [])
+        for participant in participants:
+            action_result.add_data(participant)
+
+        self.debug_print("Updating the summary")
+        action_result.update_summary({"message": "Participants retrieved successfully", "total_participants": len(participants)})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_list_messages(self, param):
+        """List messages from a Webex room or thread."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        ret_val, max_messages = self.validate_integer(action_result, param.get("limit", 50), "limit")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # At least one of 'room_id' or 'parent_id' must be provided
+        if not param.get("room_id") and not param.get("parent_id"):
+            return action_result.set_status(phantom.APP_ERROR, "You must provide at least 'room_id' or 'parent_id'.")
+
+        # Required parameter (only if present)
+        query_params = {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_LIST_MESSAGES.items() if param.get(value)}
+
+        # Add max messages if valid
+        if max_messages:
+            query_params["max"] = max_messages
+
+        # Call the Webex API
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_MESSAGE_ENDPOINT, action_result, params=query_params)
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_MESSAGE_ENDPOINT, params=query_params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        messages = response.get("items", [])
+        for message in messages:
+            action_result.add_data(message)
+
+        action_result.update_summary({"message": "Messages retrieved successfully", "total_messages": len(messages)})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_message_details(self, param):
+        """Retrieve the details of a specific Webex message by message ID."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Extract required parameter
+        message_id = param.get("message_id")
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: message_id")
+
+        # Call the Webex API
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(
+                consts.WEBEX_GET_MESSAGES_DETAILS_ENDPOINT.format(message_id=message_id), action_result
+            )
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_GET_MESSAGES_DETAILS_ENDPOINT.format(message_id=message_id))
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # Add full message details to result
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Message details retrieved successfully")
+
+    def _handle_get_meeting_details(self, param):
+        """Retrieve details of a specific Webex meeting using meeting ID or meeting number."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        meeting_id = param.get("meeting_id")
+        current = param.get("current", False)
+        host_email = param.get("host_email")
+
+        if not meeting_id:
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: meeting_id")
+
+        # Build query parameters
+        params = {}
+        if current:
+            params["current"] = str(current).lower()  # API expects true/false in lowercase
+        if host_email:
+            params["hostEmail"] = host_email
+
+        # Make API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(
+                consts.WEBEX_GET_MEETINGS_DETAILS.format(meeting_id=meeting_id), action_result, params=params
+            )
+        else:
+            ret_val, response = self._update_request(
+                action_result, consts.WEBEX_GET_MEETINGS_DETAILS.format(meeting_id=meeting_id), params=params
+            )
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # Add meeting details to action result
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved meeting details")
+
+    def _handle_list_users(self, param):
+        """List people from Webex with optional filters."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Validate limit
+        ret_val, max_people = self.validate_integer(action_result, param.get("limit", 100), "limit")
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        # At least one of email, display_name, or id is recommended for non-admin users
+        if not any([param.get("email"), param.get("display_name"), param.get("id")]):
+            self.debug_print("No filters provided (email, display_name, id). This may fail for non-admin users.")
+
+        query_params = {key: param.get(value) for key, value in consts.PARAMETER_LIST_FOR_LIST_USERS.items() if param.get(value)}
+
+        # Special handling for calling_data
+        if param.get("calling_data", False):
+            query_params["callingData"] = "true"
+
+        # Add validated max value
+        if max_people:
+            query_params["max"] = max_people
+
+        # Make the REST API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_LIST_USERS_ENDPOINT, action_result, params=query_params)
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_LIST_USERS_ENDPOINT, params=query_params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        people = response.get("items", [])
+        for person in people:
+            action_result.add_data(person)
+
+        action_result.update_summary({"message": "Users retrieved successfully", "total_people": len(people)})
+
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _handle_get_recording_details(self, param):
+        """Handles the get recording details action."""
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Extract parameters
+        recording_id = param.get("recording_id")
+        meeting_id = param.get("meeting_id")
+        host_email = param.get("host_email")
+
+        if not recording_id and not meeting_id:
+            return action_result.set_status(
+                phantom.APP_ERROR, "Missing required parameter. please provide either 'recording_id' or 'meeting_id'"
+            )
+
+        # Prepare query parameters
+        query_params = {"hostEmail": host_email} if host_email else {}
+
+        if recording_id:
+            endpoint = consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id)
+        elif meeting_id:
+            endpoint = consts.WEBEX_RECORDING_DETAILS_BY_MEETING_ID_ENDPOINT.format(meeting_id=meeting_id)
+        # Make API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(endpoint, action_result, params=query_params)
+        else:
+            ret_val, response = self._update_request(action_result, endpoint, params=query_params)
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        if not recording_id:
+            items = response.get("items", [])
+
+            if not items or not items[0].get("id"):
+                return action_result.set_status(phantom.APP_ERROR, f"Recording details not found for meeting id: {meeting_id}")
+
+            for item in items:
+                recording_id = item["id"]
+
+                # Make API call
+                if self._api_key:
+                    ret_val, response = self._make_rest_call_using_api_key(
+                        consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id),
+                        action_result,
+                        params=query_params,
+                    )
+                else:
+                    ret_val, response = self._update_request(
+                        action_result,
+                        consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id),
+                        params=query_params,
+                    )
+
+                if phantom.is_fail(ret_val):
+                    return action_result.get_status()
+
+                action_result.add_data(response)
+        else:
+            action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Recording details retrieved successfully")
+
+    def _handle_ai_meeting_summary(self, param):
+        """Get AI generated meeting summary and actions items."""
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        recording_id = param.get("recording_id")
+        site_url = param.get("site_url")
+
+        if not recording_id and not site_url:
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter. Please provide either 'recording_id' or 'site_url'")
+
+        endpoint = consts.WEBEX_GET_AI_GENERATED_SUMMARY_ENDPOINT.format(recording_id=recording_id, site_url=site_url)
+
+        # Make API call
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(endpoint, action_result)
+        else:
+            ret_val, response = self._update_request(action_result, endpoint)
+
+        if phantom.is_fail(ret_val):
+            return action_result.set_status(f"Failed to get recording details for given recording id : {recording_id} and site url : {site_url}")
+
+        output_response = {"recordingId": response.get("recordUUID"), "recordingName": response.get("recordName")}
+
+        suggested_url = response.get("suggestedNoteUrl")
+        if suggested_url:
+            ret_val, note_response = self._make_rest_call(suggested_url, action_result, headers=consts.WEBEX_JSON_HEADERS)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+            notes = None
+            content_str = note_response.get("content")
+            if content_str:
+                try:
+                    content = json.loads(content_str)
+                    description = content.get("description", {}).get("text", "")
+                    note_items = "".join(f"<li>{note.get('text', '')}</li>" for note in content.get("notes", []))
+                    notes = f"<p>{description}</p><ul>{note_items}</ul>"
+                except json.JSONDecodeError:
+                    notes = content_str
+
+            output_response["suggestedNote"] = notes
+
+        action_item_url = response.get("actionItemUrl")
+        if action_item_url:
+            ret_val, action_item_response = self._make_rest_call(action_item_url, action_result, headers=consts.WEBEX_JSON_HEADERS)
+            if phantom.is_fail(ret_val):
+                return action_result.get_status()
+
+            content_str = action_item_response.get("content")
+            action_items = ""
+            if content_str:
+                try:
+                    content = json.loads(content_str)
+                    for item in content:
+                        item_content = item.get("content", "")
+                        if re.search(r"<[^>]+>", item_content):
+                            action_items += item_content
+                        else:
+                            action_items += f"<p>{item_content}</p>"
+                except json.JSONDecodeError:
+                    action_items = content_str
+
+            output_response["actionItems"] = action_items
+
+        action_result.add_data(output_response)
+
+        if not (output_response.get("actionItems") or output_response.get("suggestedNote")):
+            return action_result.set_status(phantom.APP_ERROR, "AI generated meeting summary and actions items not found")
+
+        return action_result.set_status(phantom.APP_SUCCESS, "AI generated meeting summary and actions items retrieved successfully")
+
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
@@ -818,7 +1236,62 @@ class CiscoWebexConnector(BaseConnector):
         elif action_id == "send_message":
             ret_val = self._handle_send_message(param)
 
+        elif action_id == "create_room":
+            ret_val = self._handle_create_room(param)
+
+        elif action_id == "add_people_to_room":
+            ret_val = self._handle_add_people_to_room(param)
+
+        elif action_id == "schedule_meeting":
+            ret_val = self._handle_schedule_meeting(param)
+
+        elif action_id == "retrieve_meeting_participants":
+            ret_val = self._handle_retrieve_meeting_participants(param)
+
+        elif action_id == "list_messages":
+            ret_val = self._handle_list_messages(param)
+
+        elif action_id == "get_message_details":
+            ret_val = self._handle_get_message_details(param)
+
+        elif action_id == "get_meeting_details":
+            ret_val = self._handle_get_meeting_details(param)
+
+        elif action_id == "list_users":
+            ret_val = self._handle_list_users(param)
+
+        elif action_id == "get_recording_details":
+            ret_val = self._handle_get_recording_details(param)
+
+        elif action_id == "ai_meeting_summary":
+            ret_val = self._handle_ai_meeting_summary(param)
+
         return ret_val
+
+    def validate_integer(self, action_result, parameter, key, allow_zero=False, allow_negative=False):
+        """Check if the provided input parameter value is valid.
+
+        :param action_result: Action result or BaseConnector object
+        :param parameter: Input parameter value
+        :param key: Input parameter key
+        :param allow_zero: Zero is allowed or not (default True)
+        :param allow_negative: Negative values are allowed or not (default False)
+        :returns: phantom.APP_SUCCESS/phantom.APP_ERROR and parameter value itself.
+        """
+        try:
+            if not float(parameter).is_integer():
+                return action_result.set_status(phantom.APP_ERROR, consts.ERROR_INVALID_INT_PARAM.format(key=key)), None
+
+            parameter = int(parameter)
+        except Exception:
+            return action_result.set_status(phantom.APP_ERROR, consts.ERROR_INVALID_INT_PARAM.format(key=key)), None
+
+        if not allow_zero and parameter == 0:
+            return action_result.set_status(phantom.APP_ERROR, consts.ERROR_ZERO_INT_PARAM.format(key=key)), None
+        if not allow_negative and parameter < 0:
+            return action_result.set_status(phantom.APP_ERROR, consts.ERROR_NEG_INT_PARAM.format(key=key)), None
+
+        return phantom.APP_SUCCESS, parameter
 
     def decrypt_state(self, state):
         if not state.get(consts.WEBEX_STR_IS_ENCRYPTED):
