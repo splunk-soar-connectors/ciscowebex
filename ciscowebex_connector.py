@@ -1107,6 +1107,9 @@ class CiscoWebexConnector(BaseConnector):
             endpoint = consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id)
         elif meeting_id:
             endpoint = consts.WEBEX_RECORDING_DETAILS_BY_MEETING_ID_ENDPOINT.format(meeting_id=meeting_id)
+        else:
+            endpoint = ""
+        
         # Make API call
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(endpoint, action_result, params=query_params)
