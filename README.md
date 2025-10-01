@@ -1,9 +1,9 @@
 # Cisco Webex
 
-Publisher: Splunk \
-Connector Version: 2.1.3 \
-Product Vendor: Cisco \
-Product Name: Cisco Webex \
+Publisher: Splunk <br>
+Connector Version: 2.1.3 <br>
+Product Vendor: Cisco <br>
+Product Name: Cisco Webex <br>
 Minimum Product Version: 6.3.0
 
 This app integrates with Cisco Webex to implement investigative and genric actions
@@ -85,26 +85,26 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[list rooms](#action-list-rooms) - List webex rooms \
-[get user](#action-get-user) - Get user ID from e-mail address \
-[send message](#action-send-message) - Send message to user or room \
-[create a room](#action-create-a-room) - Create a new Webex room (space) \
-[add people](#action-add-people) - Add a people to a Webex room (space) as a member or moderator \
-[schedule meeting](#action-schedule-meeting) - Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting \
-[retrieve meeting participants](#action-retrieve-meeting-participants) - Retrieve all participants in an in-progress or ended Webex meeting \
-[list messages](#action-list-messages) - Retrieve a list of messages from a Webex room or 1:1 conversation \
-[get message details](#action-get-message-details) - Retrieve the details of a specific Webex message by message ID \
-[get meeting details](#action-get-meeting-details) - Retrieve details of a specific Webex meeting using meeting ID or meeting number \
-[list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location \
-[get recording details](#action-get-recording-details) - Retrieve details of a Webex meeting recording using its recording ID \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[list rooms](#action-list-rooms) - List webex rooms <br>
+[get user](#action-get-user) - Get user ID from e-mail address <br>
+[send message](#action-send-message) - Send message to user or room <br>
+[create a room](#action-create-a-room) - Create a new Webex room (space) <br>
+[add people](#action-add-people) - Add a people to a Webex room (space) as a member or moderator <br>
+[schedule meeting](#action-schedule-meeting) - Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting <br>
+[retrieve meeting participants](#action-retrieve-meeting-participants) - Retrieve all participants in an in-progress or ended Webex meeting <br>
+[list messages](#action-list-messages) - Retrieve a list of messages from a Webex room or 1:1 conversation <br>
+[get message details](#action-get-message-details) - Retrieve the details of a specific Webex message by message ID <br>
+[get meeting details](#action-get-meeting-details) - Retrieve details of a specific Webex meeting using meeting ID or meeting number <br>
+[list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location <br>
+[get recording details](#action-get-recording-details) - Retrieve details of a Webex meeting recording using its recording ID <br>
 [ai meeting summary](#action-ai-meeting-summary) - Retrieve AI-Generated meeting summary and actions items using its recording ID and site url
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -119,7 +119,7 @@ No Output
 
 List webex rooms
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -148,7 +148,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get user ID from e-mail address
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -185,7 +185,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Send message to user or room
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 #### Action Parameters
@@ -223,7 +223,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Create a new Webex room (space)
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 <ul><li>Public rooms require a description.</li><li>Announcement mode requires the room to be locked.</li><li>Team rooms cannot be locked.</li><li>Requires permission: <code>spark:rooms_write</code>.</li></ul>
@@ -274,7 +274,7 @@ summary.total_objects_successful | numeric | | |
 
 Add a people to a Webex room (space) as a member or moderator
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 Adds a person to a Webex room using their ID or email. You can optionally assign them as a moderator. Requires `spark:memberships_write` scope. Compliance officers cannot add users to empty team spaces.
@@ -317,7 +317,7 @@ summary.total_objects_successful | numeric | | |
 
 Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting
 
-Type: **generic** \
+Type: **generic** <br>
 Read only: **False**
 
 <ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_schedule_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href="https://developer.webex.com/docs/integrations#scopes" target="_blank">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don’t set it, Webex will use the host’s time zone. <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href="https://developer.webex.com/docs/api/v1/meetings/create-a-meeting" target="_blank">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored — the meeting will use the Webex space owner as host.</li></ul>
@@ -464,7 +464,7 @@ summary.total_objects_successful | numeric | | |
 
 Retrieve all participants in an in-progress or ended Webex meeting
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 Retrieve a list of participants from a specific Webex meeting instance or series
@@ -525,7 +525,7 @@ summary.total_objects_successful | numeric | | |
 
 Retrieve a list of messages from a Webex room or 1:1 conversation
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -568,7 +568,7 @@ summary.total_objects_successful | numeric | | |
 
 Retrieve the details of a specific Webex message by message ID
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -600,7 +600,7 @@ summary.total_objects_successful | numeric | | |
 
 Retrieve details of a specific Webex meeting using meeting ID or meeting number
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -710,7 +710,7 @@ summary.total_objects_successful | numeric | | |
 
 List users in your Webex organization using filters like email, name, ID, roles, or location
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -787,7 +787,7 @@ summary.total_objects_successful | numeric | | |
 
 Retrieve details of a Webex meeting recording using its recording ID
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -837,7 +837,7 @@ summary.total_objects_successful | numeric | | |
 
 Retrieve AI-Generated meeting summary and actions items using its recording ID and site url
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
