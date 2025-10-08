@@ -773,6 +773,8 @@ class CiscoWebexConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
         dest_type = param["destination_type"]
         is_markdown = param.get("is_markdown", False)
+        card_attachment = param.get("card", False)
+        vault_id = param.get("vault_id", False)
 
         sendto_field = "toPersonId" if (dest_type == "user") else "roomId"
         message_field = "markdown" if is_markdown else "text"
@@ -781,7 +783,18 @@ class CiscoWebexConnector(BaseConnector):
         user_id = param["endpoint_id"]
         message = param["message"]
         data = {sendto_field: user_id, message_field: message}
-
+        
+        if card_attachment:
+            card_attachment = json.loads(card_attachment)
+            data.update({
+                  "attachments": [
+                    {
+                      "contentType": "application/vnd.microsoft.card.adaptive",
+                      "content": card_attachment
+                    }
+                  ]
+            })
+        
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(uri_endpoint, action_result, data=data, method="post")
         else:

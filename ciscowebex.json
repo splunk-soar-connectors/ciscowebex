@@ -386,7 +386,34 @@
                     "description": "Message",
                     "data_type": "string",
                     "required": true,
-                    "order": 2
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 2,
+                    "name": "message"
+                },
+                "card": {
+                    "description": "AdaptiveCard format card",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 3,
+                    "name": "card"
+                },
+                "vault_id": {
+                    "description": "Vault ID to send file to webex",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 4,
+                    "name": "vault_id"
                 },
                 "is_markdown": {
                     "description": "Is the message Markdown formatted",
