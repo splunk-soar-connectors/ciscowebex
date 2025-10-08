@@ -1222,10 +1222,64 @@ class CiscoWebexConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "AI generated meeting summary and actions items retrieved successfully")
 
+    def _handle_update_room(self, param):
+        # Implement the handler here
+        # use self.save_progress(...) to send progress messages back to the platform
+        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+
+        # Add an action result object to self (BaseConnector) to represent the action for this param
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Access action parameters passed in the 'param' dictionary
+
+        # Required values can be accessed directly
+        room_id = param['room_id']
+        endpoint_uri = consts.WEBEX_UPDATE_ROOM_ENDPOINT.format(room_id)
+
+        # Optional values should use the .get() function
+        #classification_id = param.get('classification_id', '')
+        description = param.get('description', '')
+        team_id = param.get('team_id', '')
+        title = param.get('title', '')
+        #is_announcement_only = param.get('is_announcement_only', False)
+        is_locked = param.get('is_locked', False)
+        is_public = param.get('is_public', False)
+        is_read_only = param.get('is_read_only', False)
+        
+        if is_public and not description:
+            return action_result.set_status(phantom.APP_ERROR, "When room is public 'description' must be set.")
+
+        data = {
+                "title": title,
+                #"classificationId": classification_id,
+                "teamId": team_id,
+                "isLocked": is_locked,
+                "isPublic": is_public,
+                "description": description,
+                #"isAnnouncementOnly": is_announcement_only,
+                "isReadOnly": is_read_only
+        }
+
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(endpoint_uri, action_result, data=data, method="put")
+        else:
+            ret_val, response = self._update_request(action_result, consts.WEBEX_UPDATE_ROOM_ENDPOINT, data=data, method="put")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, "Update the room successfully")
+
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
         action_id = self.get_action_identifier()
+
+        if action_id == 'update_room':
+            ret_val = self._handle_update_room(param)
 
         if action_id == "test_connectivity":
             ret_val = self._handle_test_connectivity(param)
