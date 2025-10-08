@@ -404,17 +404,6 @@
                     "order": 3,
                     "name": "card"
                 },
-                "vault_id": {
-                    "description": "Vault ID to send file to webex",
-                    "data_type": "string",
-                    "required": false,
-                    "primary": false,
-                    "contains": [],
-                    "value_list": [],
-                    "default": "",
-                    "order": 4,
-                    "name": "vault_id"
-                },
                 "is_markdown": {
                     "description": "Is the message Markdown formatted",
                     "data_type": "boolean",
