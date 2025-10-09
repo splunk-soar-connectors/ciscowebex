@@ -785,7 +785,13 @@ class CiscoWebexConnector(BaseConnector):
         data = {sendto_field: user_id, message_field: message}
         
         if card_attachment:
-            card_attachment = json.loads(card_attachment)
+            try:
+                card_attachment = json.loads(card_attachment)
+            except Exception as e:
+                return action_result.set_status(
+                    phantom.APP_ERROR, f"Error decoding json: {e}"
+                )
+                
             data.update({
                   "attachments": [
                     {
