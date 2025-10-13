@@ -130,7 +130,7 @@
                 {
                     "data_path": "action_result.data.*.ownerId",
                     "data_type": "string",
-                    "example_value": [
+                    "example_values": [
                         "L2lzY29zcAByazovL3VzL09SR0FOSVpABCElPTi9hOGY3ZDhlMi04MjY1LTQ4OWEtOWE1My00NzlkZjQTESTEXAMPLE"
                     ]
                 },
@@ -153,7 +153,7 @@
                 {
                     "data_path": "action_result.summary.total_rooms",
                     "data_type": "numeric",
-                    "example_value": [
+                    "example_values": [
                         4
                     ]
                 },
@@ -225,13 +225,6 @@
                 {
                     "data_path": "action_result.data.*.created",
                     "data_type": "string",
-                    "example_value": [
-                        "2015-04-22T07:16:49.649Z"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.created",
-                    "data_type": "string",
                     "example_values": [
                         "2018-01-04T20:46:30.734Z"
                     ]
@@ -258,7 +251,7 @@
                 {
                     "data_path": "action_result.data.*.firstName",
                     "data_type": "string",
-                    "example_value": [
+                    "example_values": [
                         "abc"
                     ]
                 },
@@ -284,14 +277,14 @@
                 {
                     "data_path": "action_result.data.*.lastModified",
                     "data_type": "string",
-                    "example_value": [
+                    "example_values": [
                         "2021-08-25T11:54:51.623Z"
                     ]
                 },
                 {
                     "data_path": "action_result.data.*.lastName",
                     "data_type": "string",
-                    "example_value": [
+                    "example_values": [
                         "abc"
                     ]
                 },
@@ -326,7 +319,7 @@
                 {
                     "data_path": "action_result.summary.found_user",
                     "data_type": "boolean",
-                    "example_value": [
+                    "example_values": [
                         true
                     ]
                 },
@@ -386,12 +379,39 @@
                     "description": "Message",
                     "data_type": "string",
                     "required": true,
-                    "order": 2
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 2,
+                    "name": "message"
+                },
+                "card": {
+                    "description": "AdaptiveCard format card",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 3,
+                    "name": "card"
+                },
+                "vault_id": {
+                    "description": "Vault ID to send file to webex",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 4,
+                    "name": "vault_id"
                 },
                 "is_markdown": {
                     "description": "Is the message Markdown formatted",
                     "data_type": "boolean",
-                    "order": 3
+                    "order": 5
                 }
             },
             "output": [
@@ -3970,6 +3990,247 @@
                 "type": "custom",
                 "view": "ciscowebex_view.display_view",
                 "title": "Get AI Meeting Summary"
+            },
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "update room",
+            "identifier": "update_room",
+            "description": "Updates details for a room, by ID.",
+            "verbose": "Specify the room ID in the roomId parameter in the URI.\nA space can only be put into announcement mode when it is locked.\nAny space participant or compliance officer can convert a space from public to private. Only a compliance officer can convert a space from private to public and only if the space is classified with the lowest category (usually public), and the space has a description.\nTo remove a description please use a space character by itself.",
+            "type": "generic",
+            "read_only": false,
+            "parameters": {
+                "room_id": {
+                    "description": "The unique identifier for the room.  example = \"Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0\"",
+                    "data_type": "string",
+                    "required": true,
+                    "primary": true,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 0,
+                    "name": "room_id"
+                },
+                "description": {
+                    "description": "The description of the space.",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 1,
+                    "name": "description"
+                },
+                "team_id": {
+                    "description": "The teamId to which this space should be assigned. Only unowned spaces can be assigned to a team. Assignment between teams is unsupported.",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 2,
+                    "name": "team_id"
+                },
+                "title": {
+                    "description": "A user-friendly name for the room.",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 3,
+                    "name": "title"
+                },
+                "is_locked": {
+                    "description": "Set the space as locked/moderated and the creator becomes a moderator",
+                    "data_type": "boolean",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "default": "",
+                    "order": 4,
+                    "name": "is_locked"
+                },
+                "is_public": {
+                    "description": "The room is public and therefore discoverable within the org. Anyone can find and join that room. When true the description must be filled in.",
+                    "data_type": "boolean",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "default": "",
+                    "order": 5,
+                    "name": "is_public"
+                },
+                "is_read_only": {
+                    "description": "A compliance officer can set a direct room as read-only, which will disallow any new information exchanges in this space, while maintaing historical data.",
+                    "data_type": "boolean",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "default": "",
+                    "order": 6,
+                    "name": "is_read_only"
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.parameter.room_id",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "room_id",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.parameter.description",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "description",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.parameter.team_id",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "team_id",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.parameter.title",
+                    "data_type": "string",
+                    "contains": [],
+                    "column_name": "title",
+                    "column_order": 3
+                },
+                {
+                    "data_path": "action_result.parameter.is_locked",
+                    "data_type": "boolean",
+                    "contains": [],
+                    "column_name": "is_locked",
+                    "column_order": 4
+                },
+                {
+                    "data_path": "action_result.parameter.is_public",
+                    "data_type": "boolean",
+                    "contains": [],
+                    "column_name": "is_public",
+                    "column_order": 5
+                },
+                {
+                    "data_path": "action_result.parameter.is_read_only",
+                    "data_type": "boolean",
+                    "contains": [],
+                    "column_name": "is_read_only",
+                    "column_order": 6
+                },
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "column_name": "status",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.type",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.title",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.created",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.ownerId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.isLocked",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.isPublic",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.creatorId",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.isReadOnly",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.data.*.lastActivity",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.message",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.title",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.context.guid",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.context.artifact_id",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.room_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.is_locked",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.is_public",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.description",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.*.parameter.is_read_only",
+                    "data_type": "boolean"
+                }
+            ],
+            "render": {
+                "type": "table"
             },
             "versions": "EQ(*)"
         }
