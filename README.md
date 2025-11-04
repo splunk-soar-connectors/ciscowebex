@@ -57,6 +57,7 @@ This app supports two types of authentication:
 | **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read`, for admin (`spark-admin:people_read`) to retrieve other user details |
 | **Get Recording Details** | Retrieve details of a Webex meeting recording using its recording ID | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
 | **AI Meeting Summary** | Retrieve AI-Generated meeting summary and actions items using its recording ID and site url | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
+| **Update Room** | Updates details for a room, by ID. | `spark:rooms_write` |
 
 ______________________________________________________________________
 
@@ -90,6 +91,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [get user](#action-get-user) - Get user ID from e-mail address \
 [send message](#action-send-message) - Send message to user or room \
 [create a room](#action-create-a-room) - Create a new Webex room (space) \
+[update room](#action-update-room) - Updates details for a room, by ID.
 [add people](#action-add-people) - Add a people to a Webex room (space) as a member or moderator \
 [schedule meeting](#action-schedule-meeting) - Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting \
 [retrieve meeting participants](#action-retrieve-meeting-participants) - Retrieve all participants in an in-progress or ended Webex meeting \

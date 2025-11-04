@@ -1,0 +1,24 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+    name: webex
+    title: Cisco Webex
+    functionalDomain: []
+    description: ""
+    annotations:
+        backstage.io/source-location: url:https://cd.splunkdev.com/sgs-soar/phantom-apps/webex
+        splunk.com/issue-tracker-url: http://go/replace/me
+        splunk.com/slack-url: http://go/replace/me
+        backstage.io/view-url: https://cd.splunkdev.com/sgs-soar/phantom-apps/webex/-/blob/main/.service-manifests/webex-component.yaml
+        backstage.io/edit-url: https://cd.splunkdev.com/sgs-soar/phantom-apps/webex/-/edit/main/.service-manifests/webex-component.yaml
+    links:
+        - title: Overview
+          url: http://go/replace/me
+        - title: ERD/RFC
+          url: http://go/replace/me
+        - title: Ops Runbook
+          url: http://go/replace/me
+spec:
+    lifecycle: production
+    type: product
+    owner: group:sg-sgs-secauto
