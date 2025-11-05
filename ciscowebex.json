@@ -16,7 +16,7 @@
     ],
     "license": "Copyright (c) 2021-2025 Splunk Inc.",
     "app_version": "2.1.4",
-    "utctime_updated": "2025-10-06T20:18:54.446106Z",
+    "utctime_updated": "2025-11-06T20:18:54.446106Z",
     "package_name": "phantom_ciscowebex",
     "main_module": "ciscowebex_connector.py",
     "min_phantom_version": "6.3.0",
@@ -386,12 +386,39 @@
                     "description": "Message",
                     "data_type": "string",
                     "required": true,
-                    "order": 2
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 2,
+                    "name": "message"
+                },
+                "card": {
+                    "description": "AdaptiveCard format card",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 3,
+                    "name": "card"
+                },
+                "vault_id": {
+                    "description": "Vault ID to send file to webex",
+                    "data_type": "string",
+                    "required": false,
+                    "primary": false,
+                    "contains": [],
+                    "value_list": [],
+                    "default": "",
+                    "order": 4,
+                    "name": "vault_id"
                 },
                 "is_markdown": {
                     "description": "Is the message Markdown formatted",
                     "data_type": "boolean",
-                    "order": 3
+                    "order": 5
                 }
             },
             "output": [
