@@ -23,6 +23,9 @@
     "app_wizard_version": "1.0.0",
     "rest_handler": "ciscowebex_connector._handle_rest_request",
     "python_version": "3.9, 3.13",
+    "pip313_dependencies": {
+        "wheel": []
+    },
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cisco webex api v1 tested on 9th May, 2025"
@@ -560,6 +563,14 @@
                     "example_values": [
                         1
                     ]
+                },
+                {
+                    "data_path": "action_result.parameter.card",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.vault_id",
+                    "data_type": "string"
                 }
             ],
             "render": {
@@ -4003,7 +4014,7 @@
         {
             "action": "update room",
             "identifier": "update_room",
-            "description": "Updates details for a room, by ID.",
+            "description": "Updates details for a room by ID",
             "verbose": "Specify the room ID in the roomId parameter in the URI.\nA space can only be put into announcement mode when it is locked.\nAny space participant or compliance officer can convert a space from public to private. Only a compliance officer can convert a space from private to public and only if the space is classified with the lowest category (usually public), and the space has a description.\nTo remove a description please use a space character by itself.",
             "type": "generic",
             "read_only": false,
@@ -4242,5 +4253,7 @@
             "versions": "EQ(*)"
         }
     ],
-    "copied_from_version": "2.1.3"
+    "pip39_dependencies": {
+        "wheel": []
+    }
 }
