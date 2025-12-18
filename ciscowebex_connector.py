@@ -601,7 +601,7 @@ class CiscoWebexConnector(BaseConnector):
         # If API key exists, skipping oAuth authentication
         if self._api_key:
             self.save_progress("Validating API Key")
-            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result, params=None)
+            ret_val, _response = self._make_rest_call_using_api_key(consts.WEBEX_ROOMS_ENDPOINT, action_result, params=None)
             if phantom.is_fail(ret_val):
                 self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
                 return action_result.get_status()
@@ -696,7 +696,7 @@ class CiscoWebexConnector(BaseConnector):
 
         self.save_progress("Getting info about the rooms to verify token")
 
-        ret_val, response = self._update_request(action_result=action_result, endpoint=consts.WEBEX_ROOMS_ENDPOINT)
+        ret_val, _response = self._update_request(action_result=action_result, endpoint=consts.WEBEX_ROOMS_ENDPOINT)
 
         if phantom.is_fail(ret_val):
             self.save_progress(consts.WEBEX_ERROR_TEST_CONNECTIVITY)
@@ -821,7 +821,7 @@ class CiscoWebexConnector(BaseConnector):
         elif vault_id:
             data = message_payload
 
-            success, messages, info = vault.vault_info(vault_id=vault_id)
+            success, _messages, info = vault.vault_info(vault_id=vault_id)
             if not success:
                 return action_result.set_status(phantom.APP_ERROR, consts.WEBEX_ERR_NOT_IN_VAULT)
 
@@ -846,7 +846,7 @@ class CiscoWebexConnector(BaseConnector):
                 uri_endpoint, action_result, json_data=json_data, data=data, method="post", files=files
             )
         else:
-            ret_val, response = self._update_request(action_result, uri_endpoint, data=data, json_data=json_data,files=files, method="post")
+            ret_val, response = self._update_request(action_result, uri_endpoint, data=data, json_data=json_data, files=files, method="post")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -896,7 +896,6 @@ class CiscoWebexConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS, "Room created successfully")
 
     def _handle_update_room(self, param):
-
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -924,10 +923,7 @@ class CiscoWebexConnector(BaseConnector):
         json_data = {k: v for k, v in json_data.items() if v is not None and v != ""}
 
         if json_data.get("isPublic") and not json_data.get("description"):
-            return action_result.set_status(
-                phantom.APP_ERROR,
-                "When room is public 'description' must be set."
-            )
+            return action_result.set_status(phantom.APP_ERROR, "When room is public 'description' must be set.")
 
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(endpoint_uri, action_result, json_data=json_data, method="put")

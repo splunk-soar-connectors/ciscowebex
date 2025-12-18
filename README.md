@@ -99,7 +99,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location <br>
 [get recording details](#action-get-recording-details) - Retrieve details of a Webex meeting recording using its recording ID <br>
 [ai meeting summary](#action-ai-meeting-summary) - Retrieve AI-Generated meeting summary and actions items using its recording ID and site url <br>
-[update room](#action-update-room) - Updates details for a room by ID
+[update a room](#action-update-a-room) - Updates details for a room by ID
 
 ## action: 'test connectivity'
 
@@ -195,7 +195,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **endpoint_id** | required | User or Room ID | string | `webex user id` `webex room id` |
 **destination_type** | required | Destination Type | string | |
-**message** | required | Message | string | |
+**message** | optional | Message | string | |
 **card** | optional | AdaptiveCard format card | string | |
 **vault_id** | optional | Vault ID to send file to webex | string | |
 **is_markdown** | optional | Is the message Markdown formatted | boolean | |
@@ -870,14 +870,14 @@ action_result.message | string | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
 
-## action: 'update room'
+## action: 'update a room'
 
 Updates details for a room by ID
 
 Type: **generic** <br>
 Read only: **False**
 
-Specify the room ID in the roomId parameter in the URI.
+Specify the room ID in the room_id parameter in the URI.
 A space can only be put into announcement mode when it is locked.
 Any space participant or compliance officer can convert a space from public to private. Only a compliance officer can convert a space from private to public and only if the space is classified with the lowest category (usually public), and the space has a description.
 To remove a description please use a space character by itself.
@@ -887,12 +887,14 @@ To remove a description please use a space character by itself.
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **room_id** | required | The unique identifier for the room. example = "Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0" | string | |
+**title** | required | A user-friendly name for the room. | string | |
 **description** | optional | The description of the space. | string | |
 **team_id** | optional | The teamId to which this space should be assigned. Only unowned spaces can be assigned to a team. Assignment between teams is unsupported. | string | |
-**title** | optional | A user-friendly name for the room. | string | |
-**is_locked** | optional | Set the space as locked/moderated and the creator becomes a moderator | boolean | |
-**is_public** | optional | The room is public and therefore discoverable within the org. Anyone can find and join that room. When true the description must be filled in. | boolean | |
-**is_read_only** | optional | A compliance officer can set a direct room as read-only, which will disallow any new information exchanges in this space, while maintaing historical data. | boolean | |
+**classification_id** | optional | The classification_id for the room | string | |
+**is_announcement_only** | optional | Sets the space into announcement-only mode. The room must be locked to be set to announcement-only mode. | string | |
+**is_locked** | optional | Set the space as locked/moderated and the creator becomes a moderator | string | |
+**is_public** | optional | The room is public and therefore discoverable within the org. Anyone can find and join that room. When true the description must be filled in. | string | |
+**is_read_only** | optional | A compliance officer can set a direct room as read-only, which will disallow any new information exchanges in this space, while maintaing historical data. | string | |
 
 #### Action Output
 
@@ -905,6 +907,8 @@ action_result.parameter.title | string | | |
 action_result.parameter.is_locked | boolean | | |
 action_result.parameter.is_public | boolean | | |
 action_result.parameter.is_read_only | boolean | | |
+action_result.parameter.is_announcement_only | boolean | | |
+action_result.parameter.classification_id | string | | |
 action_result.status | string | | |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
@@ -930,6 +934,8 @@ action_result.data.\*.\*.parameter.is_locked | boolean | | |
 action_result.data.\*.\*.parameter.is_public | boolean | | |
 action_result.data.\*.\*.parameter.description | string | | |
 action_result.data.\*.\*.parameter.is_read_only | boolean | | |
+action_result.parameter.classification_id | string | | |
+action_result.parameter.is_announcement_only | string | | |
 
 ______________________________________________________________________
 

@@ -4050,14 +4050,22 @@
                 "is_announcement_only": {
                     "description": "Sets the space into announcement-only mode. The room must be locked to be set to announcement-only mode.",
                     "data_type": "string",
-                    "value_list": ["", "true", "false"],
+                    "value_list": [
+                        "",
+                        "true",
+                        "false"
+                    ],
                     "order": 5,
                     "name": "is_announcement_only"
                 },
                 "is_locked": {
                     "description": "Set the space as locked/moderated and the creator becomes a moderator",
                     "data_type": "string",
-                    "value_list": ["", "true", "false"],
+                    "value_list": [
+                        "",
+                        "true",
+                        "false"
+                    ],
                     "default": "",
                     "order": 6,
                     "name": "is_locked"
@@ -4065,7 +4073,11 @@
                 "is_public": {
                     "description": "The room is public and therefore discoverable within the org. Anyone can find and join that room. When true the description must be filled in.",
                     "data_type": "string",
-                    "value_list": ["", "true", "false"],
+                    "value_list": [
+                        "",
+                        "true",
+                        "false"
+                    ],
                     "required": false,
                     "order": 7,
                     "name": "is_public"
@@ -4073,7 +4085,11 @@
                 "is_read_only": {
                     "description": "A compliance officer can set a direct room as read-only, which will disallow any new information exchanges in this space, while maintaing historical data.",
                     "data_type": "string",
-                    "value_list": ["", "true", "false"],
+                    "value_list": [
+                        "",
+                        "true",
+                        "false"
+                    ],
                     "required": false,
                     "order": 8,
                     "name": "is_read_only"
@@ -4123,10 +4139,22 @@
                     "column_order": 6
                 },
                 {
+                    "data_path": "action_result.parameter.is_announcement_only",
+                    "data_type": "boolean",
+                    "column_name": "is_announcement_only",
+                    "column_order": 7
+                },
+                {
+                    "data_path": "action_result.parameter.classification_id",
+                    "data_type": "string",
+                    "column_name": "classification_id",
+                    "column_order": 8
+                },
+                {
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "column_name": "status",
-                    "column_order": 7
+                    "column_order": 9
                 },
                 {
                     "data_path": "action_result.message",
@@ -4223,6 +4251,14 @@
                 {
                     "data_path": "action_result.data.*.*.parameter.is_read_only",
                     "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.parameter.classification_id",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.is_announcement_only",
+                    "data_type": "string"
                 }
             ],
             "render": {
