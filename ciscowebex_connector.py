@@ -793,9 +793,6 @@ class CiscoWebexConnector(BaseConnector):
         sendto_field = "toPersonId" if (dest_type == "user") else "roomId"
         message_field = "markdown" if is_markdown else "text"
 
-        if card_attachment and vault_id:
-            return action_result.set_status(phantom.APP_ERROR, "Can only set either card or vault_id.")
-
         uri_endpoint = consts.WEBEX_MESSAGE_ENDPOINT
         user_id = param["endpoint_id"]
         message = param.get("message", "")
@@ -806,6 +803,9 @@ class CiscoWebexConnector(BaseConnector):
 
         if not message and not card_attachment and not vault_id:
             return action_result.set_status(phantom.APP_ERROR, consts.WEBEX_ERROR_MESSAGE_REQUIRED)
+
+        if card_attachment and vault_id:
+            return action_result.set_status(phantom.APP_ERROR, "Can only set one of card or vault_id.")
 
         message_payload = {sendto_field: user_id, message_field: message}
 
