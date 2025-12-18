@@ -904,10 +904,10 @@ action_result.parameter.room_id | string | | |
 action_result.parameter.description | string | | |
 action_result.parameter.team_id | string | | |
 action_result.parameter.title | string | | |
-action_result.parameter.is_locked | boolean | | |
-action_result.parameter.is_public | boolean | | |
-action_result.parameter.is_read_only | boolean | | |
-action_result.parameter.is_announcement_only | boolean | | |
+action_result.parameter.is_locked | string | | |
+action_result.parameter.is_public | string | | |
+action_result.parameter.is_read_only | string | | |
+action_result.parameter.is_announcement_only | string | | |
 action_result.parameter.classification_id | string | | |
 action_result.status | string | | |
 action_result.message | string | | |
