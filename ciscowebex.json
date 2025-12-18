@@ -388,10 +388,7 @@
                 "message": {
                     "description": "Message",
                     "data_type": "string",
-                    "required": true,
-                    "primary": false,
-                    "contains": [],
-                    "value_list": [],
+                    "required": false,
                     "default": "",
                     "order": 2,
                     "name": "message"
@@ -401,8 +398,6 @@
                     "data_type": "string",
                     "required": false,
                     "primary": false,
-                    "contains": [],
-                    "value_list": [],
                     "default": "",
                     "order": 3,
                     "name": "card"
@@ -412,8 +407,6 @@
                     "data_type": "string",
                     "required": false,
                     "primary": false,
-                    "contains": [],
-                    "value_list": [],
                     "default": "",
                     "order": 4,
                     "name": "vault_id"
@@ -4012,10 +4005,10 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "update room",
+            "action": "update a room",
             "identifier": "update_room",
             "description": "Updates details for a room by ID",
-            "verbose": "Specify the room ID in the roomId parameter in the URI.\nA space can only be put into announcement mode when it is locked.\nAny space participant or compliance officer can convert a space from public to private. Only a compliance officer can convert a space from private to public and only if the space is classified with the lowest category (usually public), and the space has a description.\nTo remove a description please use a space character by itself.",
+            "verbose": "Specify the room ID in the room_id parameter in the URI.\nA space can only be put into announcement mode when it is locked.\nAny space participant or compliance officer can convert a space from public to private. Only a compliance officer can convert a space from private to public and only if the space is classified with the lowest category (usually public), and the space has a description.\nTo remove a description please use a space character by itself.",
             "type": "generic",
             "read_only": false,
             "parameters": {
@@ -4024,73 +4017,65 @@
                     "data_type": "string",
                     "required": true,
                     "primary": true,
-                    "contains": [],
-                    "value_list": [],
-                    "default": "",
                     "order": 0,
                     "name": "room_id"
+                },
+                "title": {
+                    "description": "A user-friendly name for the room.",
+                    "data_type": "string",
+                    "required": true,
+                    "order": 1,
+                    "name": "title"
                 },
                 "description": {
                     "description": "The description of the space.",
                     "data_type": "string",
-                    "required": false,
-                    "primary": false,
-                    "contains": [],
-                    "value_list": [],
-                    "default": "",
-                    "order": 1,
+                    "order": 2,
                     "name": "description"
                 },
                 "team_id": {
                     "description": "The teamId to which this space should be assigned. Only unowned spaces can be assigned to a team. Assignment between teams is unsupported.",
                     "data_type": "string",
                     "required": false,
-                    "primary": false,
-                    "contains": [],
-                    "value_list": [],
-                    "default": "",
-                    "order": 2,
-                    "name": "team_id"
-                },
-                "title": {
-                    "description": "A user-friendly name for the room.",
-                    "data_type": "string",
-                    "required": false,
-                    "primary": false,
-                    "contains": [],
-                    "value_list": [],
                     "default": "",
                     "order": 3,
-                    "name": "title"
+                    "name": "team_id"
+                },
+                "classification_id": {
+                    "description": "The classification_id for the room",
+                    "data_type": "string",
+                    "order": 4,
+                    "name": "classification_id"
+                },
+                "is_announcement_only": {
+                    "description": "Sets the space into announcement-only mode. The room must be locked to be set to announcement-only mode.",
+                    "data_type": "string",
+                    "value_list": ["", "true", "false"],
+                    "order": 5,
+                    "name": "is_announcement_only"
                 },
                 "is_locked": {
                     "description": "Set the space as locked/moderated and the creator becomes a moderator",
-                    "data_type": "boolean",
-                    "required": false,
-                    "primary": false,
-                    "contains": [],
+                    "data_type": "string",
+                    "value_list": ["", "true", "false"],
                     "default": "",
-                    "order": 4,
+                    "order": 6,
                     "name": "is_locked"
                 },
                 "is_public": {
                     "description": "The room is public and therefore discoverable within the org. Anyone can find and join that room. When true the description must be filled in.",
-                    "data_type": "boolean",
+                    "data_type": "string",
+                    "value_list": ["", "true", "false"],
                     "required": false,
-                    "primary": false,
-                    "contains": [],
-                    "default": "",
-                    "order": 5,
+                    "order": 7,
                     "name": "is_public"
                 },
                 "is_read_only": {
                     "description": "A compliance officer can set a direct room as read-only, which will disallow any new information exchanges in this space, while maintaing historical data.",
-                    "data_type": "boolean",
+                    "data_type": "string",
+                    "value_list": ["", "true", "false"],
                     "required": false,
-                    "primary": false,
-                    "contains": [],
-                    "default": "",
-                    "order": 6,
+                    "order": 8,
                     "name": "is_read_only"
                 }
             },
@@ -4098,49 +4083,42 @@
                 {
                     "data_path": "action_result.parameter.room_id",
                     "data_type": "string",
-                    "contains": [],
                     "column_name": "room_id",
                     "column_order": 0
                 },
                 {
                     "data_path": "action_result.parameter.description",
                     "data_type": "string",
-                    "contains": [],
                     "column_name": "description",
                     "column_order": 1
                 },
                 {
                     "data_path": "action_result.parameter.team_id",
                     "data_type": "string",
-                    "contains": [],
                     "column_name": "team_id",
                     "column_order": 2
                 },
                 {
                     "data_path": "action_result.parameter.title",
                     "data_type": "string",
-                    "contains": [],
                     "column_name": "title",
                     "column_order": 3
                 },
                 {
                     "data_path": "action_result.parameter.is_locked",
                     "data_type": "boolean",
-                    "contains": [],
                     "column_name": "is_locked",
                     "column_order": 4
                 },
                 {
                     "data_path": "action_result.parameter.is_public",
                     "data_type": "boolean",
-                    "contains": [],
                     "column_name": "is_public",
                     "column_order": 5
                 },
                 {
                     "data_path": "action_result.parameter.is_read_only",
                     "data_type": "boolean",
-                    "contains": [],
                     "column_name": "is_read_only",
                     "column_order": 6
                 },

@@ -480,7 +480,7 @@ class CiscoWebexConnector(BaseConnector):
         """
 
         req_url = f"{self._base_url}{consts.WEBEX_ACCESS_TOKEN_ENDPOINT}"
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url, json_data=data, method="post")
+        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url, data=data, method="post")
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -564,8 +564,6 @@ class CiscoWebexConnector(BaseConnector):
                 return action_result.get_status(), None
 
         headers.update({"Authorization": f"Bearer {self._access_token}"})
-        # if not headers.get("Content-Type"):
-        #   headers.update(consts.WEBEX_JSON_HEADERS)
 
         ret_val, resp_json = self._make_rest_call(
             action_result=action_result,
@@ -786,8 +784,6 @@ class CiscoWebexConnector(BaseConnector):
     def _handle_send_message(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
-        files = None
-        data = None
         action_result = self.add_action_result(ActionResult(dict(param)))
         dest_type = param["destination_type"]
         is_markdown = param.get("is_markdown", False)
@@ -802,23 +798,29 @@ class CiscoWebexConnector(BaseConnector):
 
         uri_endpoint = consts.WEBEX_MESSAGE_ENDPOINT
         user_id = param["endpoint_id"]
-        message = param["message"]
-        json_data = {sendto_field: user_id, message_field: message}
+        message = param.get("message", "")
+
+        data = None
+        files = None
+        json_data = None
+
+        if not message and not card_attachment and not vault_id:
+            return action_result.set_status(phantom.APP_ERROR, consts.WEBEX_ERROR_MESSAGE_REQUIRED)
+
+        message_payload = {sendto_field: user_id, message_field: message}
 
         if card_attachment:
             try:
                 card_attachment = json.loads(card_attachment)
             except Exception as e:
-                return action_result.set_status(phantom.APP_ERROR, f"Error decoding json: {e}")
+                return action_result.set_status(phantom.APP_ERROR, f"Error deserializing card attachment: {e}")
 
-            json_data.update({"attachments": [{"contentType": "application/vnd.microsoft.card.adaptive", "content": card_attachment}]})
+            message_payload.update({"attachments": [{"contentType": "application/vnd.microsoft.card.adaptive", "content": card_attachment}]})
+            json_data = message_payload
 
         elif vault_id:
-            # API expects files to be sent with data instead of json_data
-            data = json_data
-            json_data = None
+            data = message_payload
 
-            # check the vault for a file with the supplied ID
             success, messages, info = vault.vault_info(vault_id=vault_id)
             if not success:
                 return action_result.set_status(phantom.APP_ERROR, consts.WEBEX_ERR_NOT_IN_VAULT)
@@ -836,13 +838,15 @@ class CiscoWebexConnector(BaseConnector):
             with open(file_path, "rb") as f:
                 file_content = f.read()
                 files = {"files": (file_name, file_content, mime_type)}
+        else:
+            json_data = message_payload
 
         if self._api_key:
             ret_val, response = self._make_rest_call_using_api_key(
                 uri_endpoint, action_result, json_data=json_data, data=data, method="post", files=files
             )
         else:
-            ret_val, response = self._update_request(action_result, uri_endpoint, data=data, files=files, method="post")
+            ret_val, response = self._update_request(action_result, uri_endpoint, data=data, json_data=json_data,files=files, method="post")
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -890,6 +894,52 @@ class CiscoWebexConnector(BaseConnector):
         action_result.add_data(response)
 
         return action_result.set_status(phantom.APP_SUCCESS, "Room created successfully")
+
+    def _handle_update_room(self, param):
+
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
+
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
+        room_id = param["room_id"]
+        title = param.get("title")
+
+        if not room_id or not title:
+            return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: room_id or title")
+
+        endpoint_uri = consts.WEBEX_UPDATE_ROOM_ENDPOINT.format(room_id=room_id)
+
+        json_data = {
+            "title": title,
+            "description": param.get("description"),
+            "teamId": param.get("team_id"),
+            "classificationId": param.get("classification_id"),
+            "isLocked": param.get("is_locked") == "true" if param.get("is_locked") else None,
+            "isPublic": param.get("is_public") == "true" if param.get("is_public") else None,
+            "isReadOnly": param.get("is_read_only") == "true" if param.get("is_read_only") else None,
+            "isAnnouncementOnly": param.get("is_announcement_only") == "true" if param.get("is_announcement_only") else None,
+        }
+
+        # Remove keys where the value is None or empty string (but keep False values)
+        json_data = {k: v for k, v in json_data.items() if v is not None and v != ""}
+
+        if json_data.get("isPublic") and not json_data.get("description"):
+            return action_result.set_status(
+                phantom.APP_ERROR,
+                "When room is public 'description' must be set."
+            )
+
+        if self._api_key:
+            ret_val, response = self._make_rest_call_using_api_key(endpoint_uri, action_result, json_data=json_data, method="put")
+        else:
+            ret_val, response = self._update_request(action_result, endpoint_uri, json_data=json_data, method="put")
+
+        if phantom.is_fail(ret_val):
+            return action_result.get_status()
+
+        action_result.add_data(response)
+
+        return action_result.set_status(phantom.APP_SUCCESS, consts.WEBEX_SUCCESS_UPDATE_ROOM)
 
     def _handle_add_people_to_room(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
@@ -1283,63 +1333,10 @@ class CiscoWebexConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS, "AI generated meeting summary and actions items retrieved successfully")
 
-    def _handle_update_room(self, param):
-        # Implement the handler here
-        # use self.save_progress(...) to send progress messages back to the platform
-        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
-
-        # Add an action result object to self (BaseConnector) to represent the action for this param
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        # Access action parameters passed in the 'param' dictionary
-
-        # Required values can be accessed directly
-        room_id = param["room_id"]
-        endpoint_uri = consts.WEBEX_UPDATE_ROOM_ENDPOINT.format(room_id)
-
-        # Optional values should use the .get() function
-        # classification_id = param.get('classification_id', '')
-        description = param.get("description", "")
-        team_id = param.get("team_id", "")
-        title = param.get("title", "")
-        # is_announcement_only = param.get('is_announcement_only', False)
-        is_locked = param.get("is_locked", False)
-        is_public = param.get("is_public", False)
-        is_read_only = param.get("is_read_only", False)
-
-        if is_public and not description:
-            return action_result.set_status(phantom.APP_ERROR, "When room is public 'description' must be set.")
-
-        json_data = {
-            "title": title,
-            # "classificationId": classification_id,
-            "teamId": team_id,
-            "isLocked": is_locked,
-            "isPublic": is_public,
-            "description": description,
-            # "isAnnouncementOnly": is_announcement_only,
-            "isReadOnly": is_read_only,
-        }
-
-        if self._api_key:
-            ret_val, response = self._make_rest_call_using_api_key(endpoint_uri, action_result, json_data=json_data, method="put")
-        else:
-            ret_val, response = self._update_request(action_result, consts.WEBEX_UPDATE_ROOM_ENDPOINT, json_data=json_data, method="put")
-
-        if phantom.is_fail(ret_val):
-            return action_result.get_status()
-
-        action_result.add_data(response)
-
-        return action_result.set_status(phantom.APP_SUCCESS, "Update the room successfully")
-
     def handle_action(self, param):
         ret_val = phantom.APP_SUCCESS
 
         action_id = self.get_action_identifier()
-
-        if action_id == "update_room":
-            ret_val = self._handle_update_room(param)
 
         if action_id == "test_connectivity":
             ret_val = self._handle_test_connectivity(param)
@@ -1355,6 +1352,9 @@ class CiscoWebexConnector(BaseConnector):
 
         elif action_id == "create_room":
             ret_val = self._handle_create_room(param)
+
+        elif action_id == "update_room":
+            ret_val = self._handle_update_room(param)
 
         elif action_id == "add_people_to_room":
             ret_val = self._handle_add_people_to_room(param)
