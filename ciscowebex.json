@@ -15,8 +15,8 @@
         }
     ],
     "license": "Copyright (c) 2021-2025 Splunk Inc.",
-    "app_version": "2.1.4",
-    "utctime_updated": "2025-11-06T20:18:54.446106Z",
+    "app_version": "2.2.0",
+    "utctime_updated": "2026-01-06T18:17:36.394013Z",
     "package_name": "phantom_ciscowebex",
     "main_module": "ciscowebex_connector.py",
     "min_phantom_version": "6.3.0",
