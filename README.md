@@ -337,7 +337,7 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **timezone** | optional | IANA time zone for the meeting (e.g., America/Los_Angeles) | string | |
 **description** | optional | Meeting description (max 1300 chars) | string | |
 **invitees** | optional | List of emails to invite (comma‑separated) | string | |
-**password** | optional | Password to join the meeting | string | |
+**password** | optional | Password to join the meeting | password | |
 **send_email** | optional | Whether to email host & invitees | boolean | |
 **host_email** | optional | Host email (admin scopes required) | string | |
 **scheduled_type** | optional | Type of meeting: meeting, webinar, or personal_room_meeting | string | |
@@ -373,7 +373,7 @@ action_result.parameter.end | string | | |
 action_result.parameter.host_email | string | | |
 action_result.parameter.invitees | string | | |
 action_result.parameter.join_before_host_minutes | numeric | | |
-action_result.parameter.password | string | | |
+action_result.parameter.password | password | | |
 action_result.parameter.public_meeting | boolean | | |
 action_result.parameter.recurrence | string | | |
 action_result.parameter.reminder_time | numeric | | |
