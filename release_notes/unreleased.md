@@ -4,3 +4,4 @@
 - Escaped recording identifiers before inserting them into widget JavaScript contexts.
 - Rendered AI meeting summaries as escaped plain text instead of trusted upstream HTML.
 - Bound OAuth callbacks to a single-use, cryptographically random state value.
+- URL-encoded message identifiers before inserting them into Webex API paths.

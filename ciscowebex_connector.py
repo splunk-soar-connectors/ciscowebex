@@ -1120,6 +1120,7 @@ class CiscoWebexConnector(BaseConnector):
         message_id = param.get("message_id")
         if not message_id:
             return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: message_id")
+        message_id = urllib.quote(str(message_id), safe="")
 
         # Call the Webex API
         if self._api_key:
