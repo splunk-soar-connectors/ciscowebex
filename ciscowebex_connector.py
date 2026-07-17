@@ -371,8 +371,10 @@ class CiscoWebexConnector(BaseConnector):
 
         if hasattr(action_result, "add_debug_data"):
             action_result.add_debug_data({"r_status_code": r.status_code})
-            action_result.add_debug_data({"r_text": r.text})
-            action_result.add_debug_data({"r_headers": r.headers})
+            request_url = getattr(getattr(r, "request", None), "url", "")
+            if not request_url.endswith(consts.WEBEX_ACCESS_TOKEN_ENDPOINT):
+                action_result.add_debug_data({"r_text": r.text})
+                action_result.add_debug_data({"r_headers": r.headers})
 
         # Process each 'Content-Type' of response separately
 
