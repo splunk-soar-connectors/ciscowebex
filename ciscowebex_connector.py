@@ -14,9 +14,11 @@
 # and limitations under the License.
 #
 #
+import hmac
 import json
 import os
 import pathlib
+import secrets
 import time
 import urllib.parse as urllib
 
@@ -85,8 +87,9 @@ def _handle_rest_request(request, path_parts):
     # To handle response from Webex login page
     if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get("state")  # nosemgrep
-        if asset_id and asset_id.isalnum():
+        oauth_state = request.GET.get("state", "")
+        asset_id, separator, _nonce = oauth_state.partition(".")
+        if return_val.status_code == 200 and separator and asset_id.isalnum():
             app_dir = pathlib.Path(__file__).resolve()
             auth_status_file_path = app_dir.with_name("{}_{}".format(asset_id, "oauth_task.out"))
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
@@ -105,11 +108,17 @@ def _handle_login_response(request):
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get("state")
-    if not asset_id:
+    oauth_state = request.GET.get("state", "")
+    asset_id, separator, _nonce = oauth_state.partition(".")
+    if not separator or not asset_id.isalnum():
         return HttpResponse(  # nosemgrep
-            f"ERROR: Asset ID not found in URL\n{json.dumps(request.GET)}", content_type=consts.WEBEX_STR_TEXT, status=400
+            "ERROR: Invalid OAuth state", content_type=consts.WEBEX_STR_TEXT, status=400
         )
+
+    state = _load_app_state(asset_id)
+    expected_oauth_state = state.get(consts.WEBEX_STR_OAUTH_STATE)
+    if not expected_oauth_state or not hmac.compare_digest(oauth_state, expected_oauth_state):
+        return HttpResponse("ERROR: Invalid OAuth state", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
 
     # Check for error in URL
     error = request.GET.get("error")
@@ -130,7 +139,7 @@ def _handle_login_response(request):
             f"Error while authenticating\n{json.dumps(request.GET)}", content_type=consts.WEBEX_STR_TEXT, status=400
         )
 
-    state = _load_app_state(asset_id)
+    state.pop(consts.WEBEX_STR_OAUTH_STATE, None)
     state[consts.WEBEX_STR_CODE] = code
     _save_app_state(state, asset_id, None)
 
@@ -639,8 +648,10 @@ class CiscoWebexConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         # Authorization URL used to make request for getting code which is used to generate access token
+        oauth_state = f"{self._asset_id}.{secrets.token_urlsafe(32)}"
+        app_state[consts.WEBEX_STR_OAUTH_STATE] = oauth_state
         authorization_url = consts.AUTHORIZATION_URL.format(
-            client_id=self._client_id, redirect_uri=redirect_uri, response_type=consts.WEBEX_STR_CODE, state=self._asset_id, scope=self._scopes
+            client_id=self._client_id, redirect_uri=redirect_uri, response_type=consts.WEBEX_STR_CODE, state=oauth_state, scope=self._scopes
         )
 
         authorization_url = f"{self._base_url}{authorization_url}"

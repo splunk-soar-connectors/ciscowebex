@@ -34,6 +34,7 @@ WEBEX_STR_GRANT_TYPE = "grant_type"
 WEBEX_STR_REDIRECT_URI = "redirect_uri"
 WEBEX_STR_IS_ENCRYPTED = "is_encrypted"
 WEBEX_STR_SCOPE = "scope"
+WEBEX_STR_OAUTH_STATE = "oauth_state"
 WEBEX_JSON_HEADERS = {"Content-Type": "application/json"}
 
 WEBEX_SUCCESS_CODE_RECEIVED_MESSAGE = "Code received. Please close this window, the action will continue to get new token"
