@@ -1814,6 +1814,10 @@
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.password",
+                    "data_type": "password"
                 }
             ],
             "render": {
@@ -3704,7 +3708,7 @@
                         "https://company.webex.com/siteurl/ldr.php?RCID=testcc66c2ee8536aabdd0ec607test"
                     ],
                     "column_name": "Playback URL",
-                    "column_order": 2,
+                    "column_order": 1,
                     "contains": [
                         "url"
                     ]
@@ -3772,7 +3776,7 @@
                         "https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet?siteid=00240&recordid=197000062"
                     ],
                     "column_name": "Recording Download Link",
-                    "column_order": 3,
+                    "column_order": 2,
                     "contains": [
                         "url"
                     ]
@@ -3784,7 +3788,7 @@
                         "https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/transcript.txt?siteid=00240&recordid=197000062&confid=6547000000000001771&from=MBS"
                     ],
                     "column_name": "Transcript Download Link",
-                    "column_order": 4,
+                    "column_order": 3,
                     "contains": [
                         "url"
                     ]

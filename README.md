@@ -82,6 +82,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 **client_id** | optional | string | Client ID |
 **client_secret** | optional | password | Client Secret |
 **scope** | optional | string | Scopes (Append extra space-seperated scopes which are added during app creation from webex portal) |
+**verify_server_cert** | optional | boolean | Verify the Webex server certificate |
 
 ### Supported Actions
 
@@ -373,7 +374,6 @@ action_result.parameter.end | string | | |
 action_result.parameter.host_email | string | | |
 action_result.parameter.invitees | string | | |
 action_result.parameter.join_before_host_minutes | numeric | | |
-action_result.parameter.password | password | | |
 action_result.parameter.public_meeting | boolean | | |
 action_result.parameter.recurrence | string | | |
 action_result.parameter.reminder_time | numeric | | |
@@ -434,10 +434,6 @@ action_result.data.\*.meetingOptions.enabledChat | boolean | | True False |
 action_result.data.\*.meetingOptions.enabledFileTransfer | boolean | | True False |
 action_result.data.\*.meetingOptions.enabledVideo | boolean | | True False |
 action_result.data.\*.meetingType | string | | meetingSeries |
-action_result.data.\*.panelistPassword | string | | hhQcajkb562 |
-action_result.data.\*.password | string | | testdpXhe326 |
-action_result.data.\*.phoneAndVideoSystemPanelistPassword | string | | 44722552 |
-action_result.data.\*.phoneAndVideoSystemPassword | string | | 97237943 |
 action_result.data.\*.publicMeeting | boolean | | True False |
 action_result.data.\*.reminderTime | numeric | | 10 |
 action_result.data.\*.requireAttendeeLogin | boolean | | True False |
@@ -464,6 +460,7 @@ action_result.summary | string | | |
 action_result.message | string | | |
 summary.total_objects | numeric | | |
 summary.total_objects_successful | numeric | | |
+action_result.parameter.password | password | | |
 
 ## action: 'retrieve meeting participants'
 
@@ -683,8 +680,6 @@ action_result.data.\*.meetingOptions.enabledFileTransfer | boolean | | True Fals
 action_result.data.\*.meetingOptions.enabledVideo | boolean | | True False |
 action_result.data.\*.meetingSeriesId | string | | testa706b64041559c664a83e6btest |
 action_result.data.\*.meetingType | string | | scheduledMeeting |
-action_result.data.\*.password | string | | 72Xjx9PyYKA |
-action_result.data.\*.phoneAndVideoSystemPassword | string | | 72959979 |
 action_result.data.\*.publicMeeting | boolean | | True False |
 action_result.data.\*.reminderTime | numeric | | 15 |
 action_result.data.\*.scheduledMeetingId | string | | 937f2ef03e1a49be883320fe35fde314_20250508T140000Z |
@@ -819,7 +814,6 @@ action_result.data.\*.hostEmail | string | | example@example.com |
 action_result.data.\*.id | string | `webex recording id` | test06506faa48c790592a4198c3test |
 action_result.data.\*.meetingId | string | | test5560719471599d7test2a4c1b72_I_6547053376test |
 action_result.data.\*.meetingSeriesId | string | | test5560719471599d76418test |
-action_result.data.\*.password | string | | testpass |
 action_result.data.\*.playbackUrl | string | `url` | https://company.webex.com/siteurl/ldr.php?RCID=testcc66c2ee8536aabdd0ec607test |
 action_result.data.\*.scheduledMeetingId | string | | test60719471599d764182a4c1b7test250522T150000Z |
 action_result.data.\*.serviceType | string | | MeetingCenter |
