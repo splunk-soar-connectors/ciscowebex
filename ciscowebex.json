@@ -55,6 +55,12 @@
             "default": "spark:people_read spark:rooms_read spark:messages_write spark:rooms_write spark:memberships_write spark:messages_read meeting:participants_read meeting:schedules_read meeting:recordings_read meeting:schedules_write",
             "data_type": "string",
             "order": 4
+        },
+        "verify_server_cert": {
+            "description": "Verify the Webex server certificate",
+            "data_type": "boolean",
+            "default": true,
+            "order": 5
         }
     },
     "actions": [

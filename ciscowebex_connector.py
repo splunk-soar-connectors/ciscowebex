@@ -391,7 +391,7 @@ class CiscoWebexConnector(BaseConnector):
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _make_rest_call(
-        self, endpoint, action_result, headers=None, params=None, json_data=None, data=None, files=None, method="get", verify=False
+        self, endpoint, action_result, headers=None, params=None, json_data=None, data=None, files=None, method="get", verify=True
     ):
         resp_json = None
 
@@ -480,7 +480,9 @@ class CiscoWebexConnector(BaseConnector):
         """
 
         req_url = f"{self._base_url}{consts.WEBEX_ACCESS_TOKEN_ENDPOINT}"
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url, data=data, method="post")
+        ret_val, resp_json = self._make_rest_call(
+            action_result=action_result, endpoint=req_url, data=data, method="post", verify=self._verify_server_cert
+        )
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -574,6 +576,7 @@ class CiscoWebexConnector(BaseConnector):
             data=data,
             method=method,
             files=files,
+            verify=self._verify_server_cert,
         )
 
         # If token is expired, generate new token
@@ -586,7 +589,14 @@ class CiscoWebexConnector(BaseConnector):
 
             headers.update({"Authorization": f"Bearer {self._access_token}"})
             ret_val, resp_json = self._make_rest_call(
-                action_result=action_result, endpoint=endpoint, headers=headers, params=params, json_data=json_data, data=data, method=method
+                action_result=action_result,
+                endpoint=endpoint,
+                headers=headers,
+                params=params,
+                json_data=json_data,
+                data=data,
+                method=method,
+                verify=self._verify_server_cert,
             )
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
@@ -708,7 +718,7 @@ class CiscoWebexConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _make_rest_call_using_api_key(
-        self, endpoint, action_result, params=None, json_data=None, data=None, files=None, method="get", verify=False
+        self, endpoint, action_result, params=None, json_data=None, data=None, files=None, method="get", verify=None
     ):
         # Create a URL to connect to
         if not endpoint.startswith("https"):
@@ -716,6 +726,9 @@ class CiscoWebexConnector(BaseConnector):
         else:
             url = endpoint
         headers = {"Authorization": f"Bearer {self._api_key}"}
+
+        if verify is None:
+            verify = self._verify_server_cert
 
         return self._make_rest_call(
             url, action_result, params=params, headers=headers, json_data=json_data, data=data, method=method, verify=verify, files=files
@@ -1464,6 +1477,7 @@ class CiscoWebexConnector(BaseConnector):
         config = self.get_config()
         self._base_url = consts.BASE_URL
         self._api_key = config.get("authorization_key", None)
+        self._verify_server_cert = config.get("verify_server_cert", True)
 
         self._client_id = config.get(consts.WEBEX_STR_CLIENT_ID, None)
         self._client_secret = config.get(consts.WEBEX_STR_SECRET, None)
