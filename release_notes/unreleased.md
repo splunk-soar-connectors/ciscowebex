@@ -7,3 +7,4 @@
 - URL-encoded message identifiers before inserting them into Webex API paths.
 - Excluded OAuth token responses from action-result diagnostic data.
 - Prevented schedule-meeting input passwords from being persisted in action parameters.
+- Removed meeting and recording password fields from stored action results.

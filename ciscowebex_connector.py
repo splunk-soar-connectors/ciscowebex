@@ -40,6 +40,14 @@ class RetVal(tuple):
         return tuple.__new__(RetVal, (val1, val2))
 
 
+def _remove_password_fields(value):
+    if isinstance(value, dict):
+        return {key: _remove_password_fields(item) for key, item in value.items() if "password" not in key.lower()}
+    if isinstance(value, list):
+        return [_remove_password_fields(item) for item in value]
+    return value
+
+
 def _get_error_message_from_exception(e, app_connector=None):
     """This function is used to get appropriate error message from the exception.
     :param e: Exception object
@@ -1036,7 +1044,7 @@ class CiscoWebexConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        action_result.add_data(response)
+        action_result.add_data(_remove_password_fields(response))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Meeting scheduled successfully")
 
@@ -1175,7 +1183,7 @@ class CiscoWebexConnector(BaseConnector):
             return action_result.get_status()
 
         # Add meeting details to action result
-        action_result.add_data(response)
+        action_result.add_data(_remove_password_fields(response))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved meeting details")
 
@@ -1280,9 +1288,9 @@ class CiscoWebexConnector(BaseConnector):
                 if phantom.is_fail(ret_val):
                     return action_result.get_status()
 
-                action_result.add_data(response)
+                action_result.add_data(_remove_password_fields(response))
         else:
-            action_result.add_data(response)
+            action_result.add_data(_remove_password_fields(response))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Recording details retrieved successfully")
 

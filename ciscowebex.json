@@ -1634,34 +1634,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.panelistPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "hhQcajkb562"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "example_values": [
-                        "testdpXhe326"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPanelistPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "44722552"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "97237943"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.publicMeeting",
                     "data_type": "boolean",
                     "example_values": [
@@ -3019,20 +2991,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "example_values": [
-                        "72Xjx9PyYKA"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "72959979"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.publicMeeting",
                     "data_type": "boolean",
                     "example_values": [
@@ -3737,15 +3695,6 @@
                     "data_type": "string",
                     "example_values": [
                         "test5560719471599d76418test"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "column_name": "Password",
-                    "column_order": 1,
-                    "example_values": [
-                        "testpass"
                     ]
                 },
                 {
