@@ -17,7 +17,6 @@
 import json
 import os
 import pathlib
-import re
 import time
 import urllib.parse as urllib
 
@@ -1306,8 +1305,8 @@ class CiscoWebexConnector(BaseConnector):
                 try:
                     content = json.loads(content_str)
                     description = content.get("description", {}).get("text", "")
-                    note_items = "".join(f"<li>{note.get('text', '')}</li>" for note in content.get("notes", []))
-                    notes = f"<p>{description}</p><ul>{note_items}</ul>"
+                    note_items = [note.get("text", "") for note in content.get("notes", [])]
+                    notes = "\n".join(filter(None, [description, *note_items]))
                 except json.JSONDecodeError:
                     notes = content_str
 
@@ -1326,10 +1325,7 @@ class CiscoWebexConnector(BaseConnector):
                     content = json.loads(content_str)
                     for item in content:
                         item_content = item.get("content", "")
-                        if re.search(r"<[^>]+>", item_content):
-                            action_items += item_content
-                        else:
-                            action_items += f"<p>{item_content}</p>"
+                        action_items += f"{item_content}\n"
                 except json.JSONDecodeError:
                     action_items = content_str
 

@@ -138,10 +138,10 @@ and limitations under the License.
                   </a>
                 </td>
                 <td>
-                  <div>{{ result.data.0.suggestedNote | default:"None" | safe }}</div>
+                  <div style="white-space: pre-wrap">{{ result.data.0.suggestedNote | default:"None" }}</div>
                 </td>
                 <td>
-                  <div>{{ result.data.0.actionItems | default:"None" | safe }}</div>
+                  <div style="white-space: pre-wrap">{{ result.data.0.actionItems | default:"None" }}</div>
                 </td>
               </tr>
             </tbody>
