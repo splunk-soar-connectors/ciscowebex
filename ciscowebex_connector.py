@@ -999,7 +999,9 @@ class CiscoWebexConnector(BaseConnector):
     def _handle_schedule_meeting(self, param):
         """Schedules a Webex meeting based on provided parameters."""
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
-        action_result = self.add_action_result(ActionResult(dict(param)))
+        result_param = dict(param)
+        result_param.pop("password", None)
+        action_result = self.add_action_result(ActionResult(result_param))
 
         # Required parameters
         title = param.get("title")

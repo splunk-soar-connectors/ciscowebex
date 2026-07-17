@@ -6,3 +6,4 @@
 - Bound OAuth callbacks to a single-use, cryptographically random state value.
 - URL-encoded message identifiers before inserting them into Webex API paths.
 - Excluded OAuth token responses from action-result diagnostic data.
+- Prevented schedule-meeting input passwords from being persisted in action parameters.

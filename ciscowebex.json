@@ -1203,10 +1203,6 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.parameter.password",
-                    "data_type": "password"
-                },
-                {
                     "data_path": "action_result.parameter.public_meeting",
                     "data_type": "boolean"
                 },
