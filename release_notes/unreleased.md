@@ -1,10 +1,10 @@
 **Unreleased**
 
-* - Enabled Webex server certificate verification by default and added an asset setting to control it.
-* - Escaped recording identifiers before inserting them into widget JavaScript contexts.
-* - Rendered AI meeting summaries as escaped plain text instead of trusted upstream HTML.
-* - Bound OAuth callbacks to a single-use, cryptographically random state value.
-* - URL-encoded message identifiers before inserting them into Webex API paths.
-* - Excluded OAuth token responses from action-result diagnostic data.
-* - Prevented schedule-meeting input passwords from being persisted in action parameters.
-* - Removed meeting and recording password fields from stored action results.
+* Enabled Webex server certificate verification by default and added an asset setting to control it.
+* Escaped recording identifiers before inserting them into widget JavaScript contexts.
+* Rendered AI meeting summaries as escaped plain text instead of trusted upstream HTML.
+* Bound OAuth callbacks to a single-use, cryptographically random state value.
+* URL-encoded message identifiers before inserting them into Webex API paths.
+* Excluded OAuth token responses from action-result diagnostic data.
+* Prevented schedule-meeting input passwords from being persisted in action parameters.
+* Removed meeting and recording password fields from stored action results.
