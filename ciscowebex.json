@@ -55,6 +55,12 @@
             "default": "spark:people_read spark:rooms_read spark:messages_write spark:rooms_write spark:memberships_write spark:messages_read meeting:participants_read meeting:schedules_read meeting:recordings_read meeting:schedules_write",
             "data_type": "string",
             "order": 4
+        },
+        "verify_server_cert": {
+            "description": "Verify the Webex server certificate",
+            "data_type": "boolean",
+            "default": true,
+            "order": 5
         }
     },
     "actions": [
@@ -1197,10 +1203,6 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.parameter.password",
-                    "data_type": "password"
-                },
-                {
                     "data_path": "action_result.parameter.public_meeting",
                     "data_type": "boolean"
                 },
@@ -1632,34 +1634,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.panelistPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "hhQcajkb562"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "example_values": [
-                        "testdpXhe326"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPanelistPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "44722552"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "97237943"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.publicMeeting",
                     "data_type": "boolean",
                     "example_values": [
@@ -1840,6 +1814,10 @@
                 {
                     "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.parameter.password",
+                    "data_type": "password"
                 }
             ],
             "render": {
@@ -3017,20 +2995,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "example_values": [
-                        "72Xjx9PyYKA"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.phoneAndVideoSystemPassword",
-                    "data_type": "string",
-                    "example_values": [
-                        "72959979"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.publicMeeting",
                     "data_type": "boolean",
                     "example_values": [
@@ -3738,22 +3702,13 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.password",
-                    "data_type": "string",
-                    "column_name": "Password",
-                    "column_order": 1,
-                    "example_values": [
-                        "testpass"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.playbackUrl",
                     "data_type": "string",
                     "example_values": [
                         "https://company.webex.com/siteurl/ldr.php?RCID=testcc66c2ee8536aabdd0ec607test"
                     ],
                     "column_name": "Playback URL",
-                    "column_order": 2,
+                    "column_order": 1,
                     "contains": [
                         "url"
                     ]
@@ -3821,7 +3776,7 @@
                         "https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet?siteid=00240&recordid=197000062"
                     ],
                     "column_name": "Recording Download Link",
-                    "column_order": 3,
+                    "column_order": 2,
                     "contains": [
                         "url"
                     ]
@@ -3833,7 +3788,7 @@
                         "https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/transcript.txt?siteid=00240&recordid=197000062&confid=6547000000000001771&from=MBS"
                     ],
                     "column_name": "Transcript Download Link",
-                    "column_order": 4,
+                    "column_order": 3,
                     "contains": [
                         "url"
                     ]

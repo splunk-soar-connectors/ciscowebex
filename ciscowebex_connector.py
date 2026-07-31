@@ -14,10 +14,11 @@
 # and limitations under the License.
 #
 #
+import hmac
 import json
 import os
 import pathlib
-import re
+import secrets
 import time
 import urllib.parse as urllib
 
@@ -37,6 +38,14 @@ import ciscowebex_consts as consts
 class RetVal(tuple):
     def __new__(cls, val1, val2):
         return tuple.__new__(RetVal, (val1, val2))
+
+
+def _remove_password_fields(value):
+    if isinstance(value, dict):
+        return {key: _remove_password_fields(item) for key, item in value.items() if "password" not in key.lower()}
+    if isinstance(value, list):
+        return [_remove_password_fields(item) for item in value]
+    return value
 
 
 def _get_error_message_from_exception(e, app_connector=None):
@@ -86,8 +95,9 @@ def _handle_rest_request(request, path_parts):
     # To handle response from Webex login page
     if call_type == "result":
         return_val = _handle_login_response(request)
-        asset_id = request.GET.get("state")  # nosemgrep
-        if asset_id and asset_id.isalnum():
+        oauth_state = request.GET.get("state", "")
+        asset_id, separator, _nonce = oauth_state.partition(".")
+        if return_val.status_code == 200 and separator and asset_id.isalnum():
             app_dir = pathlib.Path(__file__).resolve()
             auth_status_file_path = app_dir.with_name("{}_{}".format(asset_id, "oauth_task.out"))
             real_auth_status_file_path = os.path.abspath(auth_status_file_path)
@@ -106,11 +116,17 @@ def _handle_login_response(request):
     :return: HttpResponse. The response displayed on authorization URL page
     """
 
-    asset_id = request.GET.get("state")
-    if not asset_id:
+    oauth_state = request.GET.get("state", "")
+    asset_id, separator, _nonce = oauth_state.partition(".")
+    if not separator or not asset_id.isalnum():
         return HttpResponse(  # nosemgrep
-            f"ERROR: Asset ID not found in URL\n{json.dumps(request.GET)}", content_type=consts.WEBEX_STR_TEXT, status=400
+            "ERROR: Invalid OAuth state", content_type=consts.WEBEX_STR_TEXT, status=400
         )
+
+    state = _load_app_state(asset_id)
+    expected_oauth_state = state.get(consts.WEBEX_STR_OAUTH_STATE)
+    if not expected_oauth_state or not hmac.compare_digest(oauth_state, expected_oauth_state):
+        return HttpResponse("ERROR: Invalid OAuth state", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
 
     # Check for error in URL
     error = request.GET.get("error")
@@ -131,7 +147,7 @@ def _handle_login_response(request):
             f"Error while authenticating\n{json.dumps(request.GET)}", content_type=consts.WEBEX_STR_TEXT, status=400
         )
 
-    state = _load_app_state(asset_id)
+    state.pop(consts.WEBEX_STR_OAUTH_STATE, None)
     state[consts.WEBEX_STR_CODE] = code
     _save_app_state(state, asset_id, None)
 
@@ -363,8 +379,10 @@ class CiscoWebexConnector(BaseConnector):
 
         if hasattr(action_result, "add_debug_data"):
             action_result.add_debug_data({"r_status_code": r.status_code})
-            action_result.add_debug_data({"r_text": r.text})
-            action_result.add_debug_data({"r_headers": r.headers})
+            request_url = getattr(getattr(r, "request", None), "url", "")
+            if not request_url.endswith(consts.WEBEX_ACCESS_TOKEN_ENDPOINT):
+                action_result.add_debug_data({"r_text": r.text})
+                action_result.add_debug_data({"r_headers": r.headers})
 
         # Process each 'Content-Type' of response separately
 
@@ -391,7 +409,7 @@ class CiscoWebexConnector(BaseConnector):
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _make_rest_call(
-        self, endpoint, action_result, headers=None, params=None, json_data=None, data=None, files=None, method="get", verify=False
+        self, endpoint, action_result, headers=None, params=None, json_data=None, data=None, files=None, method="get", verify=True
     ):
         resp_json = None
 
@@ -480,7 +498,9 @@ class CiscoWebexConnector(BaseConnector):
         """
 
         req_url = f"{self._base_url}{consts.WEBEX_ACCESS_TOKEN_ENDPOINT}"
-        ret_val, resp_json = self._make_rest_call(action_result=action_result, endpoint=req_url, data=data, method="post")
+        ret_val, resp_json = self._make_rest_call(
+            action_result=action_result, endpoint=req_url, data=data, method="post", verify=self._verify_server_cert
+        )
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
@@ -574,6 +594,7 @@ class CiscoWebexConnector(BaseConnector):
             data=data,
             method=method,
             files=files,
+            verify=self._verify_server_cert,
         )
 
         # If token is expired, generate new token
@@ -586,7 +607,14 @@ class CiscoWebexConnector(BaseConnector):
 
             headers.update({"Authorization": f"Bearer {self._access_token}"})
             ret_val, resp_json = self._make_rest_call(
-                action_result=action_result, endpoint=endpoint, headers=headers, params=params, json_data=json_data, data=data, method=method
+                action_result=action_result,
+                endpoint=endpoint,
+                headers=headers,
+                params=params,
+                json_data=json_data,
+                data=data,
+                method=method,
+                verify=self._verify_server_cert,
             )
         if phantom.is_fail(ret_val):
             return action_result.get_status(), None
@@ -630,8 +658,10 @@ class CiscoWebexConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, error_message)
 
         # Authorization URL used to make request for getting code which is used to generate access token
+        oauth_state = f"{self._asset_id}.{secrets.token_urlsafe(32)}"
+        app_state[consts.WEBEX_STR_OAUTH_STATE] = oauth_state
         authorization_url = consts.AUTHORIZATION_URL.format(
-            client_id=self._client_id, redirect_uri=redirect_uri, response_type=consts.WEBEX_STR_CODE, state=self._asset_id, scope=self._scopes
+            client_id=self._client_id, redirect_uri=redirect_uri, response_type=consts.WEBEX_STR_CODE, state=oauth_state, scope=self._scopes
         )
 
         authorization_url = f"{self._base_url}{authorization_url}"
@@ -708,7 +738,7 @@ class CiscoWebexConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _make_rest_call_using_api_key(
-        self, endpoint, action_result, params=None, json_data=None, data=None, files=None, method="get", verify=False
+        self, endpoint, action_result, params=None, json_data=None, data=None, files=None, method="get", verify=None
     ):
         # Create a URL to connect to
         if not endpoint.startswith("https"):
@@ -716,6 +746,9 @@ class CiscoWebexConnector(BaseConnector):
         else:
             url = endpoint
         headers = {"Authorization": f"Bearer {self._api_key}"}
+
+        if verify is None:
+            verify = self._verify_server_cert
 
         return self._make_rest_call(
             url, action_result, params=params, headers=headers, json_data=json_data, data=data, method=method, verify=verify, files=files
@@ -974,7 +1007,9 @@ class CiscoWebexConnector(BaseConnector):
     def _handle_schedule_meeting(self, param):
         """Schedules a Webex meeting based on provided parameters."""
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
-        action_result = self.add_action_result(ActionResult(dict(param)))
+        result_param = dict(param)
+        result_param.pop("password", None)
+        action_result = self.add_action_result(ActionResult(result_param))
 
         # Required parameters
         title = param.get("title")
@@ -1009,7 +1044,7 @@ class CiscoWebexConnector(BaseConnector):
         if phantom.is_fail(ret_val):
             return action_result.get_status()
 
-        action_result.add_data(response)
+        action_result.add_data(_remove_password_fields(response))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Meeting scheduled successfully")
 
@@ -1097,6 +1132,7 @@ class CiscoWebexConnector(BaseConnector):
         message_id = param.get("message_id")
         if not message_id:
             return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: message_id")
+        message_id = urllib.quote(str(message_id), safe="")
 
         # Call the Webex API
         if self._api_key:
@@ -1147,7 +1183,7 @@ class CiscoWebexConnector(BaseConnector):
             return action_result.get_status()
 
         # Add meeting details to action result
-        action_result.add_data(response)
+        action_result.add_data(_remove_password_fields(response))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Successfully retrieved meeting details")
 
@@ -1252,9 +1288,9 @@ class CiscoWebexConnector(BaseConnector):
                 if phantom.is_fail(ret_val):
                     return action_result.get_status()
 
-                action_result.add_data(response)
+                action_result.add_data(_remove_password_fields(response))
         else:
-            action_result.add_data(response)
+            action_result.add_data(_remove_password_fields(response))
 
         return action_result.set_status(phantom.APP_SUCCESS, "Recording details retrieved successfully")
 
@@ -1293,8 +1329,8 @@ class CiscoWebexConnector(BaseConnector):
                 try:
                     content = json.loads(content_str)
                     description = content.get("description", {}).get("text", "")
-                    note_items = "".join(f"<li>{note.get('text', '')}</li>" for note in content.get("notes", []))
-                    notes = f"<p>{description}</p><ul>{note_items}</ul>"
+                    note_items = [note.get("text", "") for note in content.get("notes", [])]
+                    notes = "\n".join(filter(None, [description, *note_items]))
                 except json.JSONDecodeError:
                     notes = content_str
 
@@ -1313,10 +1349,7 @@ class CiscoWebexConnector(BaseConnector):
                     content = json.loads(content_str)
                     for item in content:
                         item_content = item.get("content", "")
-                        if re.search(r"<[^>]+>", item_content):
-                            action_items += item_content
-                        else:
-                            action_items += f"<p>{item_content}</p>"
+                        action_items += f"{item_content}\n"
                 except json.JSONDecodeError:
                     action_items = content_str
 
@@ -1464,6 +1497,7 @@ class CiscoWebexConnector(BaseConnector):
         config = self.get_config()
         self._base_url = consts.BASE_URL
         self._api_key = config.get("authorization_key", None)
+        self._verify_server_cert = config.get("verify_server_cert", True)
 
         self._client_id = config.get(consts.WEBEX_STR_CLIENT_ID, None)
         self._client_secret = config.get(consts.WEBEX_STR_SECRET, None)
