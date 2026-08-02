@@ -48,6 +48,12 @@ def _remove_password_fields(value):
     return value
 
 
+def _encode_path_identifier(value):
+    if not isinstance(value, str) or not value or value in {".", ".."}:
+        return None
+    return urllib.quote(value, safe="")
+
+
 def _get_error_message_from_exception(e, app_connector=None):
     """This function is used to get appropriate error message from the exception.
     :param e: Exception object
@@ -87,10 +93,6 @@ def _handle_rest_request(request, path_parts):
         return HttpResponse("error: True, message: Invalid REST endpoint request", content_type=consts.WEBEX_STR_TEXT, status=404)  # nosemgrep
 
     call_type = path_parts[1]
-
-    # To handle authorize request in test connectivity action
-    if call_type == "start_oauth":
-        return _handle_login_redirect(request, "authorization_url")
 
     # To handle response from Webex login page
     if call_type == "result":
@@ -152,32 +154,6 @@ def _handle_login_response(request):
     _save_app_state(state, asset_id, None)
 
     return HttpResponse(consts.WEBEX_SUCCESS_CODE_RECEIVED_MESSAGE, content_type=consts.WEBEX_STR_TEXT)  # nosemgrep
-
-
-def _handle_login_redirect(request, key):
-    """This function is used to redirect login request to Cisco webex login page.
-
-    :param request: Data given to REST endpoint
-    :param key: Key to search in state file
-    :return: response authorization_url/admin_consent_url
-    """
-
-    asset_id = request.GET.get("asset_id")
-    if not asset_id:
-        return HttpResponse("ERROR: Asset ID not found in URL", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
-    state = _load_app_state(asset_id)
-    if not state:
-        return HttpResponse("ERROR: Invalid asset_id", content_type=consts.WEBEX_STR_TEXT, status=400)  # nosemgrep
-    url = state.get(key)
-    if not url:
-        return HttpResponse(
-            f"App state is invalid, {key} not found.",  # nosemgrep
-            content_type=consts.WEBEX_STR_TEXT,
-            status=400,
-        )  # nosemgrep
-    response = HttpResponse(status=302)
-    response["Location"] = url
-    return response
 
 
 def _load_app_state(asset_id, app_connector=None):
@@ -665,14 +641,11 @@ class CiscoWebexConnector(BaseConnector):
         )
 
         authorization_url = f"{self._base_url}{authorization_url}"
-        app_state["authorization_url"] = authorization_url
 
-        # URL which would be shown to the user
-        url_for_authorize_request = f"{app_rest_url}/start_oauth?asset_id={self._asset_id}&"
         _save_app_state(app_state, self._asset_id, self)
 
         self.save_progress("Please authorize user in a separate tab using URL")
-        self.save_progress(url_for_authorize_request)  # nosemgrep
+        self.save_progress(authorization_url)  # nosemgrep
 
         # Wait time for authorization
         time.sleep(15)
@@ -786,12 +759,12 @@ class CiscoWebexConnector(BaseConnector):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
-        uri_endpoint = consts.WEBEX_GET_USER_ENDPOINT.format(param["email_address"])
+        query_params = {"email": param["email_address"]}
 
         if self._api_key:
-            ret_val, response = self._make_rest_call_using_api_key(uri_endpoint, action_result, params=None)
+            ret_val, response = self._make_rest_call_using_api_key(consts.WEBEX_GET_USER_ENDPOINT, action_result, params=query_params)
         else:
-            ret_val, response = self._update_request(action_result, uri_endpoint)
+            ret_val, response = self._update_request(action_result, consts.WEBEX_GET_USER_ENDPOINT, params=query_params)
 
         if phantom.is_fail(ret_val):
             return action_result.get_status()
@@ -939,6 +912,9 @@ class CiscoWebexConnector(BaseConnector):
         if not room_id or not title:
             return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: room_id or title")
 
+        room_id = _encode_path_identifier(room_id)
+        if not room_id:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid room_id")
         endpoint_uri = consts.WEBEX_UPDATE_ROOM_ENDPOINT.format(room_id=room_id)
 
         json_data = {
@@ -1132,7 +1108,9 @@ class CiscoWebexConnector(BaseConnector):
         message_id = param.get("message_id")
         if not message_id:
             return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: message_id")
-        message_id = urllib.quote(str(message_id), safe="")
+        message_id = _encode_path_identifier(message_id)
+        if not message_id:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid message_id")
 
         # Call the Webex API
         if self._api_key:
@@ -1161,6 +1139,10 @@ class CiscoWebexConnector(BaseConnector):
 
         if not meeting_id:
             return action_result.set_status(phantom.APP_ERROR, "Missing required parameter: meeting_id")
+
+        meeting_id = _encode_path_identifier(meeting_id)
+        if not meeting_id:
+            return action_result.set_status(phantom.APP_ERROR, "Invalid meeting_id")
 
         # Build query parameters
         params = {}
@@ -1247,9 +1229,13 @@ class CiscoWebexConnector(BaseConnector):
         query_params = {"hostEmail": host_email} if host_email else {}
 
         if recording_id:
+            recording_id = _encode_path_identifier(recording_id)
+            if not recording_id:
+                return action_result.set_status(phantom.APP_ERROR, "Invalid recording_id")
             endpoint = consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(recording_id=recording_id)
         elif meeting_id:
-            endpoint = consts.WEBEX_RECORDING_DETAILS_BY_MEETING_ID_ENDPOINT.format(meeting_id=meeting_id)
+            endpoint = consts.WEBEX_RECORDING_DETAILS_BY_MEETING_ID_ENDPOINT
+            query_params["meetingId"] = meeting_id
         else:
             endpoint = ""
 
@@ -1269,7 +1255,9 @@ class CiscoWebexConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR, f"Recording details not found for meeting id: {meeting_id}")
 
             for item in items:
-                recording_id = item["id"]
+                recording_id = _encode_path_identifier(item["id"])
+                if not recording_id:
+                    return action_result.set_status(phantom.APP_ERROR, "Invalid recording_id returned by Webex")
 
                 # Make API call
                 if self._api_key:
