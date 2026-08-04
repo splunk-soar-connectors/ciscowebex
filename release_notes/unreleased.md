@@ -1,1 +1,4 @@
 **Unreleased**
+
+* Limited OAuth authorization URLs to the test-connectivity action that initiated each flow (PSAAS-31084)
+* Validated Webex path identifiers and encoded meeting and email query parameters (PSAAS-31151)
