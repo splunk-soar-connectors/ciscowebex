@@ -31,11 +31,8 @@ class GetUserParams(Params):
 
 
 class GetUserOutput(WebexOutput):
-    status: str = OutputField(
-        column_name="Status", example_values=["success", "failed"]
-    )
+    status: str | None = OutputField(column_name="Status", example_values=["inactive"])
     email_address: str | None = OutputField(column_name="Email Address")
-    user_status: str | None = OutputField()
     displayName: str = OutputField(
         column_name="User Name", example_values=["Test User"]
     )
@@ -49,7 +46,7 @@ class GetUserOutput(WebexOutput):
     created: str = OutputField(
         example_values=["2015-04-22T07:16:49.649Z", "2018-01-04T20:46:30.734Z"]
     )
-    emails: str = OutputField(
+    emails: list[str] = OutputField(
         cef_types=["email"], example_values=["examplemail@test.com"]
     )
     firstName: str = OutputField(example_values=["abc"])
@@ -89,16 +86,4 @@ def get_user(
     if not items:
         raise ActionFailure(consts.WEBEX_ERROR_USER_NOT_FOUND)
     soar.set_message("Found user")
-    outputs = []
-    for item in items:
-        user = dict(item)
-        user_status = user.pop("status", None)
-        outputs.append(
-            GetUserOutput(
-                **user,
-                status="success",
-                email_address=params.email_address,
-                user_status=user_status,
-            )
-        )
-    return outputs
+    return [GetUserOutput(**item, email_address=params.email_address) for item in items]

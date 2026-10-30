@@ -44,8 +44,9 @@ class ListUsersParams(Params):
     location_id: str | None = Param(
         description="List users present in this location (admin only)"
     )
-    limit: float | None = Param(
+    limit: float = Param(
         description="Maximum number of people to return (default 100, max varies based on flags)",
+        required=False,
         default=100,
     )
 
@@ -78,7 +79,7 @@ class SipaddressesOutput(WebexOutput):
 
 class ListUsersOutput(WebexOutput):
     id: str = OutputField(cef_types=["webex user id"], column_name="User ID")
-    emails: str = OutputField(cef_types=["email"], column_name="Emails")
+    emails: list[str] = OutputField(cef_types=["email"], column_name="Emails")
     displayName: str | None = OutputField(column_name="Display Name")
     addresses: list[AddressesOutput] | None = OutputField()
     avatar: str = OutputField(
@@ -110,7 +111,7 @@ class ListUsersOutput(WebexOutput):
     orgId: str = OutputField(cef_types=["webex org id"])
     phoneNumbers: list[PhonenumbersOutput] | None = OutputField()
     pronouns: PronounsOutput | None = OutputField()
-    roles: str | None = OutputField()
+    roles: list[str] | None = OutputField()
     sipAddresses: list[SipaddressesOutput] | None = OutputField()
     status: str | None = OutputField()
     timeZone: str = OutputField(example_values=["Asia/Shanghai"])
@@ -134,7 +135,7 @@ class ListUsersSummary(WebexOutput):
 def list_users(
     params: ListUsersParams, soar: SOARClient, asset: Asset
 ) -> list[ListUsersOutput]:
-    limit = validate_integer(params.limit or 100, "limit")
+    limit = validate_integer(params.limit, "limit")
     query_params = {}
     for api_name, param_name in consts.PARAMETER_LIST_FOR_LIST_USERS.items():
         value = getattr(params, param_name, None)

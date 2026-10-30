@@ -20,7 +20,6 @@ import json
 from .. import consts
 from ..helper import encode_path_identifier, make_rest_call
 from soar_sdk.exceptions import ActionFailure
-from .custom_views import ai_meeting_summary_view
 
 
 class AiMeetingSummaryParams(Params):
@@ -56,7 +55,7 @@ class AiMeetingSummaryOutput(WebexOutput):
     actions_items: str = OutputField(
         example_values=["AI-Generated actions items retrieved successfully"]
     )
-    recordingName: str = OutputField(example_values=["test recording"])
+    recordingName: str | None = OutputField(example_values=["test recording"])
     summary: str = OutputField(
         example_values=[
             "AI-Generated meeting summary and actions items retrieved successfully"
@@ -68,7 +67,7 @@ class AiMeetingSummaryOutput(WebexOutput):
     description="Retrieve AI-Generated meeting summary and actions items using its recording ID and site url",
     action_type="investigate",
     read_only=True,
-    view_handler=ai_meeting_summary_view,
+    render_as="table",
 )
 def ai_meeting_summary(
     params: AiMeetingSummaryParams, soar: SOARClient, asset: Asset

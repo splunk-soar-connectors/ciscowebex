@@ -13,14 +13,23 @@
 # limitations under the License.
 from __future__ import annotations
 
+import time
+from collections.abc import Iterator
+from contextlib import contextmanager
 from html.parser import HTMLParser
 from urllib.parse import quote
 
 import httpx
-from soar_sdk.auth import AuthorizationCodeFlow, StaticTokenAuth, create_oauth_client
+from soar_sdk.auth import (
+    OAuthBearerAuth,
+    OAuthConfig,
+    SOARAssetOAuthClient,
+    StaticTokenAuth,
+)
 from soar_sdk.exceptions import ActionFailure
 
 from . import consts
+from .oauth_state import migrate_legacy_oauth_state
 
 
 class _ErrorTextParser(HTMLParser):
@@ -45,21 +54,49 @@ class _ErrorTextParser(HTMLParser):
         return "\n".join(self._chunks)
 
 
-def oauth_flow(asset, asset_id: str, redirect_uri: str) -> AuthorizationCodeFlow:
+def verify_server_cert(asset) -> bool:
+    return asset.verify_server_cert if asset.verify_server_cert is not None else True
+
+
+@contextmanager
+def oauth_client(
+    asset, redirect_uri: str | None = None
+) -> Iterator[SOARAssetOAuthClient]:
+    """Configure and close the OAuth token transport using the asset's TLS setting."""
     if not asset.client_id or not asset.client_secret:
         raise ActionFailure(consts.WEBEX_ERROR_REQUIRED_CONFIG_PARAMS)
-    return AuthorizationCodeFlow(
-        asset.auth_state,
-        asset_id,
+    config = OAuthConfig(
         client_id=asset.client_id,
         client_secret=asset.client_secret,
         authorization_endpoint=f"{consts.BASE_URL}/authorize",
         token_endpoint=f"{consts.BASE_URL}{consts.WEBEX_ACCESS_TOKEN_ENDPOINT}",
         redirect_uri=redirect_uri,
         scope=asset.scope.split() if asset.scope else [],
-        poll_timeout=consts.OAUTH_WAIT_INTERVALS * consts.OAUTH_WAIT_TIME,
-        poll_interval=consts.OAUTH_WAIT_TIME,
     )
+    with httpx.Client(
+        verify=verify_server_cert(asset), timeout=consts.WEBEX_DEFAULT_TIMEOUT
+    ) as token_http:
+        yield SOARAssetOAuthClient(
+            config,
+            asset.auth_state,
+            http_client=token_http,
+            verify_ssl=verify_server_cert(asset),
+            timeout=consts.WEBEX_DEFAULT_TIMEOUT,
+        )
+
+
+def wait_for_oauth_authorization(client: SOARAssetOAuthClient, on_progress) -> None:
+    """Poll the SDK session; the SDK flow factory cannot configure token TLS in 6.1.2."""
+    timeout = consts.OAUTH_WAIT_INTERVALS * consts.OAUTH_WAIT_TIME
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        time.sleep(consts.OAUTH_WAIT_TIME)
+        on_progress()
+        code = client.get_authorization_code(force_reload=True)
+        if code:
+            client.fetch_token_with_authorization_code(code)
+            return
+    raise ActionFailure(f"Authorization timed out after {timeout} seconds")
 
 
 def encode_path_identifier(value: str | None) -> str | None:
@@ -81,7 +118,7 @@ def remove_password_fields(value):
 
 
 def _request(asset, method: str, url: str, **kwargs) -> httpx.Response:
-    verify = asset.verify_server_cert if asset.verify_server_cert is not None else True
+    verify = verify_server_cert(asset)
     try:
         if asset.authorization_key:
             with httpx.Client(
@@ -90,15 +127,15 @@ def _request(asset, method: str, url: str, **kwargs) -> httpx.Response:
                 timeout=consts.WEBEX_DEFAULT_TIMEOUT,
             ) as client:
                 return client.request(method, url, **kwargs)
-        with create_oauth_client(
-            asset,
-            client_id=asset.client_id,
-            client_secret=asset.client_secret,
-            token_endpoint=f"{consts.BASE_URL}{consts.WEBEX_ACCESS_TOKEN_ENDPOINT}",
-            scope=asset.scope.split() if asset.scope else [],
-            verify=verify,
-            timeout=consts.WEBEX_DEFAULT_TIMEOUT,
-        ) as client:
+        migrate_legacy_oauth_state(asset)
+        with (
+            oauth_client(asset) as token_client,
+            httpx.Client(
+                auth=OAuthBearerAuth(token_client),
+                verify=verify,
+                timeout=consts.WEBEX_DEFAULT_TIMEOUT,
+            ) as client,
+        ):
             return client.request(method, url, **kwargs)
     except httpx.RequestError as exc:
         raise ActionFailure(f"Error Connecting to server. Details: {exc}") from exc
@@ -162,12 +199,13 @@ def make_rest_call(
     )
 
 
-def validate_integer(value, key: str) -> int | None:
-    if value is None or value == "":
-        return None
+def validate_integer(value, key: str) -> int:
+    """Validate a positive integer without truncating fractional input."""
     try:
+        if not float(value).is_integer():
+            raise ValueError("Not an integer")
         parsed = int(value)
-    except (TypeError, ValueError) as exc:
+    except (TypeError, ValueError, OverflowError) as exc:
         raise ActionFailure(consts.ERROR_INVALID_INT_PARAM.format(key=key)) from exc
     if parsed < 0:
         raise ActionFailure(consts.ERROR_NEG_INT_PARAM.format(key=key))

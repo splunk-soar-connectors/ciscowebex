@@ -47,8 +47,10 @@ class RetrieveMeetingParticipantsParams(Params):
     join_time_to: str | None = Param(
         description="End of participant join time range (ISO 8601 format)"
     )
-    limit: float | None = Param(
-        description="Max number of participants to return (1-100)", default=10
+    limit: float = Param(
+        description="Max number of participants to return (1-100)",
+        required=False,
+        default=10,
     )
 
 
@@ -119,7 +121,7 @@ def retrieve_meeting_participants(
     if not meeting_id:
         raise ActionFailure("Invalid meeting_id")
 
-    limit = validate_integer(params.limit or 100, "limit")
+    limit = validate_integer(params.limit, "limit")
     query_params = {"meetingId": params.meeting_id}
     for (
         api_name,

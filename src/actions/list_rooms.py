@@ -49,9 +49,6 @@ class ListRoomsOutput(WebexOutput):
         ]
     )
     type: str = OutputField(example_values=["group"])
-    status: str = OutputField(
-        column_name="Status", example_values=["success", "failed"]
-    )
 
 
 class ListRoomsSummary(WebexOutput):
@@ -72,4 +69,4 @@ def list_rooms(params: Params, soar: SOARClient, asset: Asset) -> list[ListRooms
         items = [items]
     soar.set_summary(ListRoomsSummary(total_rooms=len(items)))
     soar.set_message("Total rooms")
-    return [ListRoomsOutput(**item, status="success") for item in items]
+    return [ListRoomsOutput(**item) for item in items]

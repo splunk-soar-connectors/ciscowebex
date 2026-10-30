@@ -25,14 +25,21 @@ This app supports two types of authentication:
 
 1. **Create a Webex App** at [https://developer.webex.com/my-apps](https://developer.webex.com/my-apps)
 1. Choose the app type: **Integration**
-1. Set **redirect URI** (for OAuth):
-   - You can find it while run the test connectivity. e.g.`https://<your-splunk-soar-url>/rest/handler/ciscowebex_34624d1a-f0ae-47d6-a731-8499d5617cf7/<asset_name>/result`
 1. Provide default required scopes to run all actions: `spark:people_read spark:rooms_read spark:messages_write spark:rooms_write spark:memberships_write spark:messages_read meeting:participants_read meeting:schedules_read meeting:recordings_read meeting:schedules_write`.
 1. Collect:
    - **Client ID**
    - **Client Secret**
    - Required **Scopes**
 1. In Splunk SOAR, create a new asset and provide credentials as per the method selected.
+1. Run **Test Connectivity** and copy the URI printed after **Register this OAuth redirect URI in your Webex integration:**.
+1. In the Webex integration settings, register that exact value as a **Redirect URI**. The SDK callback has the form `https://<soar-host>:<webhook-port>/webhook/<app-directory>/<asset-id>/oauth_callback`. Use the generated URI, including its port and asset ID, rather than constructing it manually.
+1. Run **Test Connectivity** again and open the authorization URL it prints to complete authorization. If the earlier attempt timed out while you updated Webex, use the new attempt's authorization URL.
+
+#### Upgrading from the legacy connector
+
+The SDK uses a different OAuth callback route from the legacy connector. Update the Webex integration's registered Redirect URI to the exact URI printed by the upgraded asset's **Test Connectivity** before authorizing it again. Replace the old `/rest/handler/.../result` registration with the generated `/webhook/.../oauth_callback` URI; changing only the final path component is insufficient.
+
+Existing OAuth tokens are migrated automatically when available, so normal actions do not require reauthorization solely because the callback changed. The new registered URI is required when you next run **Test Connectivity** or reauthorize the asset. Personal Access Token authentication does not use this callback.
 
 - Webex Developer Portal: [https://developer.webex.com](https://developer.webex.com)
 - Webex Scopes: [https://developer.webex.com/docs/integrations](https://developer.webex.com/docs/integrations)
@@ -149,7 +156,6 @@ action_result.data.\*.isLocked | boolean | | True False |
 action_result.data.\*.lastActivity | string | | 2018-01-08T21:26:38.851Z 2018-01-16T18:37:12.037Z |
 action_result.data.\*.ownerId | string | | L2lzY29zcAByazovL3VzL09SR0FOSVpABCElPTi9hOGY3ZDhlMi04MjY1LTQ4OWEtOWE1My00NzlkZjQTESTEXAMPLE |
 action_result.data.\*.type | string | | group |
-action_result.data.\*.status | string | | success failed |
 action_result.summary.total_rooms | numeric | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
@@ -174,13 +180,12 @@ DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 action_result.status | string | | success failure |
 action_result.message | string | | |
 action_result.parameter.email_address | string | `email` | |
-action_result.data.\*.status | string | | success failed |
+action_result.data.\*.status | string | | inactive |
 action_result.data.\*.email_address | string | | |
-action_result.data.\*.user_status | string | | |
 action_result.data.\*.displayName | string | | Test User |
 action_result.data.\*.id | string | `webex user id` | L2lzY29zcAByazovL3VzL1690T1BMRS9hMzMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTEXAMPLE |
 action_result.data.\*.created | string | | 2015-04-22T07:16:49.649Z 2018-01-04T20:46:30.734Z |
-action_result.data.\*.emails | string | `email` | examplemail@test.com |
+action_result.data.\*.emails.\* | string | `email` | examplemail@test.com |
 action_result.data.\*.firstName | string | | abc |
 action_result.data.\*.lastActivity | string | | 2018-01-05T21:04:53.424Z |
 action_result.data.\*.lastModified | string | | 2021-08-25T11:54:51.623Z |
@@ -746,7 +751,7 @@ action_result.parameter.calling_data | boolean | | |
 action_result.parameter.location_id | string | | |
 action_result.parameter.limit | numeric | | |
 action_result.data.\*.id | string | `webex user id` | |
-action_result.data.\*.emails | string | `email` | |
+action_result.data.\*.emails.\* | string | `email` | |
 action_result.data.\*.displayName | string | | |
 action_result.data.\*.addresses.\*.country | string | | US |
 action_result.data.\*.addresses.\*.locality | string | | SAN JOSE |
@@ -774,7 +779,7 @@ action_result.data.\*.phoneNumbers.\*.type | string | | work |
 action_result.data.\*.phoneNumbers.\*.value | string | | +1 000-895-000 |
 action_result.data.\*.pronouns.value | string | | He/Him/His |
 action_result.data.\*.pronouns.visibility | string | | Internal |
-action_result.data.\*.roles | string | | |
+action_result.data.\*.roles.\* | string | | |
 action_result.data.\*.sipAddresses.\*.primary | boolean | | True False |
 action_result.data.\*.sipAddresses.\*.type | string | | personal-room |
 action_result.data.\*.sipAddresses.\*.value | string | | 4229032891@sademo2ci.dmz.webex.com |

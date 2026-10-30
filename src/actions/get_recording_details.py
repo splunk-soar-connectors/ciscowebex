@@ -11,15 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+from collections.abc import Iterator
+
 from soar_sdk.abstract import SOARClient
-from soar_sdk.action_results import OutputField
+from soar_sdk.action_results import ActionResult, OutputField
+from soar_sdk.auth import OAuthClientError
 from soar_sdk.params import Param, Params
 from ..app import Asset, app
 from ..output_models import WebexOutput
 from .. import consts
 from ..helper import encode_path_identifier, make_rest_call, remove_password_fields
 from soar_sdk.exceptions import ActionFailure
-from .custom_views import recording_details_view
 
 
 class GetRecordingDetailsParams(Params):
@@ -101,15 +103,10 @@ class GetRecordingDetailsOutput(WebexOutput):
     topic: str = OutputField(example_values=["soar test-20250522 0829-1"])
 
 
-@app.action(
-    description="Retrieve details of a Webex meeting recording using its recording ID",
-    action_type="investigate",
-    read_only=True,
-    view_handler=recording_details_view,
-)
-def get_recording_details(
-    params: GetRecordingDetailsParams, soar: SOARClient, asset: Asset
-) -> list[GetRecordingDetailsOutput]:
+def _iter_recording_details(
+    params: GetRecordingDetailsParams, asset: Asset
+) -> Iterator[GetRecordingDetailsOutput]:
+    """Validate each recording immediately so completed items survive later errors."""
     recording_id = params.recording_id
     meeting_id = params.meeting_id
     if not recording_id and not meeting_id:
@@ -119,23 +116,15 @@ def get_recording_details(
 
     query_params = {"hostEmail": params.host_email} if params.host_email else {}
     if recording_id:
-        encoded_id = encode_path_identifier(recording_id)
-        if not encoded_id:
-            raise ActionFailure("Invalid recording_id")
-        response = make_rest_call(
-            asset,
-            consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(
-                recording_id=encoded_id
-            ),
-            params=query_params,
-        )
-        items = [response]
+        recordings = [{"id": recording_id}]
     else:
         response = make_rest_call(
             asset,
             consts.WEBEX_RECORDING_DETAILS_BY_MEETING_ID_ENDPOINT,
             params={**query_params, "meetingId": meeting_id},
         )
+        if not isinstance(response, dict):
+            raise ActionFailure("Invalid recording list returned by Webex")
         recordings = response.get("items", [])
         if not isinstance(recordings, list):
             recordings = [recordings]
@@ -143,19 +132,55 @@ def get_recording_details(
             raise ActionFailure(
                 f"Recording details not found for meeting id: {meeting_id}"
             )
-        items = []
-        for item in recordings:
-            encoded_id = encode_path_identifier(item.get("id"))
-            if not encoded_id:
-                raise ActionFailure("Invalid recording_id returned by Webex")
-            details = make_rest_call(
-                asset,
-                consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(
-                    recording_id=encoded_id
-                ),
-                params=query_params,
-            )
-            items.append(details)
 
-    soar.set_message("Recording details retrieved successfully")
-    return [GetRecordingDetailsOutput(**remove_password_fields(item)) for item in items]
+    for item in recordings:
+        encoded_id = encode_path_identifier(
+            item.get("id") if isinstance(item, dict) else None
+        )
+        if not encoded_id:
+            raise ActionFailure(
+                "Invalid recording_id"
+                if recording_id
+                else "Invalid recording_id returned by Webex"
+            )
+        details = make_rest_call(
+            asset,
+            consts.WEBEX_RECORDING_DETAILS_BY_RECORDING_ID_ENDPOINT.format(
+                recording_id=encoded_id
+            ),
+            params=query_params,
+        )
+        if not isinstance(details, dict):
+            raise ActionFailure("Invalid recording details returned by Webex")
+        yield GetRecordingDetailsOutput(**remove_password_fields(details))
+
+
+@app.action(
+    description="Retrieve details of a Webex meeting recording using its recording ID",
+    action_type="investigate",
+    read_only=True,
+    render_as="table",
+    output_class=GetRecordingDetailsOutput,
+)
+def get_recording_details(
+    params: GetRecordingDetailsParams, soar: SOARClient, asset: Asset
+):
+    """Return typed outputs on success, or a failed result with completed recordings."""
+    # SDK 6.1.2 cannot register a union return annotation. Explicit output_class
+    # keeps typed metadata while permitting a failed ActionResult at runtime.
+    outputs: list[GetRecordingDetailsOutput] = []
+    try:
+        outputs.extend(_iter_recording_details(params, asset))
+    except (ActionFailure, OAuthClientError) as exc:
+        failure = ActionResult(status=False, message=str(exc))
+    except ValueError:
+        failure = ActionResult(
+            status=False, message="Invalid recording details returned by Webex"
+        )
+    else:
+        soar.set_message("Recording details retrieved successfully")
+        return outputs
+
+    for output in outputs:
+        failure.add_data(output.model_dump(by_alias=True))
+    return failure

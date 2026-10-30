@@ -38,8 +38,9 @@ class ListMessagesParams(Params):
     before_message: str | None = Param(
         description="List messages sent before a specific message ID"
     )
-    limit: float | None = Param(
+    limit: float = Param(
         description="The maximum number of messages to return (default 50, max 100)",
+        required=False,
         default=50,
     )
 
@@ -105,7 +106,7 @@ class ListMessagesSummary(WebexOutput):
 def list_messages(
     params: ListMessagesParams, soar: SOARClient, asset: Asset
 ) -> list[ListMessagesOutput]:
-    limit = validate_integer(params.limit or 50, "limit")
+    limit = validate_integer(params.limit, "limit")
     if not params.room_id and not params.parent_id:
         raise ActionFailure("You must provide at least 'room_id' or 'parent_id'.")
 
