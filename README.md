@@ -4,7 +4,7 @@ Publisher: Splunk <br>
 Connector Version: 3.0.1 <br>
 Product Vendor: Cisco <br>
 Product Name: Cisco Webex <br>
-Minimum Product Version: 8.6.0
+Minimum Product Version: 7.0.0
 
 This app integrates with Cisco Webex to implement investigative and genric actions
 
@@ -86,7 +86,7 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[test connectivity](#action-test-connectivity) - test connectivity <br>
 [list rooms](#action-list-rooms) - List webex rooms <br>
 [get user](#action-get-user) - Get user ID from e-mail address <br>
 [send message](#action-send-message) - Send message to user or room <br>
@@ -104,10 +104,12 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ## action: 'test connectivity'
 
-Validate the asset configuration for connectivity using supplied configuration
+test connectivity
 
 Type: **test** <br>
 Read only: **True**
+
+Basic test for app.
 
 #### Action Parameters
 
@@ -115,7 +117,12 @@ No parameters are required for this action
 
 #### Action Output
 
-No Output
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'list rooms'
 
@@ -132,17 +139,18 @@ No parameters are required for this action
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.data.\*.title | string | | Test Alert Space |
+action_result.data.\*.id | string | `webex room id` | L2lzY69zcGFylsdovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWYEXAMPLE |
 action_result.data.\*.created | string | | 2018-01-05T02:43:33.032Z |
 action_result.data.\*.creatorId | string | `creater id` | L2lzY69zcBFyazoxL3VzL1BFT1BMRS9iMmMwZjIwMS03NGQyLTRkYTEtYWM0Yi1mNzcEXAMPLE |
-action_result.data.\*.id | string | `webex room id` | L2lzY69zcGFylsdovL3VzL1JPT00vMzg2NzFhODAtZjFjMi0xMWU3LTg1OWUtNDMzYWYEXAMPLE |
 action_result.data.\*.isLocked | boolean | | True False |
 action_result.data.\*.lastActivity | string | | 2018-01-08T21:26:38.851Z 2018-01-16T18:37:12.037Z |
-action_result.data.\*.ownerId | string | | |
-action_result.data.\*.title | string | | Test Alert Space |
+action_result.data.\*.ownerId | string | | L2lzY29zcAByazovL3VzL09SR0FOSVpABCElPTi9hOGY3ZDhlMi04MjY1LTQ4OWEtOWE1My00NzlkZjQTESTEXAMPLE |
 action_result.data.\*.type | string | | group |
+action_result.data.\*.status | string | | success failed |
 action_result.summary.total_rooms | numeric | | |
-action_result.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -163,23 +171,24 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.email_address | string | `email` | examplemail@test.com |
-action_result.data.\*.created | string | | |
-action_result.data.\*.created | string | | 2018-01-04T20:46:30.734Z |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.email_address | string | `email` | |
+action_result.data.\*.status | string | | success failed |
+action_result.data.\*.email_address | string | | |
+action_result.data.\*.user_status | string | | |
 action_result.data.\*.displayName | string | | Test User |
-action_result.data.\*.emails | string | `email` | examplemail@test.com |
-action_result.data.\*.firstName | string | | |
 action_result.data.\*.id | string | `webex user id` | L2lzY29zcAByazovL3VzL1690T1BMRS9hMzMGQ4Mi01ZWE0LTQ3OTktOWM3Zi00M2E0MTEXAMPLE |
+action_result.data.\*.created | string | | 2015-04-22T07:16:49.649Z 2018-01-04T20:46:30.734Z |
+action_result.data.\*.emails | string | `email` | examplemail@test.com |
+action_result.data.\*.firstName | string | | abc |
 action_result.data.\*.lastActivity | string | | 2018-01-05T21:04:53.424Z |
-action_result.data.\*.lastModified | string | | |
-action_result.data.\*.lastName | string | | |
+action_result.data.\*.lastModified | string | | 2021-08-25T11:54:51.623Z |
+action_result.data.\*.lastName | string | | abc |
 action_result.data.\*.nickName | string | | Test User |
 action_result.data.\*.orgId | string | | L2lzY29zcABCazovL3VzL09SR0FOSVpBVElPTi9jb2TEST |
-action_result.data.\*.status | string | | inactive |
 action_result.data.\*.type | string | | person |
-action_result.summary.found_user | boolean | | |
-action_result.message | string | | |
+action_result.summary.found_user | boolean | | True False |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 
@@ -205,25 +214,26 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.destination_type | string | | room |
-action_result.parameter.endpoint_id | string | `webex user id` `webex room id` | L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDAxTEST5EXAMPLE |
-action_result.parameter.is_markdown | boolean | | True False |
-action_result.parameter.message | string | | Compile Test hello room |
-action_result.data.\*.created | string | | 2018-01-08T21:27:31.755Z 2018-03-30T18:36:01.210Z |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.endpoint_id | string | `webex user id` `webex room id` | |
+action_result.parameter.destination_type | string | | |
+action_result.parameter.message | string | | |
+action_result.parameter.card | string | | |
+action_result.parameter.vault_id | string | | |
+action_result.parameter.is_markdown | boolean | | |
 action_result.data.\*.id | string | `webex message id` | testzcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0LTlhNDQtNDATEST4MzEXAMPLE |
+action_result.data.\*.created | string | | 2018-01-08T21:27:31.755Z 2018-03-30T18:36:01.210Z |
 action_result.data.\*.personEmail | string | `email` | examplemail@test.com |
 action_result.data.\*.personId | string | | L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTk0TESTNDQtNDAxZTk4MzEXAMPLE |
 action_result.data.\*.roomId | string | | L2szY29zcGFyazovLABCVzL1JLT00vODliODk1ZWYtYjk2YS0zMTESTTlhNDQtNDAxZTk4MzEXAMPLE |
 action_result.data.\*.roomType | string | | direct group |
 action_result.data.\*.text | string | | Compile Test hello room |
 action_result.data.\*.toPersonId | string | | L2lzY1zcAByazovL3VzL1HNT1BMRS9hMzllMGQ4Mi01ZWE0LTQ3OTESTWM3Zi00M2E0MTI4MjEXAMPLE |
-action_result.summary.message | string | | Message sent successfully |
-action_result.message | string | | Message sent successfully |
+action_result.data.\*.status | string | | success failed |
+action_result.summary.message | string | | |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
-action_result.parameter.card | string | | |
-action_result.parameter.vault_id | string | | |
 
 ## action: 'create a room'
 
@@ -250,31 +260,30 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.classification_id | string | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.title | string | | |
 action_result.parameter.description | string | | |
-action_result.parameter.is_announcement_only | boolean | | |
+action_result.parameter.team_id | string | | |
+action_result.parameter.classification_id | string | | |
 action_result.parameter.is_locked | boolean | | |
 action_result.parameter.is_public | boolean | | |
-action_result.parameter.team_id | string | | |
-action_result.parameter.title | string | | |
+action_result.parameter.is_announcement_only | boolean | | |
+action_result.data.\*.id | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.title | string | | test room |
+action_result.data.\*.ownerId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.isLocked | boolean | | True False |
+action_result.data.\*.isPublic | boolean | | True False |
 action_result.data.\*.created | string | | 2025-05-09T09:57:17.803Z |
 action_result.data.\*.creatorId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.description | string | | test |
-action_result.data.\*.id | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.isAnnouncementOnly | boolean | | True False |
-action_result.data.\*.isLocked | boolean | | True False |
-action_result.data.\*.isPublic | boolean | | True False |
 action_result.data.\*.lastActivity | string | | 2025-05-09T09:57:17.803Z |
 action_result.data.\*.madePublic | string | | 2025-05-23T04:53:54.268Z |
-action_result.data.\*.ownerId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.teamId | string | | testzcGFyazovL3VzL1RFQU0vMDM3ZWZlZTAtMtestzc5My0xMWYwLWFhY2EtODM2Mjg3test |
-action_result.data.\*.title | string | | test room |
 action_result.data.\*.type | string | | group |
-action_result.summary | string | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'add people'
 
@@ -298,26 +307,25 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.is_moderator | boolean | | |
-action_result.parameter.person_email | string | `email` | |
-action_result.parameter.person_id | string | `webex user id` | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.room_id | string | `webex room id` | |
-action_result.data.\*.created | string | | 2025-05-09T09:58:50.433Z |
+action_result.parameter.person_id | string | `webex user id` | |
+action_result.parameter.person_email | string | `email` | |
+action_result.parameter.is_moderator | boolean | | |
 action_result.data.\*.id | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personDisplayName | string | | TEST USER |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
+action_result.data.\*.personOrgId | string | `webex org id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.created | string | | 2025-05-09T09:58:50.433Z |
 action_result.data.\*.isModerator | boolean | | True False |
 action_result.data.\*.isMonitor | boolean | | True False |
 action_result.data.\*.isRoomHidden | boolean | | True False |
-action_result.data.\*.personDisplayName | string | | TEST USER |
-action_result.data.\*.personEmail | string | `email` | example@example.com |
-action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.personOrgId | string | `webex org id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.roomType | string | | group |
-action_result.summary | string | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'schedule meeting'
 
@@ -326,7 +334,7 @@ Allows users to schedule a Webex meeting, webinar, or ad-hoc meeting
 Type: **generic** <br>
 Read only: **False**
 
-<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_schedule_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href="https://developer.webex.com/docs/integrations#scopes" target="_blank">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don’t set it, Webex will use the host’s time zone. <a href="https://en.wikipedia.org/wiki/List_of_tz_database_time_zones" target="_blank">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href="https://developer.webex.com/docs/api/v1/meetings/create-a-meeting" target="_blank">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored — the meeting will use the Webex space owner as host.</li></ul>
+<ul><li>To create a <strong>public meeting</strong> (<code>public_meeting=true</code>), your Webex admin must turn on this feature. If not, it will show an error.</li><li><strong>OAuth Scopes</strong>: <code>meeting:schedules_write</code>, <code>meeting:admin_schedule_write</code>. Also, make sure the user has the right access (for example, a webinar license if you're creating webinars). <a href=\\"https://developer.webex.com/docs/integrations#scopes\\" target=\\"_blank\\">Check required scopes</a></li><li>Use standard time zone names like <code>America/New_York</code> or <code>Asia/Kolkata</code>. This sets the correct time zone for your meeting. If you don’t set it, Webex will use the host’s time zone. <a href=\\"https://en.wikipedia.org/wiki/List_of_tz_database_time_zones\\" target=\\"_blank\\">See full list of time zones</a></li><li>If you want the meeting to repeat (daily, weekly, etc.), use the <code>recurrence</code> field. You must write it in a special format called <strong>RFC 5545</strong>.<br />Example: <code>FREQ=WEEKLY;BYDAY=MO,WE,FR</code> (means every Monday, Wednesday, and Friday)<br /><a href=\\"https://developer.webex.com/docs/api/v1/meetings/create-a-meeting\\" target=\\"_blank\\">More about recurrence rules</a></li><li>If you're creating an ad-hoc meeting (<code>adhoc=true</code>), you must give a <code>roomId</code> (Webex space ID).<br />In this case, <code>hostEmail</code> will be ignored — the meeting will use the Webex space owner as host.</li></ul>
 
 #### Action Parameters
 
@@ -337,14 +345,14 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **end** | required | Meeting end time (ISO 8601 format) | string | |
 **timezone** | optional | IANA time zone for the meeting (e.g., America/Los_Angeles) | string | |
 **description** | optional | Meeting description (max 1300 chars) | string | |
-**invitees** | optional | List of emails to invite (comma‑separated) | string | |
+**invitees** | optional | List of emails to invite (comma-separated) | string | |
 **password** | optional | Password to join the meeting | password | |
 **send_email** | optional | Whether to email host & invitees | boolean | |
 **host_email** | optional | Host email (admin scopes required) | string | |
 **scheduled_type** | optional | Type of meeting: meeting, webinar, or personal_room_meeting | string | |
-**adhoc** | optional | Create an ad‑hoc (instant) meeting in a room | boolean | |
-**room_id** | optional | Room (space) ID for ad‑hoc meeting | string | `webex room id` |
-**recurrence** | optional | Meeting series rule (RFC‑2445, e.g. FREQ=DAILY;INTERVAL=1) | string | |
+**adhoc** | optional | Create an ad-hoc (instant) meeting in a room | boolean | |
+**room_id** | optional | Room (space) ID for ad-hoc meeting | string | `webex room id` |
+**recurrence** | optional | Meeting series rule (RFC-2445, e.g. FREQ=DAILY;INTERVAL=1) | string | |
 **session_type_id** | optional | Session type ID (required for webinars) | numeric | |
 **enabled_auto_record_meeting** | optional | Automatically record when meeting starts | boolean | |
 **allow_any_user_to_be_co_host** | optional | Allow any qualified user to be cohost | boolean | |
@@ -352,39 +360,47 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **join_before_host_minutes** | optional | Minutes attendees can join before host (0,5,10,15) | numeric | |
 **enable_connect_audio_before_host** | optional | Allow audio connect before host | boolean | |
 **enable_automatic_lock** | optional | Automatically lock the meeting after start | boolean | |
-**automatic_lock_minutes** | optional | Minutes after start to auto‑lock | numeric | |
+**automatic_lock_minutes** | optional | Minutes after start to auto-lock | numeric | |
 **public_meeting** | optional | List on public calendar | boolean | |
 **reminder_time** | optional | Minutes before start to send host reminder | numeric | |
-**unlocked_meeting_join_security** | optional | How non‑invitees join: allowJoin, allowJoinWithLobby, blockFromJoin | string | |
+**unlocked_meeting_join_security** | optional | How non-invitees join: allowJoin, allowJoinWithLobby, blockFromJoin | string | |
 
 #### Action Output
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.adhoc | boolean | | |
-action_result.parameter.allow_any_user_to_be_co_host | boolean | | |
-action_result.parameter.automatic_lock_minutes | numeric | | |
-action_result.parameter.description | string | | |
-action_result.parameter.enable_automatic_lock | boolean | | |
-action_result.parameter.enable_connect_audio_before_host | boolean | | |
-action_result.parameter.enabled_auto_record_meeting | boolean | | |
-action_result.parameter.enabled_join_before_host | boolean | | |
-action_result.parameter.end | string | | |
-action_result.parameter.host_email | string | | |
-action_result.parameter.invitees | string | | |
-action_result.parameter.join_before_host_minutes | numeric | | |
-action_result.parameter.public_meeting | boolean | | |
-action_result.parameter.recurrence | string | | |
-action_result.parameter.reminder_time | numeric | | |
-action_result.parameter.room_id | string | `webex room id` | |
-action_result.parameter.scheduled_type | string | | |
-action_result.parameter.send_email | boolean | | |
-action_result.parameter.session_type_id | numeric | | |
-action_result.parameter.start | string | | |
-action_result.parameter.timezone | string | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.title | string | | |
+action_result.parameter.start | string | | |
+action_result.parameter.end | string | | |
+action_result.parameter.timezone | string | | |
+action_result.parameter.description | string | | |
+action_result.parameter.invitees | string | | |
+action_result.parameter.password | string | | |
+action_result.parameter.send_email | boolean | | |
+action_result.parameter.host_email | string | | |
+action_result.parameter.scheduled_type | string | | |
+action_result.parameter.adhoc | boolean | | |
+action_result.parameter.room_id | string | `webex room id` | |
+action_result.parameter.recurrence | string | | |
+action_result.parameter.session_type_id | numeric | | |
+action_result.parameter.enabled_auto_record_meeting | boolean | | |
+action_result.parameter.allow_any_user_to_be_co_host | boolean | | |
+action_result.parameter.enabled_join_before_host | boolean | | |
+action_result.parameter.join_before_host_minutes | numeric | | |
+action_result.parameter.enable_connect_audio_before_host | boolean | | |
+action_result.parameter.enable_automatic_lock | boolean | | |
+action_result.parameter.automatic_lock_minutes | numeric | | |
+action_result.parameter.public_meeting | boolean | | |
+action_result.parameter.reminder_time | numeric | | |
 action_result.parameter.unlocked_meeting_join_security | string | | |
+action_result.data.\*.id | string | `webex meeting id` | test92d8997b4d36bc3ac1893c7ftest8 |
+action_result.data.\*.title | string | | test meeting |
+action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=m6325e89c172b9167381372a0b862a995 |
+action_result.data.\*.start | string | | 2025-05-10T13:24:00Z |
+action_result.data.\*.end | string | | 2025-05-10T14:24:00Z |
+action_result.data.\*.timezone | string | | UTC |
 action_result.data.\*.agenda | string | | 漢字©¬ɸѠ֍۞ਊ௵൬༃ဤᄨᇗኖᏌᔠᛯᜠឦᡤᢻᤐᦪᨃᩔ᪸᭒ᮈᯡᰦ᳀ᴞᵆᵝḈὒ⁇ℰ⅏ⅷ∰⋐⏻サイバーセキュリティインシデント日本標準時⛰⛱⛲⛳⛵✔❤ﬗ╬⎋⌚ ⅍ⅎ€ ₭⁂ᾧ҈₮₯⅏⌛ ⎎☆Ḃ平仮名, ひらがな~ |
 action_result.data.\*.allowAnyUserToBeCoHost | boolean | | True False |
 action_result.data.\*.allowAuthenticatedDevices | boolean | | True False |
@@ -420,13 +436,11 @@ action_result.data.\*.enabledJoinBeforeHost | boolean | | True False |
 action_result.data.\*.enabledLiveStream | boolean | | True False |
 action_result.data.\*.enabledVisualWatermark | boolean | | True False |
 action_result.data.\*.enabledWebcastView | boolean | | True False |
-action_result.data.\*.end | string | | 2025-05-10T14:24:00Z |
 action_result.data.\*.excludePassword | boolean | | True False |
 action_result.data.\*.hostDisplayName | string | | test user |
 action_result.data.\*.hostEmail | string | | ishans@example.com |
 action_result.data.\*.hostKey | string | | 210605 |
 action_result.data.\*.hostUserId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.id | string | `webex meeting id` | test92d8997b4d36bc3ac1893c7ftest8 |
 action_result.data.\*.joinBeforeHostMinutes | numeric | | 5 |
 action_result.data.\*.maxWebinarAttendeeCapacity | numeric | | 50000 |
 action_result.data.\*.meetingNumber | string | | 26600002133 |
@@ -443,7 +457,6 @@ action_result.data.\*.sessionTypeId | numeric | | 159 |
 action_result.data.\*.simultaneousInterpretation.enabled | boolean | | True False |
 action_result.data.\*.sipAddress | string | | 2660000000133@webex.com |
 action_result.data.\*.siteUrl | string | | example.webex.com |
-action_result.data.\*.start | string | | 2025-05-10T13:24:00Z |
 action_result.data.\*.state | string | | active |
 action_result.data.\*.telephony.accessCode | string | | 26636572133 |
 action_result.data.\*.telephony.callInNumbers.\*.callInNumber | string | | +1-000-525-6800 |
@@ -452,15 +465,9 @@ action_result.data.\*.telephony.callInNumbers.\*.tollType | string | | toll |
 action_result.data.\*.telephony.links.\*.href | string | | /v1/meetings/atest92d8997b4d36bc3ac1893c7ftest/globalCallinNumbers |
 action_result.data.\*.telephony.links.\*.method | string | | GET |
 action_result.data.\*.telephony.links.\*.rel | string | | globalCallinNumbers |
-action_result.data.\*.timezone | string | | UTC |
-action_result.data.\*.title | string | | test meeting |
 action_result.data.\*.unlockedMeetingJoinSecurity | string | | allowJoin |
-action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=m6325e89c172b9167381372a0b862a995 |
-action_result.summary | string | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
-action_result.parameter.password | password | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'retrieve meeting participants'
 
@@ -482,46 +489,46 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 **host_email** | optional | Email address of the meeting host (admin-only use) | string | `email` |
 **join_time_from** | optional | Start of participant join time range (ISO 8601 format) | string | |
 **join_time_to** | optional | End of participant join time range (ISO 8601 format) | string | |
-**limit** | optional | Max number of participants to return (1–100) | numeric | |
+**limit** | optional | Max number of participants to return (1-100) | numeric | |
 
 #### Action Output
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.meeting_id | string | `webex meeting id` | |
 action_result.parameter.breakout_session_id | string | | |
+action_result.parameter.meeting_start_time_from | string | | |
+action_result.parameter.meeting_start_time_to | string | | |
 action_result.parameter.host_email | string | `email` | |
 action_result.parameter.join_time_from | string | | |
 action_result.parameter.join_time_to | string | | |
 action_result.parameter.limit | numeric | | |
-action_result.parameter.meeting_id | string | `webex meeting id` | |
-action_result.parameter.meeting_start_time_from | string | | |
-action_result.parameter.meeting_start_time_to | string | | |
-action_result.data.\*.coHost | boolean | | True False |
-action_result.data.\*.devices.\*.correlationId | string | | test927a-496a-4678-ac62-bcbdaadctest |
-action_result.data.\*.devices.\*.deviceType | string | | mac |
-action_result.data.\*.devices.\*.durationSecond | numeric | | 6 |
-action_result.data.\*.devices.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
-action_result.data.\*.devices.\*.leftTime | string | | 2025-05-08T12:40:55Z |
-action_result.data.\*.displayName | string | | test user |
-action_result.data.\*.email | string | `email` | example@example.com |
-action_result.data.\*.host | boolean | | True False |
-action_result.data.\*.hostEmail | string | | example@example.com |
 action_result.data.\*.id | string | `webex user id` | testef03e1a49be883320fe35fde314_I_65220test54323715_3118cefb-81e7-492d-8223-1fe0a353test |
-action_result.data.\*.invitee | boolean | | True False |
-action_result.data.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
+action_result.data.\*.email | string | `email` | example@example.com |
+action_result.data.\*.devices.\*.deviceType | string | | mac |
+action_result.data.\*.devices.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
+action_result.data.\*.devices.\*.correlationId | string | | test927a-496a-4678-ac62-bcbdaadctest |
+action_result.data.\*.devices.\*.durationSecond | numeric | | 6 |
+action_result.data.\*.devices.\*.leftTime | string | | 2025-05-08T12:40:55Z |
 action_result.data.\*.leftTime | string | | 2025-05-08T12:40:55Z |
 action_result.data.\*.meetingId | string | `webex meeting id` | test2ef03e1a49be883320fe35fde314_I_65220661465432test |
+action_result.data.\*.coHost | boolean | | True False |
+action_result.data.\*.displayName | string | | test user |
+action_result.data.\*.host | boolean | | True False |
+action_result.data.\*.hostEmail | string | | example@example.com |
+action_result.data.\*.invitee | boolean | | True False |
+action_result.data.\*.joinedTime | string | | 2025-05-08T12:40:49Z |
 action_result.data.\*.meetingStartTime | string | | 2025-05-08T12:40:49Z |
 action_result.data.\*.muted | boolean | | True False |
 action_result.data.\*.siteUrl | string | | example.webex.com |
 action_result.data.\*.spaceModerator | boolean | | True False |
 action_result.data.\*.state | string | | end |
-action_result.summary.message | string | | Participants retrieved successfully |
-action_result.summary.total_participants | numeric | | 1 |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.message | string | | |
+action_result.summary.total_participants | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'list messages'
 
@@ -544,27 +551,27 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.room_id | string | `webex room id` | |
+action_result.parameter.parent_id | string | `webex message id` | |
 action_result.parameter.before | string | | |
 action_result.parameter.before_message | string | | |
 action_result.parameter.limit | numeric | | |
-action_result.parameter.parent_id | string | `webex message id` | |
-action_result.parameter.room_id | string | `webex room id` | |
+action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.text | string | | hello test |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
 action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
 action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
-action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.meetingId | string | `webex meeting id` | 9testf03e1a49be883320fe35fde314_I_6522066146543test |
 action_result.data.\*.parentId | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.personEmail | string | `email` | example@example.com |
-action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.roomType | string | | group |
-action_result.data.\*.text | string | | hello test |
-action_result.summary.message | string | | Messages retrieved successfully |
-action_result.summary.total_messages | numeric | | 10 |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.message | string | | |
+action_result.summary.total_messages | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'get message details'
 
@@ -583,20 +590,19 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.message_id | string | `webex message id` | |
+action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.text | string | | hello test |
+action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
+action_result.data.\*.personEmail | string | `email` | example@example.com |
 action_result.data.\*.created | string | | 2025-05-09T05:37:36.687Z |
 action_result.data.\*.html | string | | hello <spark-mention data-object-type="person" data-object-id="TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST">test</spark-mention> |
-action_result.data.\*.id | string | `webex message id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.personEmail | string | `email` | example@example.com |
-action_result.data.\*.personId | string | `webex user id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.roomId | string | `webex room id` | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
 action_result.data.\*.roomType | string | | group |
-action_result.data.\*.text | string | | hello test |
-action_result.summary | string | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'get meeting details'
 
@@ -617,10 +623,17 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.current | boolean | | |
-action_result.parameter.host_email | string | `email` | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.meeting_id | string | `webex meeting id` | |
+action_result.parameter.host_email | string | `email` | |
+action_result.parameter.current | boolean | | |
+action_result.data.\*.id | string | `webex meeting id` | ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z |
+action_result.data.\*.title | string | | Test meeting |
+action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=me0a791a45ee400f06576ed07dd940d3e |
+action_result.data.\*.start | string | | 2025-05-09T12:20:00Z |
+action_result.data.\*.end | string | | 2025-05-09T13:20:00Z |
+action_result.data.\*.timezone | string | | UTC |
 action_result.data.\*.agenda | string | | |
 action_result.data.\*.allowAnyUserToBeCoHost | boolean | | True False |
 action_result.data.\*.allowAuthenticatedDevices | boolean | | True False |
@@ -655,7 +668,6 @@ action_result.data.\*.enabledBreakoutSessions | boolean | | True False |
 action_result.data.\*.enabledJoinBeforeHost | boolean | | True False |
 action_result.data.\*.enabledLiveStream | boolean | | True False |
 action_result.data.\*.enabledVisualWatermark | boolean | | True False |
-action_result.data.\*.end | string | | 2025-05-09T13:20:00Z |
 action_result.data.\*.excludePassword | boolean | | True False |
 action_result.data.\*.hasChat | boolean | | True False |
 action_result.data.\*.hasClosedCaption | boolean | | True False |
@@ -671,7 +683,6 @@ action_result.data.\*.hostDisplayName | string | | test user |
 action_result.data.\*.hostEmail | string | | example@example.com |
 action_result.data.\*.hostKey | string | | 889047 |
 action_result.data.\*.hostUserId | string | | TESTY29zcGFyazovL3VzL1JPT00vZmRkYmMzYjAtMmNTESTxMWYwLTgwZWItMjllNWE1OTTEST |
-action_result.data.\*.id | string | `webex meeting id` | ctest706b64041559c664a83e6bfcf60_20250509Ttest0Z |
 action_result.data.\*.isModified | boolean | | True False |
 action_result.data.\*.joinBeforeHostMinutes | numeric | | 5 |
 action_result.data.\*.meetingNumber | string | | 26620031238 |
@@ -688,7 +699,6 @@ action_result.data.\*.sessionTypeId | numeric | | 159 |
 action_result.data.\*.simultaneousInterpretation.enabled | boolean | | True False |
 action_result.data.\*.sipAddress | string | | 26000031238@webex.com |
 action_result.data.\*.siteUrl | string | | example.webex.com |
-action_result.data.\*.start | string | | 2025-05-09T12:20:00Z |
 action_result.data.\*.state | string | | ready |
 action_result.data.\*.telephony.accessCode | string | | 26620031238 |
 action_result.data.\*.telephony.callInNumbers.\*.callInNumber | string | | +1-000-025-6800 |
@@ -697,14 +707,9 @@ action_result.data.\*.telephony.callInNumbers.\*.tollType | string | | toll |
 action_result.data.\*.telephony.links.\*.href | string | | /v1/meetings/testa706b64041559c664a83e6btest/globalCallinNumbers |
 action_result.data.\*.telephony.links.\*.method | string | | GET |
 action_result.data.\*.telephony.links.\*.rel | string | | globalCallinNumbers |
-action_result.data.\*.timezone | string | | UTC |
-action_result.data.\*.title | string | | Test meeting |
 action_result.data.\*.unlockedMeetingJoinSecurity | string | | allowJoin |
-action_result.data.\*.webLink | string | | https://example.webex.com/example/j.php?MTID=me0a791a45ee400f06576ed07dd940d3e |
-action_result.summary | string | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'list users'
 
@@ -730,15 +735,19 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success failed |
-action_result.parameter.calling_data | boolean | | |
-action_result.parameter.display_name | string | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.email | string | `email` | |
+action_result.parameter.display_name | string | | |
 action_result.parameter.id | string | `webex user id` | |
-action_result.parameter.limit | numeric | | |
-action_result.parameter.location_id | string | | |
 action_result.parameter.org_id | string | | |
 action_result.parameter.roles | string | | |
+action_result.parameter.calling_data | boolean | | |
+action_result.parameter.location_id | string | | |
+action_result.parameter.limit | numeric | | |
+action_result.data.\*.id | string | `webex user id` | |
+action_result.data.\*.emails | string | `email` | |
+action_result.data.\*.displayName | string | | |
 action_result.data.\*.addresses.\*.country | string | | US |
 action_result.data.\*.addresses.\*.locality | string | | SAN JOSE |
 action_result.data.\*.addresses.\*.postalCode | string | | 95128 |
@@ -748,11 +757,8 @@ action_result.data.\*.addresses.\*.type | string | | work |
 action_result.data.\*.avatar | string | | https://test-prod-us-east-2.webexcontent.com/Avtr~V1~1ebtest43-417f-9974-ad72catest/V1~test8f27546e523b2945ea2f7ff36tst141b3544e232718885c17cad0d1~test0570bbc40b193112b2c957test~1600 |
 action_result.data.\*.created | string | | 2024-11-08T10:16:05.408Z |
 action_result.data.\*.department | string | | 020122475 |
-action_result.data.\*.displayName | string | | |
-action_result.data.\*.emails | string | `email` | |
 action_result.data.\*.extension | string | | 3432432 |
 action_result.data.\*.firstName | string | | User |
-action_result.data.\*.id | string | `webex user id` | |
 action_result.data.\*.invitePending | boolean | | True False |
 action_result.data.\*.lastActivity | string | | 2025-05-22T08:00:26.197Z |
 action_result.data.\*.lastModified | string | | 2025-04-15T01:50:15.733Z |
@@ -778,10 +784,9 @@ action_result.data.\*.title | string | | Software Engineer [C] |
 action_result.data.\*.type | string | | person |
 action_result.data.\*.userName | string | | example@example.com |
 action_result.summary.message | string | | |
-action_result.summary.total_people | numeric | | 1 |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+action_result.summary.total_people | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'get recording details'
 
@@ -802,10 +807,11 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | success |
-action_result.parameter.host_email | string | `email` | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.recording_id | string | `webex recording id` | |
 action_result.parameter.meeting_id | string | `webex meeting id` | |
-action_result.parameter.recording_id | string | `webex recording id` | test06506faa48c790592a4198c3test |
+action_result.parameter.host_email | string | `email` | |
 action_result.data.\*.createTime | string | | 2025-05-22T08:31:19Z |
 action_result.data.\*.downloadUrl | string | | https://company.webex.com/siteurl/lsr.php?RCID=1a417c966testaef288e9043adatest |
 action_result.data.\*.durationSeconds | numeric | | 219 |
@@ -817,7 +823,7 @@ action_result.data.\*.meetingSeriesId | string | | test5560719471599d76418test |
 action_result.data.\*.playbackUrl | string | `url` | https://company.webex.com/siteurl/ldr.php?RCID=testcc66c2ee8536aabdd0ec607test |
 action_result.data.\*.scheduledMeetingId | string | | test60719471599d764182a4c1b7test250522T150000Z |
 action_result.data.\*.serviceType | string | | MeetingCenter |
-action_result.data.\*.shareToMe | boolean | | False |
+action_result.data.\*.shareToMe | boolean | | True False |
 action_result.data.\*.siteUrl | string | | company.webex.com |
 action_result.data.\*.sizeBytes | numeric | | 1067115 |
 action_result.data.\*.status | string | | available |
@@ -827,10 +833,8 @@ action_result.data.\*.temporaryDirectDownloadLinks.recordingDownloadLink | strin
 action_result.data.\*.temporaryDirectDownloadLinks.transcriptDownloadLink | string | `url` | https://company.dmz.webex.com/nbr/MultiThreadDownloadServlet/transcript.txt?siteid=00240&recordid=197000062&confid=6547000000000001771&from=MBS |
 action_result.data.\*.timeRecorded | string | | 2025-05-22T08:23:05Z |
 action_result.data.\*.topic | string | | soar test-20250522 0829-1 |
-action_result.summary.message | string | | Recording details retrieved successfully |
-action_result.message | string | | Message: Recording details retrieved successfully, Status code: False |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'ai meeting summary'
 
@@ -850,19 +854,18 @@ PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
-action_result.status | string | | |
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.recording_id | string | `webex recording id` | |
 action_result.parameter.site_url | string | | |
+action_result.data.\*.recordingId | string | `webex recording id` | test06506faa48c790592a4198c3test |
+action_result.data.\*.suggestedNote | string | `webex meeting notes` | AI-Generated meeting summary and actions items retrieved successfully |
 action_result.data.\*.actionItems | string | `webex meeting actions items` | AI-Generated actions items retrieved successfully |
 action_result.data.\*.actions_items | string | | AI-Generated actions items retrieved successfully |
-action_result.data.\*.recordingId | string | `webex recording id` | test06506faa48c790592a4198c3test |
 action_result.data.\*.recordingName | string | | test recording |
-action_result.data.\*.suggestedNote | string | `webex meeting notes` | AI-Generated meeting summary and actions items retrieved successfully |
 action_result.data.\*.summary | string | | AI-Generated meeting summary and actions items retrieved successfully |
-action_result.summary | string | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ## action: 'update a room'
 
@@ -881,19 +884,21 @@ To remove a description please use a space character by itself.
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
 **room_id** | required | The unique identifier for the room. example = "Y2lzY29zcGFyazovL3VzL1JPT00vYmJjZWIxYWQtNDNmMS0zYjU4LTkxNDctZjE0YmIwYzRkMTU0" | string | |
-**title** | required | A user-friendly name for the room. | string | |
 **description** | optional | The description of the space. | string | |
 **team_id** | optional | The teamId to which this space should be assigned. Only unowned spaces can be assigned to a team. Assignment between teams is unsupported. | string | |
-**classification_id** | optional | The classification_id for the room | string | |
-**is_announcement_only** | optional | Sets the space into announcement-only mode. The room must be locked to be set to announcement-only mode. | string | |
+**title** | required | A user-friendly name for the room. | string | |
 **is_locked** | optional | Set the space as locked/moderated and the creator becomes a moderator | string | |
 **is_public** | optional | The room is public and therefore discoverable within the org. Anyone can find and join that room. When true the description must be filled in. | string | |
-**is_read_only** | optional | A compliance officer can set a direct room as read-only, which will disallow any new information exchanges in this space, while maintaing historical data. | string | |
+**is_read_only** | optional | A compliance officer can set a direct room to read-only, which will disallow any new information exchanges in this space, while maintaining historical data. | string | |
+**is_announcement_only** | optional | Sets the space into announcement-only mode. The room must be locked to be set to announcement-only mode. | string | |
+**classification_id** | optional | The classification_id for the room | string | |
 
 #### Action Output
 
 DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
 --------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
 action_result.parameter.room_id | string | | |
 action_result.parameter.description | string | | |
 action_result.parameter.team_id | string | | |
@@ -903,33 +908,23 @@ action_result.parameter.is_public | string | | |
 action_result.parameter.is_read_only | string | | |
 action_result.parameter.is_announcement_only | string | | |
 action_result.parameter.classification_id | string | | |
-action_result.status | string | | |
-action_result.message | string | | |
-summary.total_objects | numeric | | |
-summary.total_objects_successful | numeric | | |
-action_result.data.\*.\*.data.\*.id | string | | |
-action_result.data.\*.\*.data.\*.type | string | | |
-action_result.data.\*.\*.data.\*.title | string | | |
-action_result.data.\*.\*.data.\*.created | string | | |
-action_result.data.\*.\*.data.\*.ownerId | string | | |
-action_result.data.\*.\*.data.\*.isLocked | boolean | | |
-action_result.data.\*.\*.data.\*.isPublic | boolean | | |
-action_result.data.\*.\*.data.\*.creatorId | string | | |
-action_result.data.\*.\*.data.\*.isReadOnly | boolean | | |
-action_result.data.\*.\*.data.\*.description | string | | |
-action_result.data.\*.\*.data.\*.lastActivity | string | | |
-action_result.data.\*.\*.status | string | | |
-action_result.data.\*.\*.message | string | | |
-action_result.data.\*.\*.parameter.title | string | | |
-action_result.data.\*.\*.parameter.context.guid | string | | |
-action_result.data.\*.\*.parameter.context.artifact_id | numeric | | |
-action_result.data.\*.\*.parameter.room_id | string | | |
-action_result.data.\*.\*.parameter.is_locked | boolean | | |
-action_result.data.\*.\*.parameter.is_public | boolean | | |
-action_result.data.\*.\*.parameter.description | string | | |
-action_result.data.\*.\*.parameter.is_read_only | boolean | | |
-action_result.parameter.classification_id | string | | |
-action_result.parameter.is_announcement_only | string | | |
+action_result.data.\*.id | string | | |
+action_result.data.\*.title | string | | |
+action_result.data.\*.description | string | | |
+action_result.data.\*.teamId | string | | |
+action_result.data.\*.classificationId | string | | |
+action_result.data.\*.type | string | | |
+action_result.data.\*.created | string | | |
+action_result.data.\*.ownerId | string | | |
+action_result.data.\*.creatorId | string | | |
+action_result.data.\*.lastActivity | string | | |
+action_result.data.\*.isLocked | boolean | | True False |
+action_result.data.\*.isPublic | boolean | | True False |
+action_result.data.\*.isReadOnly | boolean | | True False |
+action_result.data.\*.isAnnouncementOnly | boolean | | True False |
+action_result.data.\*.status | string | | success failed |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
 
 ______________________________________________________________________
 
