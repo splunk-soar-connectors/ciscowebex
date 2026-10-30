@@ -54,6 +54,31 @@ Existing OAuth tokens are migrated automatically when available, so normal actio
 | **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read`, for admin (`spark-admin:people_read`) to retrieve other user details |
 | **Get Recording Details** | Retrieve details of a Webex meeting recording using its recording ID | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
 | **AI Meeting Summary** | Retrieve AI-Generated meeting summary and actions items using its recording ID and site url | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
+| **Make Request** | Send a request to a Webex API path using the asset's authentication | Scopes required by the selected endpoint |
+
+### Make Request
+
+Use a path relative to `https://webexapis.com/v1`, such as `/rooms` or `/people`.
+Do not include a hostname or repeat the `/v1` prefix. The action uses the same
+Personal Access Token or OAuth authentication and token refresh as other actions.
+
+- `http_method` defaults to `GET` and supports `GET`, `POST`, `PUT`, `DELETE`,
+  `PATCH`, `HEAD`, and `OPTIONS`.
+- `query_parameters` accepts a JSON object or a query string, including repeated
+  keys. Parameters supplied here override matching keys in the endpoint query.
+- `headers` accepts a JSON object of string values. Header names are
+  case-insensitive. Authentication comes from the asset.
+- `body` is sent as text. With the default `Content-Type: application/json`, it
+  must be valid JSON; change Content-Type to send another text format.
+- `timeout` is a positive number of whole seconds (default 30).
+  `verify_ssl`, when omitted, uses the asset's certificate verification setting.
+  Both settings apply to API and OAuth token requests.
+
+The action returns `status_code` and `response_body` as response text, including
+non-JSON, empty, and HTTP error responses. Inspect `status_code` to determine
+whether Webex accepted the request. Invalid inputs, connection failures, and
+token acquisition or refresh errors fail the action. The action makes one resource request, apart from the
+existing OAuth retry after a rejected token; it does not paginate results.
 
 ______________________________________________________________________
 

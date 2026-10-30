@@ -64,6 +64,31 @@ Existing OAuth tokens are migrated automatically when available, so normal actio
 | **List Users** | List users in your Webex org using filters like email, name, ID, etc. | `spark:people_read`, for admin (`spark-admin:people_read`) to retrieve other user details |
 | **Get Recording Details** | Retrieve details of a Webex meeting recording using its recording ID | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
 | **AI Meeting Summary** | Retrieve AI-Generated meeting summary and actions items using its recording ID and site url | `meeting:recordings_read`, for admin (`spark-admin:recordings_read`) |
+| **Make Request** | Send a request to a Webex API path using the asset's authentication | Scopes required by the selected endpoint |
+
+### Make Request
+
+Use a path relative to `https://webexapis.com/v1`, such as `/rooms` or `/people`.
+Do not include a hostname or repeat the `/v1` prefix. The action uses the same
+Personal Access Token or OAuth authentication and token refresh as other actions.
+
+- `http_method` defaults to `GET` and supports `GET`, `POST`, `PUT`, `DELETE`,
+  `PATCH`, `HEAD`, and `OPTIONS`.
+- `query_parameters` accepts a JSON object or a query string, including repeated
+  keys. Parameters supplied here override matching keys in the endpoint query.
+- `headers` accepts a JSON object of string values. Header names are
+  case-insensitive. Authentication comes from the asset.
+- `body` is sent as text. With the default `Content-Type: application/json`, it
+  must be valid JSON; change Content-Type to send another text format.
+- `timeout` is a positive number of whole seconds (default 30).
+  `verify_ssl`, when omitted, uses the asset's certificate verification setting.
+  Both settings apply to API and OAuth token requests.
+
+The action returns `status_code` and `response_body` as response text, including
+non-JSON, empty, and HTTP error responses. Inspect `status_code` to determine
+whether Webex accepted the request. Invalid inputs, connection failures, and
+token acquisition or refresh errors fail the action. The action makes one resource request, apart from the
+existing OAuth retry after a rejected token; it does not paginate results.
 
 ______________________________________________________________________
 
@@ -107,7 +132,8 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 [list users](#action-list-users) - List users in your Webex organization using filters like email, name, ID, roles, or location <br>
 [get recording details](#action-get-recording-details) - Retrieve details of a Webex meeting recording using its recording ID <br>
 [ai meeting summary](#action-ai-meeting-summary) - Retrieve AI-Generated meeting summary and actions items using its recording ID and site url <br>
-[update a room](#action-update-a-room) - Updates details for a room by ID
+[update a room](#action-update-a-room) - Updates details for a room by ID <br>
+[make request](#action-make-request) - Send an authenticated Webex API request and return its HTTP status and response text.
 
 ## action: 'test connectivity'
 
@@ -928,6 +954,45 @@ action_result.data.\*.isPublic | boolean | | True False |
 action_result.data.\*.isReadOnly | boolean | | True False |
 action_result.data.\*.isAnnouncementOnly | boolean | | True False |
 action_result.data.\*.status | string | | success failed |
+summary.total_objects | numeric | | 1 |
+summary.total_objects_successful | numeric | | 1 |
+
+## action: 'make request'
+
+Send an authenticated Webex API request and return its HTTP status and response text.
+
+Type: **generic** <br>
+Read only: **False**
+
+'make request' action for the app. Used to handle arbitrary HTTP requests with the app's asset
+
+#### Action Parameters
+
+PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
+--------- | -------- | ----------- | ---- | --------
+**http_method** | optional | HTTP method to use for the Webex API request. | string | |
+**endpoint** | required | Webex API path relative to https://webexapis.com/v1, for example '/rooms'. Do not include the base URL or '/v1' prefix. | string | |
+**headers** | optional | The headers to send with the request (JSON object). An example is {'Content-Type': 'application/json'} | string | |
+**query_parameters** | optional | Parameters to append to the URL (JSON object or query string). An example is ?key=value&key2=value2 | string | |
+**body** | optional | Request body. Must be valid JSON when Content-Type contains 'json' (the default); otherwise sent as raw text. | string | |
+**timeout** | optional | Positive request timeout in seconds, including OAuth token requests. | numeric | |
+**verify_ssl** | optional | Override certificate verification for this request and OAuth token requests. Omit to use the asset setting. | boolean | |
+
+#### Action Output
+
+DATA PATH | TYPE | CONTAINS | EXAMPLE VALUES
+--------- | ---- | -------- | --------------
+action_result.status | string | | success failure |
+action_result.message | string | | |
+action_result.parameter.http_method | string | | |
+action_result.parameter.endpoint | string | | |
+action_result.parameter.headers | string | | |
+action_result.parameter.query_parameters | string | | |
+action_result.parameter.body | string | | |
+action_result.parameter.timeout | numeric | | |
+action_result.parameter.verify_ssl | boolean | | |
+action_result.data.\*.status_code | numeric | | 200 404 500 |
+action_result.data.\*.response_body | string | | {"key": "value"} |
 summary.total_objects | numeric | | 1 |
 summary.total_objects_successful | numeric | | 1 |
 

@@ -25,3 +25,4 @@ from . import list_users  # noqa: F401
 from . import get_recording_details  # noqa: F401
 from . import ai_meeting_summary  # noqa: F401
 from . import update_room  # noqa: F401
+from . import make_request  # noqa: F401

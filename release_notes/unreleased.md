@@ -10,3 +10,4 @@
 * Retain completed recording details when a later recording request fails, while returning typed outputs on full success.
 * Restore the list rooms table to Room Name and ID by removing the synthetic success-status column, preserving Webex response fields.
 * Return AI meeting summaries when Webex omits the recording name or returns a null name, preserving the available summary content.
+* Add make request for Webex API paths with the asset's existing personal-token or OAuth authentication, returning HTTP status and response text.

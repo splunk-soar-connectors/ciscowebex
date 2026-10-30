@@ -60,7 +60,11 @@ def verify_server_cert(asset) -> bool:
 
 @contextmanager
 def oauth_client(
-    asset, redirect_uri: str | None = None
+    asset,
+    redirect_uri: str | None = None,
+    *,
+    verify_ssl: bool | None = None,
+    timeout: int = consts.WEBEX_DEFAULT_TIMEOUT,
 ) -> Iterator[SOARAssetOAuthClient]:
     """Configure and close the OAuth token transport using the asset's TLS setting."""
     if not asset.client_id or not asset.client_secret:
@@ -73,15 +77,14 @@ def oauth_client(
         redirect_uri=redirect_uri,
         scope=asset.scope.split() if asset.scope else [],
     )
-    with httpx.Client(
-        verify=verify_server_cert(asset), timeout=consts.WEBEX_DEFAULT_TIMEOUT
-    ) as token_http:
+    verify = verify_server_cert(asset) if verify_ssl is None else verify_ssl
+    with httpx.Client(verify=verify, timeout=timeout) as token_http:
         yield SOARAssetOAuthClient(
             config,
             asset.auth_state,
             http_client=token_http,
-            verify_ssl=verify_server_cert(asset),
-            timeout=consts.WEBEX_DEFAULT_TIMEOUT,
+            verify_ssl=verify,
+            timeout=timeout,
         )
 
 
@@ -117,23 +120,32 @@ def remove_password_fields(value):
     return value
 
 
-def _request(asset, method: str, url: str, **kwargs) -> httpx.Response:
-    verify = verify_server_cert(asset)
+def request(
+    asset,
+    method: str,
+    url: str,
+    *,
+    timeout: int = consts.WEBEX_DEFAULT_TIMEOUT,
+    verify_ssl: bool | None = None,
+    **kwargs,
+) -> httpx.Response:
+    """Send an authenticated request and return the unparsed HTTP response."""
+    verify = verify_server_cert(asset) if verify_ssl is None else verify_ssl
     try:
         if asset.authorization_key:
             with httpx.Client(
                 auth=StaticTokenAuth(asset.authorization_key),
                 verify=verify,
-                timeout=consts.WEBEX_DEFAULT_TIMEOUT,
+                timeout=timeout,
             ) as client:
                 return client.request(method, url, **kwargs)
         migrate_legacy_oauth_state(asset)
         with (
-            oauth_client(asset) as token_client,
+            oauth_client(asset, verify_ssl=verify, timeout=timeout) as token_client,
             httpx.Client(
                 auth=OAuthBearerAuth(token_client),
                 verify=verify,
-                timeout=consts.WEBEX_DEFAULT_TIMEOUT,
+                timeout=timeout,
             ) as client,
         ):
             return client.request(method, url, **kwargs)
@@ -153,7 +165,7 @@ def make_rest_call(
     headers: dict | None = None,
 ):
     url = endpoint if endpoint.startswith("https") else f"{consts.BASE_URL}{endpoint}"
-    response = _request(
+    response = request(
         asset,
         method.upper(),
         url,
